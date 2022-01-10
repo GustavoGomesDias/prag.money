@@ -1,0 +1,40 @@
+.logo {
+  display: flex;
+  align-items: center;
+  color: #00E091;
+  font-weight: bold;  
+}
+
+.logo-type {
+  white-space: nowrap;
+  overflow: hidden;
+  animation: type 2s steps(40) 500ms normal both;
+}
+
+.cursor {
+  color: #fff;
+}
+
+.typing-cursor {
+  display: contents;
+  animation: cursorAnimation 1s infinite normal;
+}
+
+@keyframes cursorAnimation {
+  from {
+    color: #00E091;
+  }
+  to {
+    color: #fff
+  }
+}
+
+@keyframes type {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
