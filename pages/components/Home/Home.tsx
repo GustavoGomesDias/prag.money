@@ -12,7 +12,8 @@ const styles = {
 }
 
 const Home = (): JSX.Element => {
-  const [isMdScreen] = useMediaQuery('(max-width: 1000px)');
+  const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
+  // const [isMdScreen] = useMediaQuery('(max-width: 1000px)');
   return (
     <Box marginTop="15px">
       <Flex
@@ -22,14 +23,24 @@ const Home = (): JSX.Element => {
       >
         <FaWallet size="80px" />
         <chakra.h1
-          fontSize="48px"
+          fontSize={isSmallScreen ? '40px' : '48px'}
           fontWeight="bold"
           textAlign="center"
         >
-          Controle seu <span style={styles}>dinheiro</span> de forma <span style={styles}>pragmatica</span>
+          Controle seu <span style={styles}>dinheiro</span> de forma <span style={styles}>pragmática</span>
         </chakra.h1>
         <Section />
-        <Button className={classes['button-animation']} width="30%" fontSize="2xl" color="#00735C" display="flex"  flexDir="row" alignItems="center">Cadastre-se</Button>
+        {!isSmallScreen && <Button
+          className={classes['button-animation']}
+          width="30%"
+          fontSize="2xl"
+          color="#00735C"
+          display="flex"
+          flexDir="row"
+          alignItems="center"
+        >
+          Cadastre-se
+        </Button>}
       </Flex>
     </Box>
   );

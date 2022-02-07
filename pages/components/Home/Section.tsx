@@ -4,7 +4,7 @@ import { FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile } fro
 import classes from './Home.module.css';
 
 const Section = (): JSX.Element => {
-  // const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
+  const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
   // const [isMdScreen] = useMediaQuery('(max-width: 1000px)');
   // const [isLargeScreen] = useMediaQuery('(min-width: 1200px)');
   return (
@@ -13,6 +13,7 @@ const Section = (): JSX.Element => {
       alignItems="center"
       padding="2em"
       w="full"
+      flexDir={isSmallScreen ? 'column' : 'row'}
     >
       <Flex
         flexDir="column"
@@ -37,7 +38,8 @@ const Section = (): JSX.Element => {
         </Flex>
         <chakra.h3 fontSize="36px" textAlign="center">Cadastre várias formas de pagamento</chakra.h3>
       </Flex>
-      <Image src="/wallet.svg" alt="Wallet image" w="40%" />
+      {!isSmallScreen && <Image src="/wallet.svg" alt="Wallet image" w="40%" />}
+      {isSmallScreen && <Box bgImage="/vault.svg" bgRepeat="repeat-x" bgSize="20%" w="100%" h="100px" p="1em" />}
       <Flex
         flexDir="column"
         justifyContent="center"

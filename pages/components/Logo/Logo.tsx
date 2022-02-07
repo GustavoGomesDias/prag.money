@@ -1,3 +1,4 @@
+import { useMediaQuery } from '@chakra-ui/react';
 import React from 'react';
 
 import classes from './Logo.module.css';
@@ -7,6 +8,7 @@ export interface Size {
 }
 
 const Logo = ({ fontSize }: Size): JSX.Element => {
+  const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
   return (
     <div
       className={classes['logo']}
@@ -15,7 +17,7 @@ const Logo = ({ fontSize }: Size): JSX.Element => {
       }}
     >
       <p className={`${classes['logo-type']}`}>
-        Prag.Money$
+        {isSmallScreen ? 'p.$' : 'Prag.Money$'}
       </p>
       <span className={`${classes['typing-cursor']} ${classes['cursor']}`}>
         _
