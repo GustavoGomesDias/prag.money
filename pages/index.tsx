@@ -5,36 +5,17 @@ import { FaWallet } from 'react-icons/fa';
 import Header from './components/Header/Header'
 import SEO from './components/SEO'
 import Section from './components/Home/Section';
+import Home from './components/Home/Home';
 
-const styles = {
-  color: '#00E091',
-  textDecoration: 'underline wavy #00735C'
-}
-
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
 
   return (
     <>
       <SEO title="p.$_ | Home" description="Home Page" />
       <Header />
-      <Box marginTop="15px">
-        <Flex
-          flexDir="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <FaWallet size="80px" />
-          <chakra.h1
-            fontSize="48px"
-            fontWeight="bold"
-          >
-            Controle seu <span style={styles}>dinheiro</span> de forma <span style={styles}>pragmatica</span>
-          </chakra.h1>
-          <Section />
-        </Flex>
-      </Box>
+      <Home />
     </>
   );
 }
 
-export default Home;
+export default HomePage;

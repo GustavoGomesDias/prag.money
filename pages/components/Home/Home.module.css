@@ -1,0 +1,29 @@
+.button-animation {
+  animation: 1s move;
+}
+
+.p1-animation {
+  animation: 1s moveParagraph;
+}
+
+.p2-animation {
+  animation: 2s moveParagraph;
+}
+
+@keyframes move {
+  from {
+    margin-left: -3000px;
+  }
+  to {
+    margin-left: 0px;
+  }
+}
+
+@keyframes moveParagraph {
+  from {
+    margin-top: -3000px;
+  }
+  to {
+    margin-top: 0px;
+  }
+}
