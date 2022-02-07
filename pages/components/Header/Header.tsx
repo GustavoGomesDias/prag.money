@@ -1,5 +1,5 @@
 import React from 'react';
-import { chakra, Flex } from '@chakra-ui/react';
+import { Button, ButtonGroup, chakra, Flex } from '@chakra-ui/react';
 
 import Logo from '../Logo/Logo';
 
@@ -17,6 +17,14 @@ const Header = (): JSX.Element => {
         justifyContent="space-between"
       >
         <Logo fontSize="64px" />
+        <ButtonGroup display="flex" alignItems="center">
+          <Button colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            Cadastre-se
+          </Button>
+          <Button colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            Login
+          </Button>
+        </ButtonGroup>
       </Flex>
     </chakra.header>
   );

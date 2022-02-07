@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, chakra, Flex } from '@chakra-ui/react';
+import { Box, Button, chakra, Flex, useMediaQuery } from '@chakra-ui/react';
 import { FaWallet } from 'react-icons/fa';
 import classes from './Home.module.css';
 
@@ -12,6 +12,7 @@ const styles = {
 }
 
 const Home = (): JSX.Element => {
+  const [isMdScreen] = useMediaQuery('(max-width: 1000px)');
   return (
     <Box marginTop="15px">
       <Flex
@@ -23,6 +24,7 @@ const Home = (): JSX.Element => {
         <chakra.h1
           fontSize="48px"
           fontWeight="bold"
+          textAlign="center"
         >
           Controle seu <span style={styles}>dinheiro</span> de forma <span style={styles}>pragmatica</span>
         </chakra.h1>
