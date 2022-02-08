@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Box, chakra, useMediaQuery, Image } from '@chakra-ui/react';
+import { Flex, Box, chakra, useMediaQuery, Image, Button, Link } from '@chakra-ui/react';
 import { FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile } from 'react-icons/fa';
 import classes from './Home.module.css';
 
@@ -9,67 +9,77 @@ const Section = (): JSX.Element => {
   // const [isLargeScreen] = useMediaQuery('(min-width: 1200px)');
   return (
     <Flex
-      justifyContent="space-between"
+      justifyContent="center"
       alignItems="center"
       padding="2em"
       w="full"
-      flexDir={isSmallScreen ? 'column' : 'row'}
+      flexDir="row"
     >
-      <Flex
-        flexDir="column"
-        justifyContent="center"
-        alignItems="center"
-        className={classes['p1-animation']}
-      >
-        <Flex justifyContent="center">
-          <Box
-            borderRight="2px #00735C solid"
-            marginRight="15px"
-            w="full"
-          >
-            <FaMoneyBillWaveAlt size="60px" style={{ marginRight: '15px' }} />
-          </Box>
-          <Box
-            marginRight="15px"
-            w="full"
-          >
-            <FaCreditCard size="60px" />
-          </Box>
+      <Flex flexDir="column">
+        <Flex
+          flexDir="column"
+          justifyContent="center"
+          alignItems="center"
+          className={classes['p1-animation']}
+          mb="15px"
+        >
+          <Flex justifyContent="center">
+            <Box
+              borderRight="2px #00735C solid"
+              marginRight="15px"
+              w="full"
+            >
+              <FaMoneyBillWaveAlt size="60px" style={{ marginRight: '15px' }} />
+            </Box>
+            <Box
+              marginRight="15px"
+              w="full"
+            >
+              <FaCreditCard size="60px" />
+            </Box>
+          </Flex>
+          <chakra.h3 fontSize="36px" textAlign="center">Cadastre várias formas de pagamento</chakra.h3>
         </Flex>
-        <chakra.h3 fontSize="36px" textAlign="center">Cadastre várias formas de pagamento</chakra.h3>
+        <Flex
+          flexDir="column"
+          justifyContent="center"
+          alignItems="center"
+          className={classes['p2-animation']}
+          mb="15px"
+        >
+          <Flex justifyContent="center">
+            <Box
+              borderRight="2px #00735C solid"
+              marginRight="15px"
+              w="full"
+            >
+              <FaTshirt size="60px" style={{ marginRight: "15px" }} />
+            </Box>
+            <Box
+              borderRight="2px #00735C solid"
+              marginRight="15px"
+              w="full"
+            >
+              <FaHamburger size="60px" style={{ marginRight: "15px" }} />
+            </Box>
+            <Box
+              marginRight="15px"
+              w="full"
+            >
+              <FaMobile size="60px" />
+            </Box>
+          </Flex>
+          <chakra.h3 fontSize="36px" textAlign="center">Use-as para trackear suas compras</chakra.h3>
+        </Flex>
+        {!isSmallScreen && (
+          <Link href="/register">
+            <Button colorScheme='teal' width="100%" bg="#fff" size="lg" variant='outline' fontWeight="bold">
+              Cadastre-se
+            </Button>
+          </Link>
+        )}
       </Flex>
       {!isSmallScreen && <Image src="/wallet.svg" alt="Wallet image" w="40%" />}
-      {isSmallScreen && <Box bgImage="/vault.svg" bgRepeat="repeat-x" bgSize="20%" w="100%" h="100px" p="1em" />}
-      <Flex
-        flexDir="column"
-        justifyContent="center"
-        alignItems="center"
-        className={classes['p2-animation']}
-      >
-        <Flex justifyContent="center">
-          <Box
-            borderRight="2px #00735C solid"
-            marginRight="15px"
-            w="full"
-          >
-            <FaTshirt size="60px" style={{ marginRight: "15px" }} />
-          </Box>
-          <Box
-            borderRight="2px #00735C solid"
-            marginRight="15px"
-            w="full"
-          >
-            <FaHamburger size="60px" style={{ marginRight: "15px" }} />
-          </Box>
-          <Box
-            marginRight="15px"
-            w="full"
-          >
-            <FaMobile size="60px" />
-          </Box>
-        </Flex>
-        <chakra.h3 fontSize="36px" textAlign="center">Use-as para trackear suas compras</chakra.h3>
-      </Flex>
     </Flex>
   );
 }

@@ -30,17 +30,6 @@ const Home = (): JSX.Element => {
           Controle seu <span style={styles}>dinheiro</span> de forma <span style={styles}>pragmática</span>
         </chakra.h1>
         <Section />
-        {!isSmallScreen && <Button
-          className={classes['button-animation']}
-          width="30%"
-          fontSize="2xl"
-          color="#00735C"
-          display="flex"
-          flexDir="row"
-          alignItems="center"
-        >
-          Cadastre-se
-        </Button>}
       </Flex>
     </Box>
   );
