@@ -31,7 +31,7 @@ const Register = (): JSX.Element => {
       <Form handleSubmit={function (e: FormEvent<Element>): Promise<void> {
         throw new Error('Function not implemented.');
       }}>
-        <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastrar-se</chakra.h1>
+        <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastre-se</chakra.h1>
         <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
           <BasicInput id="email" label="E-mail" placeholder="example@example.com" onChangehandle={undefined} />
           <BasicInput id="password" label="Senha" placeholder="************" type="password" onChangehandle={undefined} />
