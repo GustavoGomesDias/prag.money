@@ -1,12 +1,13 @@
 import React, { FormEvent } from 'react';
+import { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Grid } from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
+
 import BasicInput from './components/Login/BasicInput';
 import Form from './components/Login/Form/Form';
 import Logo from './components/Logo/Logo';
-import { useRouter } from 'next/router';
 
-const Login = (): JSX.Element => {
+const Register = (): JSX.Element => {
   const { push } = useRouter();
 
   const handleRedirect = (path: string): void => {
@@ -30,14 +31,13 @@ const Login = (): JSX.Element => {
       <Form handleSubmit={function (e: FormEvent<Element>): Promise<void> {
         throw new Error('Function not implemented.');
       }}>
-        <chakra.h1 w="full" textAlign="center" fontSize="48px">Entrar</chakra.h1>
+        <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastrar-se</chakra.h1>
         <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
           <BasicInput id="email" label="E-mail" placeholder="example@example.com" onChangehandle={undefined} />
           <BasicInput id="password" label="Senha" placeholder="************" type="password" onChangehandle={undefined} />
-          <ButtonGroup>
-            <Button bg="#fff" fontSize="24px" border="2px #00735C solid" w="100%" h="60px">Entrar</Button>
+          <BasicInput id="confirmPass" label="Confirmar senha" placeholder="************" type="password" onChangehandle={undefined} />
+          <ButtonGroup py="1em" flexDir="column">
             <Button
-              onClick={() => handleRedirect('/register')}
               bg="#00735C"
               fontSize="24px"
               color="#fff"
@@ -47,8 +47,9 @@ const Login = (): JSX.Element => {
                 bg: '#00E091',
               }}
             >
-              Cadastre-se
+              Cadastrar-se
             </Button>
+            <Button onClick={() => handleRedirect('/login')} variant="link" fontSize="18px" mt="5px" color="#00735C" w="100%" h="60px">Já tem cadastro? Então faça login</Button>
           </ButtonGroup>
         </Grid>
       </Form>
@@ -56,4 +57,4 @@ const Login = (): JSX.Element => {
   );
 };
 
-export default Login;
+export default Register;

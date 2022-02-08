@@ -1,10 +1,17 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Link } from '@chakra-ui/react';
 
 import Logo from '../Logo/Logo';
 
 
 const Header = (): JSX.Element => {
+  const { push } = useRouter();
+
+  const handleRedirect = (path: string): void => {
+    push(path, path);
+  };
+
   return (
     <chakra.header
       bg="#fff"
@@ -18,16 +25,12 @@ const Header = (): JSX.Element => {
       >
         <Logo fontSize="64px" />
         <ButtonGroup display="flex" alignItems="center">
-          <Link href="/register">
-            <Button colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-              Cadastre-se
-            </Button>
-          </Link>
-          <Link href="/login">
-            <Button colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-              Login
-            </Button>
-          </Link>
+          <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            Cadastre-se
+          </Button>
+          <Button onClick={() => handleRedirect('/login')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            Login
+          </Button>
         </ButtonGroup>
       </Flex>
     </chakra.header>
