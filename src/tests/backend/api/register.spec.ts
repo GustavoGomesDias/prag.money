@@ -33,7 +33,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Nome requerido.',
+      message: 'Nome requerido (a).',
     })
   });
   
@@ -56,7 +56,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'E-mail requerido.',
+      message: 'E-mail requerido (a).',
     })
   });
 
@@ -79,7 +79,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Senha requerida.',
+      message: 'Senha requerido (a).',
     })
   });
 
@@ -102,7 +102,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Confirmação de senha requerida.',
+      message: 'Confirmação de senha requerido (a).',
     })
   });
 

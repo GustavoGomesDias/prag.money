@@ -24,36 +24,22 @@ export default class UserController {
   handleRegister(req: HttpRequest): HttpResponse {
     const { email, name, password, passwordConfirmation } = req.body.user as RegisterUser;
 
-    if (!name || name === '' || name === ' ') {
-      const res: HttpResponse = {
-        statusCode: 400,
-        message: 'Nome requerido.',
-      }
-      return res;
-    }
+    const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
 
-    if (!email || email === '' || email === ' ') {
-      const res: HttpResponse = {
-        statusCode: 400,
-        message: 'E-mail requerido.',
-      }
-      return res;
-    }
+    for (const field of lst) {
+      let response;
+      if (field === 'name') response = 'Nome';
+      if (field === 'email') response = 'E-mail';
+      if (field == 'password') response = 'Senha';
+      if (field == 'passwordConfirmation') response = 'Confirmação de senha';
 
-    if (!password || password === '' || password === ' ') {
-      const res: HttpResponse = {
-        statusCode: 400,
-        message: 'Senha requerida.',
+      if (!req.body.user?.[field as keyof RegisterUser]) {
+        const res: HttpResponse = {
+          statusCode: 400,
+          message: `${response} requerido (a).`,
+        }
+        return res;
       }
-      return res;
-    }
-
-    if (!passwordConfirmation || passwordConfirmation === '' || passwordConfirmation === ' ') {
-      const res: HttpResponse = {
-        statusCode: 400,
-        message: 'Confirmação de senha requerida.',
-      }
-      return res;
     }
 
     if (!this.emailValidator.isEmail(email)) {
