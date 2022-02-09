@@ -3,7 +3,7 @@ import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter
 import UserModel from '../../../serverless/data/models/UserModel';
 import UserRepository from '../../../serverless/repositories/UserRepository';;
 
-afterAll(async () => {
+afterEach(async () => {
   const prisma = new PrismaClient();
   await prisma.user.delete({
     where: {
@@ -40,5 +40,20 @@ describe('User Repository test', () => {
     await repository.addUser(req);
 
     expect(spy).toHaveBeenCalledWith(req);
+  });
+
+  test('Should return created account email and name infos', async () => {
+    const req: UserModel = {
+      email: 'email@email.com',
+      name: 'name',
+      password: 'password',
+    };
+    const repository = makeSut()
+    const result = await repository.addUser(req);
+
+    expect(result).toEqual({
+      email: 'email@email.com',
+      name: 'name',
+    });
   });
 });
