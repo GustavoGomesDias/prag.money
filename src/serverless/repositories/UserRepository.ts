@@ -22,6 +22,10 @@ export default class UserRepository extends GenericDAOImp<
     const { email, name, password } = req;
     const hash = await this.encrypter.encrypt(password);
     const result = await this.add({ email, name, password: hash }) as Omit<UserModel, "password">
-    return result;
+
+    return {
+      email: result.email,
+      name: result.name,
+    };
   }
 } 
