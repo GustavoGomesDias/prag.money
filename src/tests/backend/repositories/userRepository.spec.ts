@@ -3,13 +3,39 @@ import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter
 import UserModel from '../../../serverless/data/models/UserModel';
 import UserRepository from '../../../serverless/repositories/UserRepository';;
 
+const prisma = new PrismaClient();
+
 afterEach(async () => {
-  const prisma = new PrismaClient();
-  await prisma.user.delete({
+  const user = await prisma.user.findUnique({
     where: {
-      email: 'email@email.com', 
-    },
-  });
+      email: 'email@email.com',
+    }
+  })
+
+  if (user){
+    await prisma.user.delete({
+      where: {
+        email: 'email@email.com', 
+      },
+    });
+  }
+});
+
+afterAll(async () => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: 'email@email.com',
+    }
+  })
+
+  if (user){
+    await prisma.user.delete({
+      where: {
+        email: 'email@email.com', 
+      },
+    });
+  }
+  prisma.$disconnect();
 });
 
 const makeEncrypter = (): EncryptAdapter => {
@@ -29,6 +55,21 @@ const makeSut = (): UserRepository => {
 }
 
 describe('User Repository test', () => {
+
+  test('Should call addUer with correct values', async () => {
+    const req: UserModel = {
+      email: 'email@email.com',
+      name: 'name',
+      password: 'password',
+    };
+    const encrypterStub = makeEncrypter();
+    const spy = jest.spyOn(encrypterStub, 'encrypt');
+    const repository = new UserRepository(encrypterStub);
+    await repository.addUser(req);
+
+    expect(spy).toHaveBeenCalledWith('password');
+  });
+
   test('Should call addUer with correct values', async () => {
     const req: UserModel = {
       email: 'email@email.com',

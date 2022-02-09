@@ -3,6 +3,8 @@ import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import UserController, { HttpResponse } from '../../../../serverless/api/controllers/User';
 
+const prisma = new PrismaClient();
+
 const makeEncrypter = (): EncryptAdapter => {
   class EncrypterStub implements EncryptAdapter {
     async encrypt(password: string): Promise<string> {
@@ -30,13 +32,38 @@ const makeSut = (): UserController => {
   return new UserController(emailValidatorStub, encrypterStub);
 }
 
-afterAll(async () => {
-  const prisma = new PrismaClient();
-  await prisma.user.delete({
+afterEach(async () => {
+  const user = await prisma.user.findUnique({
     where: {
-      email: 'email@email.com', 
-    },
-  });
+      email: 'email@email.com',
+    }
+  })
+
+  if (user){
+    await prisma.user.delete({
+      where: {
+        email: 'email@email.com', 
+      },
+    });
+  }
+});
+
+afterAll(async () => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: 'email@email.com',
+    }
+  })
+
+  if (user){
+    await prisma.user.delete({
+      where: {
+        email: 'email@email.com', 
+      },
+    });
+  }
+
+  prisma.$disconnect();
 });
 
 describe('Handle Register test', () => {
