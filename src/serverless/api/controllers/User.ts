@@ -50,6 +50,14 @@ export default class UserController {
       return res;
     }
 
+    if (password !== passwordConfirmation) {
+      const res: HttpResponse = {
+        statusCode: 400,
+        message: 'Senha diferente de confirmar senha.',
+      }
+      return res;
+    }
+
     const res: HttpResponse = {
       statusCode: 200,
       message: 'Conta criada com sucesso!',
