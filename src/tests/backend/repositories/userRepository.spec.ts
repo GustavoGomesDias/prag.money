@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import UserModel from '../../../serverless/data/models/UserModel';
 import UserRepository from '../../../serverless/repositories/UserRepository';;
 
@@ -11,6 +12,22 @@ afterAll(async () => {
   });
 });
 
+const makeEncrypter = (): EncryptAdapter => {
+  class EncrypterStub implements EncryptAdapter {
+    async encrypt(password: string): Promise<string> {
+      return new Promise((resolve) => resolve('hash'));
+    }
+  }
+
+  return new EncrypterStub();
+}
+
+const makeSut = (): UserRepository => {
+  const encrypter = makeEncrypter();
+
+  return new UserRepository(encrypter);
+}
+
 describe('User Repository test', () => {
   test('Should call addUer with correct values', async () => {
     const req: UserModel = {
@@ -18,7 +35,7 @@ describe('User Repository test', () => {
       name: 'name',
       password: 'password',
     };
-    const repository = new UserRepository();
+    const repository = makeSut()
     const spy = jest.spyOn(repository, 'addUser');
     await repository.addUser(req);
 

@@ -18,12 +18,10 @@ export interface HttpRequest {
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
   private readonly repository: UserRepository;
-  private readonly encrypter: EncryptAdapter;
 
   constructor(emailValidator: EmailValidatorAdapter, encrypter: EncryptAdapter) {
     this.emailValidator = emailValidator;
-    this.repository = new UserRepository();
-    this.encrypter =  encrypter;
+    this.repository = new UserRepository(encrypter);
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -64,9 +62,8 @@ export default class UserController {
         return res;
       }
 
-      const hash = await this.encrypter.encrypt(password);
       await this.repository.add({
-        email, name, password: hash,
+        email, name, password,
       });
 
       const res: HttpResponse = {
