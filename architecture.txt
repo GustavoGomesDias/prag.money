@@ -1,6 +1,3 @@
-## Arquitetura
-
-**Sujeito a mudanças**
 prisma
   ├── /migrations            prisma migraions
   └── /schema.prisma         prisma schema
