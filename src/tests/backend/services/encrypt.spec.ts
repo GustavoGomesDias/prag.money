@@ -20,5 +20,11 @@ describe('Bcrypt Service', () => {
     await sut.encrypt('password');
 
     expect(spy).toHaveBeenCalledWith('password', 12);
-  })
+  });
+
+  test('Should return hash on success', async () => {
+      const sut = makeSut();
+      const hash = await sut.encrypt('password');
+      expect(hash).toBe('hash');
+  });
 });
