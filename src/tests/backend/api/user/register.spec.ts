@@ -1,6 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import UserController, { HttpResponse } from '../../../../serverless/api/controllers/User';
+
+const makeEncrypter = (): EncryptAdapter => {
+  class EncrypterStub implements EncryptAdapter {
+    async encrypt(password: string): Promise<string> {
+      return new Promise((resolve) => resolve('hash'));
+    }
+  }
+
+  return new EncrypterStub();
+}
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -10,6 +21,13 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   }
 
   return new EmailValidatorStub();
+}
+
+const makeSut = (): UserController => {
+  const emailValidatorStub = makeEmailValidator();
+  const encrypterStub = makeEncrypter();
+
+  return new UserController(emailValidatorStub, encrypterStub);
 }
 
 afterAll(async () => {
@@ -33,9 +51,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -56,9 +72,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -79,9 +93,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -102,9 +114,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -125,9 +135,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -148,9 +156,7 @@ describe('Handle Register test', () => {
         }
       },
     };
-
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -172,9 +178,10 @@ describe('Handle Register test', () => {
       },
     };
 
-    const emailValidator = makeEmailValidator();
-    jest.spyOn(emailValidator, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidator);
+    const emailValidatorStub = makeEmailValidator();
+    const encrypterStub = makeEncrypter();
+    jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
+    const userController = new UserController(emailValidatorStub, encrypterStub)
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -196,8 +203,7 @@ describe('Handle Register test', () => {
       },
     };
 
-    const emailValidator = makeEmailValidator();
-    const userController = new UserController(emailValidator);
+    const userController = makeSut();
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 

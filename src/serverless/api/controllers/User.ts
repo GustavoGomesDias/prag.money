@@ -1,5 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import UserRepository from '../../repositories/UserRepository';
 
@@ -18,10 +18,12 @@ export interface HttpRequest {
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
   private readonly repository: UserRepository;
+  private readonly encrypter: EncryptAdapter;
 
-  constructor(emailValidator: EmailValidatorAdapter) {
+  constructor(emailValidator: EmailValidatorAdapter, encrypter: EncryptAdapter) {
     this.emailValidator = emailValidator;
     this.repository = new UserRepository();
+    this.encrypter =  encrypter;
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -62,9 +64,9 @@ export default class UserController {
         return res;
       }
 
-
+      const hash = await this.encrypter.encrypt(password);
       await this.repository.add({
-        email, name, password
+        email, name, password: hash,
       });
 
       const res: HttpResponse = {
