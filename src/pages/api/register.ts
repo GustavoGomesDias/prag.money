@@ -6,7 +6,6 @@ export default function handlerRegister(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-
   const { email, name, password } = req.body.user as UserModel;
   return res.status(200);
 }

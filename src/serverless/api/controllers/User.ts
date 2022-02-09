@@ -75,7 +75,7 @@ export default class UserController {
       console.log(err);
       const res: HttpResponse = {
         statusCode: 500,
-        message: 'Erro no servidor, tente novamente mais tarde',
+        error: 'Erro no servidor, tente novamente mais tarde',
       }
       return res;
     }

@@ -5,15 +5,21 @@ src
   ├── /components            frontend components
   ├── /pages
   ├        ├──/api			        routes layer: api routes
-  ├        ├──/*.tsx			      frontend layer 
+  ├        ├──/*.tsx			      frontend layer
+  ├
   ├── /serverless		          serverless code: api routes
   ├        ├── /config			    config settings, env variables
   ├        ├── /services		    service layer: business logic
   ├        ├── /adapters	      adapter pattern
-  ├        ├── /DAO	            Data Access Object (DAO) pattern
-  ├        ├── /api	            api layer: controllers 
+  ├              └── /services  adapters interfaces for services
+  ├        ├── /infra	          database handler
+  ├              └── /DAO       Data Access Object Pattern
+  ├        ├── /api	            api layer: controllers
+  ├        ├── /reositories	    call database
+  ├        ├── /factories	      make controllers
   ├        ├── /data			      data access layer: database models and usecases
   ├              ├── /models			   database models	
   ├              └── /usecases      usecases protocols
+  ├
   ├
   └── /test                    test suites
