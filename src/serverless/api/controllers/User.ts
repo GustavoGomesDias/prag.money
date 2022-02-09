@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { EmailValidatorAdapter } from '../../adapters/EmailValidatorAdapter';
+import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
+import UserRepository from '../../repositories/UserRepository';
 
 export interface HttpResponse {
   message?: string
@@ -16,52 +17,68 @@ export interface HttpRequest {
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
+  private readonly repository: UserRepository;
 
   constructor(emailValidator: EmailValidatorAdapter) {
     this.emailValidator = emailValidator;
+    this.repository = new UserRepository();
   }
 
-  handleRegister(req: HttpRequest): HttpResponse {
-    const { email, name, password, passwordConfirmation } = req.body.user as RegisterUser;
+  async handleRegister(req: HttpRequest): Promise<HttpResponse> {
+    try {
+      const { email, name, password, passwordConfirmation } = req.body.user as RegisterUser;
 
-    const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
+      const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
 
-    for (const field of lst) {
-      let response;
-      if (field === 'name') response = 'Nome';
-      if (field === 'email') response = 'E-mail';
-      if (field == 'password') response = 'Senha';
-      if (field == 'passwordConfirmation') response = 'Confirmação de senha';
+      for (const field of lst) {
+        let response;
+        if (field === 'name') response = 'Nome';
+        if (field === 'email') response = 'E-mail';
+        if (field == 'password') response = 'Senha';
+        if (field == 'passwordConfirmation') response = 'Confirmação de senha';
 
-      if (!req.body.user?.[field as keyof RegisterUser]) {
+        if (!req.body.user?.[field as keyof RegisterUser]) {
+          const res: HttpResponse = {
+            statusCode: 400,
+            message: `${response} requerido (a).`,
+          }
+          return res;
+        }
+      }
+
+      if (!this.emailValidator.isEmail(email)) {
         const res: HttpResponse = {
           statusCode: 400,
-          message: `${response} requerido (a).`,
+          message: 'E-mail inválido.',
         }
         return res;
       }
-    }
 
-    if (!this.emailValidator.isEmail(email)) {
+      if (password !== passwordConfirmation) {
+        const res: HttpResponse = {
+          statusCode: 400,
+          message: 'Senha diferente de confirmar senha.',
+        }
+        return res;
+      }
+
+
+      await this.repository.add({
+        email, name, password
+      });
+
       const res: HttpResponse = {
-        statusCode: 400,
-        message: 'E-mail inválido.',
+        statusCode: 200,
+        message: 'Usuário criado com sucesso!',
+      }
+      return res;
+    } catch (err) {
+      console.log(err);
+      const res: HttpResponse = {
+        statusCode: 500,
+        message: 'Erro no servidor, tente novamente mais tarde',
       }
       return res;
     }
-
-    if (password !== passwordConfirmation) {
-      const res: HttpResponse = {
-        statusCode: 400,
-        message: 'Senha diferente de confirmar senha.',
-      }
-      return res;
-    }
-
-    const res: HttpResponse = {
-      statusCode: 200,
-      message: 'Conta criada com sucesso!',
-    }
-    return res;
   }
 }

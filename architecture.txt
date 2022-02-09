@@ -9,7 +9,8 @@ src
   ├── /serverless		          serverless code: api routes
   ├        ├── /config			    config settings, env variables
   ├        ├── /services		    service layer: business logic
-  ├        ├── /adapters	      adapter patterns
+  ├        ├── /adapters	      adapter pattern
+  ├        ├── /DAO	            Data Access Object (DAO) pattern
   ├        ├── /api	            api layer: controllers 
   ├        ├── /data			      data access layer: database models and usecases
   ├              ├── /models			   database models	

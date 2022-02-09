@@ -1,7 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import handlerRegister from '../../../pages/api/register';
-import { EmailValidatorAdapter } from '../../../serverless/adapters/EmailValidatorAdapter';
-import UserController, { HttpResponse } from '../../../serverless/api/controllers/User';
+import { PrismaClient } from '@prisma/client';
+import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import UserController, { HttpResponse } from '../../../../serverless/api/controllers/User';
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -13,8 +12,17 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   return new EmailValidatorStub();
 }
 
+afterAll(async () => {
+  const prisma = new PrismaClient();
+  await prisma.user.delete({
+    where: {
+      email: 'email@email.com', 
+    },
+  });
+});
+
 describe('Handle Register test', () => {
-  test('Should return 400 if no name is provided', () => {
+  test('Should return 400 if no name is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -29,7 +37,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -37,7 +45,7 @@ describe('Handle Register test', () => {
     })
   });
   
-  test('Should return 400 if no email is provided', () => {
+  test('Should return 400 if no email is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -52,7 +60,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -60,7 +68,7 @@ describe('Handle Register test', () => {
     })
   });
 
-  test('Should return 400 if no password is provided', () => {
+  test('Should return 400 if no password is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -75,7 +83,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -83,7 +91,7 @@ describe('Handle Register test', () => {
     })
   });
 
-  test('Should return 400 if no password is provided', () => {
+  test('Should return 400 if no password is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -98,7 +106,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -106,7 +114,7 @@ describe('Handle Register test', () => {
     })
   });
 
-  test('Should return 400 if no password is provided', () => {
+  test('Should return 400 if no password is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -121,7 +129,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -129,7 +137,7 @@ describe('Handle Register test', () => {
     })
   });
 
-  test('Should return 400 if password not equals passwordConfirmation', () => {
+  test('Should return 400 if password not equals passwordConfirmation', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -144,7 +152,7 @@ describe('Handle Register test', () => {
     const emailValidator = makeEmailValidator();
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
@@ -152,7 +160,7 @@ describe('Handle Register test', () => {
     })
   });
 
-  test('Should return 400 if email is not valid', () => {
+  test('Should return 400 if email is not valid', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -168,11 +176,34 @@ describe('Handle Register test', () => {
     jest.spyOn(emailValidator, 'isEmail').mockReturnValueOnce(false);
     const userController = new UserController(emailValidator);
 
-    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
       message: 'E-mail inválido.',
+    })
+  });
+
+  test('Should return 200 if user is creted', async () => {
+    const httpRequest = {
+      body: {
+        user: {
+          name: 'name',
+          email: 'email@email.com',
+          password: 'password',
+          passwordConfirmation: 'password',
+        }
+      },
+    };
+
+    const emailValidator = makeEmailValidator();
+    const userController = new UserController(emailValidator);
+
+    const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
+
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      message: 'Usuário criado com sucesso!'
     })
   });
 });
