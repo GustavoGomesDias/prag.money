@@ -1,5 +1,5 @@
 import UserModel from "../data/models/UserModel";
-import RegisterUser, { AddUser } from "../data/usecases/RegisterUser";
+import { AddUser } from "../data/usecases/RegisterUser";
 import GenericDAOImp from "../infra/DAO/GenericDAOImp";
 import { Prisma, PrismaClient } from "@prisma/client";
 
