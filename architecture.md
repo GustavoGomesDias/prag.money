@@ -1,10 +1,21 @@
 ## Arquitetura
 
 **Sujeito a mudanças**
+prisma
+  ├── /migrations            prisma migraions
+  └── /schema.prisma         prisma schema
 src
-  ├── /api			     controller layer: api routes
-  ├── /config			   config settings, env variables
-  ├── /services		   service layer: business logic
-  ├── /models			   data access layer: database models	
-  ├── /subscribers	 async event handlers
-  └── /test          test suites
+  ├── /components            frontend components
+  ├── /pages
+  ├        ├──/api			        routes layer: api routes
+  ├        ├──/*.tsx			      frontend layer 
+  ├── /serverless		          serverless code: api routes
+  ├        ├── /config			    config settings, env variables
+  ├        ├── /services		    service layer: business logic
+  ├        ├── /adapters	      adapter patterns
+  ├        ├── /api	            api layer: controllers 
+  ├        ├── /data			      data access layer: database models and usecases
+  ├              ├── /models			   database models	
+  ├              └── /usecases      usecases protocols
+  ├
+  └── /test                    test suites

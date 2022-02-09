@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import RegisterUser from '../data/usecases/RegisterUser';
+import RegisterUser from '../../data/usecases/RegisterUser';
 
 export interface HttpResponse {
   message?: string

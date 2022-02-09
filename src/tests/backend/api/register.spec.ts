@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import handlerRegister from '../../../pages/api/register';
-import UserController, { HttpResponse } from '../../../serverless/controllers/User';
+import UserController, { HttpResponse } from '../../../serverless/api/controllers/User';
 
 describe('Handle Register test', () => {
   test('Should return 400 if no name is provided', () => {
