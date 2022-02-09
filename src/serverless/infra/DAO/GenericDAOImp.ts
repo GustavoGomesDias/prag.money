@@ -1,15 +1,10 @@
 import GenericDAO from './GenericDAO';
-import { PrismaClient } from '@prisma/client';
 import { Delegate } from './Delegate';
-
-export type Entities = 'user' | 'purchase' | 'payWith' | 'payment';
 
 export default abstract class GenericDAOImp<C, R, U, D> implements GenericDAO<C, R, U, D> {
   private readonly entity: Delegate;
-  private readonly prisma: PrismaClient;
 
   constructor (entity: Delegate) {
-    this.prisma = new PrismaClient();
     this.entity = entity;
   }
 
