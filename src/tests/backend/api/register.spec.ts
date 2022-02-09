@@ -83,6 +83,29 @@ describe('Handle Register test', () => {
     })
   });
 
+  test('Should return 400 if no password is provided', () => {
+    const httpRequest = {
+      body: {
+        user: {
+          name: 'name',
+          email: 'email@email.com',
+          password: 'password',
+          passwordConfirmation: '',
+        }
+      },
+    };
+
+    const emailValidator = makeEmailValidator();
+    const userController = new UserController(emailValidator);
+
+    const httpResponse: HttpResponse = userController.handleRegister(httpRequest);
+
+    expect(httpResponse).toEqual({
+      statusCode: 400,
+      message: 'Confirmação de senha requerida.',
+    })
+  });
+
   test('Should return 400 if email is not valid', () => {
     const httpRequest = {
       body: {
