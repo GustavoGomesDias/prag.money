@@ -40,6 +40,14 @@ export default class UserController {
       return res;
     }
 
+    if (!password || password === '' || password === ' ') {
+      const res: HttpResponse = {
+        statusCode: 400,
+        message: 'Senha requerida.',
+      }
+      return res;
+    }
+
     if (!this.emailValidator.isEmail(email)) {
       const res: HttpResponse = {
         statusCode: 400,
