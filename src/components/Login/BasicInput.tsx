@@ -25,6 +25,7 @@ const BasicInput = ({ id, label, placeholder, onChangehandle, type }: InputContr
         borderRadius="5px"
         h="60px"
         w="full"
+        fontSize="18px"
         type={type ? type : ''}
         onChange={((e) => onChangehandle(e.target.value))}
         _hover={{

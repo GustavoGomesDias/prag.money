@@ -198,7 +198,13 @@ export default {
     '!**/.next/**',
     '!**/*.config.*',
     '!**/coverage/**',
-    "!**/styles/**"
+    "!**/styles/**",
+    "!**/adapters/**",
+    "!**/models/**",
+    "!**/usecases/**",
+    "!**/config/**",
+    "!**/src/service/**",
+    "!**/pages/**",
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
