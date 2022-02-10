@@ -23,4 +23,4 @@ jobs:
       - run: npm ci
       - run: npm test
         env:
-          DATABASE_URL: ${{ postgresql://postgres:postgres@localhost:5432/test }}
+          DATABASE_URL: ${{ DATABASE_URL }}
