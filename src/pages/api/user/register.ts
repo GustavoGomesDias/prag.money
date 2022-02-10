@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { makeUserController } from '../../../serverless/factories/UserFacotory';
+import { makeUserController } from '../../../serverless/factories/users/UserFacotory';
 
 export default async function handlerRegister(
   req: NextApiRequest,

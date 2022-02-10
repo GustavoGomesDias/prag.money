@@ -19,9 +19,9 @@ export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
   private readonly repository: UserRepository;
 
-  constructor(emailValidator: EmailValidatorAdapter, encrypter: EncryptAdapter) {
+  constructor(emailValidator: EmailValidatorAdapter, repository: UserRepository) {
     this.emailValidator = emailValidator;
-    this.repository = new UserRepository(encrypter);
+    this.repository = repository;
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -40,7 +40,7 @@ export default class UserController {
         if (!req.body.user?.[field as keyof RegisterUser]) {
           const res: HttpResponse = {
             statusCode: 400,
-            message: `${response} requerido (a).`,
+            error: `${response} requerido (a).`,
           }
           return res;
         }
@@ -49,7 +49,7 @@ export default class UserController {
       if (!this.emailValidator.isEmail(email)) {
         const res: HttpResponse = {
           statusCode: 400,
-          message: 'E-mail inválido.',
+          error: 'E-mail inválido.',
         }
         return res;
       }
@@ -57,12 +57,12 @@ export default class UserController {
       if (password !== passwordConfirmation) {
         const res: HttpResponse = {
           statusCode: 400,
-          message: 'Senha diferente de confirmar senha.',
+          error: 'Senha diferente de confirmar senha.',
         }
         return res;
       }
 
-      await this.repository.add({
+      await this.repository.addUser({
         email, name, password,
       });
 
