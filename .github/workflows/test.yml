@@ -7,7 +7,8 @@ on:
     branches:
       - 'main'
 jobs:
-  run_test_and_build:
+  Job1:
+    name: run tests
     runs-on: 'ubuntu-latest'
     strategy:
       matrix:
@@ -21,3 +22,5 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
+        env:
+          DATABASE_URL: ${{ postgresql://postgres:postgres@localhost:5432/test }}
