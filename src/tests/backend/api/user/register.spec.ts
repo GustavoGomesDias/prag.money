@@ -1,23 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
-import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { HttpResponse } from '../../../../serverless/api/helpers/http';
+import { badRequest, HttpResponse, ok } from '../../../../serverless/api/helpers/http';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 const prisma = new PrismaClient();
 
 jest.mock('../../../mocks/mockUserRepository');
-
-const makeEncrypter = (): EncryptAdapter => {
-  class EncrypterStub implements EncryptAdapter {
-    async encrypt(password: string): Promise<string> {
-      return new Promise((resolve) => resolve('hash'));
-    }
-  }
-
-  return new EncrypterStub();
-}
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -38,7 +27,7 @@ afterAll(async () => {
   prisma.$disconnect();
 });
 
-describe('Handle Register test', () => {
+describe('Handle User Register test', () => {
   test('Should return 400 if no name is provided', async () => {
     const httpRequest = {
       body: {
@@ -54,10 +43,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'Nome requerido (a).',
-    })
+    expect(httpResponse).toEqual(badRequest('Nome requerido (a).'));
   });
   
   test('Should return 400 if no email is provided', async () => {
@@ -75,10 +61,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'E-mail requerido (a).',
-    })
+    expect(httpResponse).toEqual(badRequest('E-mail requerido (a).'));
   });
 
   test('Should return 400 if no password is provided', async () => {
@@ -96,13 +79,10 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'Senha requerido (a).',
-    })
+    expect(httpResponse).toEqual(badRequest('Senha requerido (a).'));
   });
 
-  test('Should return 400 if no password is provided', async () => {
+  test('Should return 400 if no passwordConfirmation is provided', async () => {
     const httpRequest = {
       body: {
         user: {
@@ -117,10 +97,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'Confirmação de senha requerido (a).',
-    })
+    expect(httpResponse).toEqual(badRequest('Confirmação de senha requerido (a).'));
   });
 
   test('Should return 400 if no password is provided', async () => {
@@ -138,10 +115,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'Senha requerido (a).',
-    })
+    expect(httpResponse).toEqual(badRequest('Senha requerido (a).'));
   });
 
   test('Should return 400 if password not equals passwordConfirmation', async () => {
@@ -159,10 +133,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'Senha diferente de confirmar senha.',
-    })
+    expect(httpResponse).toEqual(badRequest('Senha diferente de confirmar senha.'));
   });
 
   test('Should return 400 if email is not valid', async () => {
@@ -183,10 +154,7 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      error: 'E-mail inválido.',
-    })
+    expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
   });
 
   test('Should return 200 if user is creted', async () => {
@@ -205,9 +173,6 @@ describe('Handle Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual({
-      statusCode: 200,
-      message: 'Usuário criado com sucesso!'
-    })
+    expect(httpResponse).toEqual(ok('Usuário criado com sucesso!'));
   });
 });
