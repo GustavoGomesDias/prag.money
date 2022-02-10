@@ -2,8 +2,11 @@ import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import UserController, { HttpResponse } from '../../../../serverless/api/controllers/User';
+import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 const prisma = new PrismaClient();
+
+jest.mock('../../../mocks/mockUserRepository');
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncrypterStub implements EncryptAdapter {
@@ -27,42 +30,10 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
 
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
-  const encrypterStub = makeEncrypter();
-
-  return new UserController(emailValidatorStub, encrypterStub);
+  return new UserController(emailValidatorStub, UserRepositoryMocked);
 }
 
-afterEach(async () => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: 'email@email.com',
-    }
-  })
-
-  if (user){
-    await prisma.user.delete({
-      where: {
-        email: 'email@email.com', 
-      },
-    });
-  }
-});
-
 afterAll(async () => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: 'email@email.com',
-    }
-  })
-
-  if (user){
-    await prisma.user.delete({
-      where: {
-        email: 'email@email.com', 
-      },
-    });
-  }
-
   prisma.$disconnect();
 });
 
@@ -84,7 +55,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Nome requerido (a).',
+      error: 'Nome requerido (a).',
     })
   });
   
@@ -105,7 +76,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'E-mail requerido (a).',
+      error: 'E-mail requerido (a).',
     })
   });
 
@@ -126,7 +97,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Senha requerido (a).',
+      error: 'Senha requerido (a).',
     })
   });
 
@@ -147,7 +118,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Confirmação de senha requerido (a).',
+      error: 'Confirmação de senha requerido (a).',
     })
   });
 
@@ -168,7 +139,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Senha requerido (a).',
+      error: 'Senha requerido (a).',
     })
   });
 
@@ -189,7 +160,7 @@ describe('Handle Register test', () => {
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'Senha diferente de confirmar senha.',
+      error: 'Senha diferente de confirmar senha.',
     })
   });
 
@@ -206,15 +177,14 @@ describe('Handle Register test', () => {
     };
 
     const emailValidatorStub = makeEmailValidator();
-    const encrypterStub = makeEncrypter();
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, encrypterStub)
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked)
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual({
       statusCode: 400,
-      message: 'E-mail inválido.',
+      error: 'E-mail inválido.',
     })
   });
 

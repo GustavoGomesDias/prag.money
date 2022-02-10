@@ -1,41 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import UserModel from '../../../serverless/data/models/UserModel';
-import UserRepository from '../../../serverless/repositories/UserRepository';;
+import UserRepository from '../../../serverless/repositories/UserRepository';
+import UserRepositoryMocked from '../../mocks/mockUserRepository';
+
+jest.mock('../../mocks/mockUserRepository');
 
 const prisma = new PrismaClient();
 
-afterEach(async () => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: 'email@email.com',
-    }
-  })
-
-  if (user){
-    await prisma.user.delete({
-      where: {
-        email: 'email@email.com', 
-      },
-    });
-  }
-});
-
 afterAll(async () => {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: 'email@email.com',
-    }
-  })
-
-  if (user){
-    await prisma.user.delete({
-      where: {
-        email: 'email@email.com', 
-      },
-    });
-  }
-  prisma.$disconnect();
+  await prisma.$disconnect();
 });
 
 const makeEncrypter = (): EncryptAdapter => {
@@ -48,27 +22,25 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncrypterStub();
 }
 
+// const makeAddUser = (encrypter: EncryptAdapter): UserRepository => {
+//   const respository = new UserRepository(encrypter);
+//   jest.spyOn(respository, 'addUser').mockImplementation(async (req) => {
+//     return await Promise.resolve({
+//       email: req.email,
+//       name: req.name,
+//     });
+//   });
+
+//   return respository;
+// }
+
 const makeSut = (): UserRepository => {
   const encrypter = makeEncrypter();
 
-  return new UserRepository(encrypter);
+  return UserRepositoryMocked;
 }
 
 describe('User Repository test', () => {
-
-  test('Should call addUer with correct values', async () => {
-    const req: UserModel = {
-      email: 'email@email.com',
-      name: 'name',
-      password: 'password',
-    };
-    const encrypterStub = makeEncrypter();
-    const spy = jest.spyOn(encrypterStub, 'encrypt');
-    const repository = new UserRepository(encrypterStub);
-    await repository.addUser(req);
-
-    expect(spy).toHaveBeenCalledWith('password');
-  });
 
   test('Should call addUer with correct values', async () => {
     const req: UserModel = {

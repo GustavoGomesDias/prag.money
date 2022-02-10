@@ -200,6 +200,8 @@ export default {
     '!**/coverage/**',
     "!**/styles/**",
     "!**/adapters/**",
+    "!**/models/**",
+    "!**/usecases/**",
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
