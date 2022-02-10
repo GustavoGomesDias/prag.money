@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { HttpResponse } from '../../../serverless/api/controllers/User';
+import { HttpResponse } from '../../../serverless/api/helpers/http';
 import RegisterUser from '../../../serverless/data/usecases/RegisterUser';
 import { makeUserController } from '../../../serverless/factories/users/UserFacotory';
 

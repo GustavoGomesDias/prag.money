@@ -1,19 +1,7 @@
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
-import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import UserRepository from '../../repositories/UserRepository';
-
-export interface HttpResponse {
-  message?: string
-  error?: string
-  statusCode: number
-}
-
-export interface HttpRequest {
-  body: {
-    user?: RegisterUser
-  }
-}
+import { badRequest, ok, serverError, HttpRequest, HttpResponse } from '../helpers/http';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -38,46 +26,27 @@ export default class UserController {
         if (field == 'passwordConfirmation') response = 'Confirmação de senha';
 
         if (!req.body.user?.[field as keyof RegisterUser]) {
-          const res: HttpResponse = {
-            statusCode: 400,
-            error: `${response} requerido (a).`,
-          }
-          return res;
+          return badRequest(`${response} requerido (a).`);
         }
       }
 
       if (!this.emailValidator.isEmail(email)) {
-        const res: HttpResponse = {
-          statusCode: 400,
-          error: 'E-mail inválido.',
-        }
-        return res;
+        return badRequest('E-mail inválido.');;
       }
 
       if (password !== passwordConfirmation) {
-        const res: HttpResponse = {
-          statusCode: 400,
-          error: 'Senha diferente de confirmar senha.',
-        }
-        return res;
+        return badRequest('Senha diferente de confirmar senha.');
       }
 
       await this.repository.addUser({
         email, name, password,
       });
 
-      const res: HttpResponse = {
-        statusCode: 200,
-        message: 'Usuário criado com sucesso!',
-      }
-      return res;
+      return ok('Usuário criado com sucesso!');
+      
     } catch (err) {
       console.log(err);
-      const res: HttpResponse = {
-        statusCode: 500,
-        error: 'Erro no servidor, tente novamente mais tarde',
-      }
-      return res;
+      return serverError('Erro no servidor, tente novamente mais tarde');
     }
   }
 }

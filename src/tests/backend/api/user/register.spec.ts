@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
-import UserController, { HttpResponse } from '../../../../serverless/api/controllers/User';
+import UserController from '../../../../serverless/api/controllers/User';
+import { HttpResponse } from '../../../../serverless/api/helpers/http';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 const prisma = new PrismaClient();
