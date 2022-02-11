@@ -4,22 +4,28 @@ prisma
 src
   ├── /components            frontend components
   ├── /pages
-  ├        ├──/api			        routes layer: api routes
-  ├        ├──/*.tsx			      frontend layer
+  ├        ├── /api			        routes layer: api routes
+  ├        └── /*.tsx			      frontend layer
   ├
   ├── /serverless		          serverless code: api routes
   ├        ├── /config			    config settings, env variables
   ├        ├── /services		    service layer: business logic
   ├        ├── /adapters	      adapter pattern
-  ├              └── /services  adapters interfaces for services
+  ├        ├     └── /services  adapters interfaces for services
   ├        ├── /infra	          database handler
-  ├              └── /DAO       Data Access Object Pattern
+  ├        ├     └── /DAO       Data Access Object Pattern
   ├        ├── /api	            api layer: controllers
+  ├        ├     ├── /controllers 
+  ├        ├     └── /helpers   controllers helpers
   ├        ├── /reositories	    call database
   ├        ├── /factories	      make controllers
-  ├        ├── /data			      data access layer: database models and usecases
+  ├        └── /data			      data access layer: database models and usecases
   ├              ├── /models			   database models	
   ├              └── /usecases      usecases protocols
   ├
   ├
-  └── /test                    test suites
+  └── /test                  test suites
+          ├── /bakcend         backend tests
+          ├      ├── /api      controllers tests  
+          ├      └── /repositories repositories tests
+          └── /mocks
