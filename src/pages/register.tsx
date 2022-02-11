@@ -33,6 +33,7 @@ const Register = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      return;
     }
 
     if (!validateEmail(email)) {
@@ -42,31 +43,32 @@ const Register = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      return;
+    }
 
-      if (password.length < 6 || passwordConfirmation.length < 6) {
-        toast({
-          title: '🤨',
-          description: 'A senha deve ter pelo menos 6 caracteres',
-          status: 'error',
-          ...toastConfig,
-        });
-      }
+    if (password.length < 6 || passwordConfirmation.length < 6) {
+      toast({
+        title: '🤨',
+        description: 'A senha deve ter pelo menos 6 caracteres',
+        status: 'error',
+        ...toastConfig,
+      });
+      return;
+    }
 
-      if (password !== passwordConfirmation) {
-        toast({
-          title: '🤨',
-          description: 'Confirmar senha não corresponde a Senha.',
-          status: 'error',
-          ...toastConfig,
-        });
-      }
+    if (password !== passwordConfirmation) {
+      toast({
+        title: '🤨',
+        description: 'Confirmar senha não corresponde a Senha.',
+        status: 'error',
+        ...toastConfig,
+      });
+      return;
     }
 
 
     const data = { name, email, password, passwordConfirmation };
     const response = await api.post('/user/register', data);
-
-    console.log(response);
 
     if (response.data.message) {
       toast({
@@ -85,6 +87,8 @@ const Register = (): JSX.Element => {
         ...toastConfig,
       });
     }
+
+    return;
   }
 
   return (

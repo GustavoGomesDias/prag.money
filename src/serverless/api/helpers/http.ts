@@ -19,10 +19,15 @@ export const badRequest = (error: string): HttpResponse => ({
 
 export const serverError = (error?: string): HttpResponse => ({
   statusCode: 500,
-  error: error
+  error: error,
 })
 
 export const ok = (message: string): HttpResponse => ({
   statusCode: 200,
-  message: message
+  message: message,
 })
+
+export const notFound = (error: string): HttpResponse => ({
+  statusCode: 404,
+  error: error,
+});

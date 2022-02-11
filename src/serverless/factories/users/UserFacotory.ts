@@ -1,7 +1,7 @@
 import EmailValidator from '../../services/EmailValidator';
 import BcryptService from '../../services/BcryptService';
 import UserController from '../../api/controllers/User';
-import UserRepository from '../../repositories/UserRepository';
+import UserRepository from '../../repositories/users/UserRepository';
 
 export function makeUserController(): UserController {
   const emailValidator = new EmailValidator();

@@ -1,10 +1,10 @@
-import UserModel from "../data/models/UserModel";
-import { AddUser } from "../data/usecases/RegisterUser";
-import GenericDAOImp from "../infra/DAO/GenericDAOImp";
+import UserModel from "../../data/models/UserModel";
+import { AddUser } from "../../data/usecases/RegisterUser";
 import { Prisma, PrismaClient } from "@prisma/client";
-import EncryptAdapter from "../adapters/services/EncryptAdapter";
+import EncryptAdapter from "../../adapters/services/EncryptAdapter";
+import UserDAOImp from "./UserDAOImp";
 
-export default class UserRepository extends GenericDAOImp<
+export default class UserRepository extends UserDAOImp<
   UserModel,
   Prisma.UserFindUniqueArgs,
   Prisma.UserUpdateInput,
@@ -13,7 +13,7 @@ export default class UserRepository extends GenericDAOImp<
   private readonly encrypter: EncryptAdapter;
 
   constructor(encrypter: EncryptAdapter) {
-    const prisma = new PrismaClient()
+    const prisma = new PrismaClient();
     super(prisma.user);
     this.encrypter = encrypter;
   }

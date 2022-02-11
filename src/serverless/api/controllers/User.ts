@@ -1,7 +1,8 @@
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
+import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
-import UserRepository from '../../repositories/UserRepository';
-import { badRequest, ok, serverError, HttpRequest, HttpResponse } from '../helpers/http';
+import UserRepository from '../../repositories/users/UserRepository';
+import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound } from '../helpers/http';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -43,7 +44,28 @@ export default class UserController {
       });
 
       return ok('Usuário criado com sucesso!');
-      
+
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde');
+    }
+  }
+
+  async handleLogin(infos: LoginProps): Promise<HttpResponse> {
+    try {
+      const { email, password } = infos;
+      if (!email || email === '' || email === ' ') {
+        return badRequest('E-mail requerido (a).');
+      }
+      if (!password || password === '' || password === ' ') {
+        return badRequest('Senha requerido (a).');
+      }
+
+      const user = await this.repository.findByEmail(email);
+      if (!user || user === undefined) {
+        return notFound('Usuário não existente, considere criar uma conta.');
+      }
+      return ok('Login efetuado com sucesso!');
     } catch (err) {
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde');

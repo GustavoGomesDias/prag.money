@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import UserModel from '../../../serverless/data/models/UserModel';
-import UserRepository from '../../../serverless/repositories/UserRepository';
+import UserRepository from '../../../serverless/repositories/users/UserRepository';
 import UserRepositoryMocked from '../../mocks/mockUserRepository';
 
 jest.mock('../../mocks/mockUserRepository');

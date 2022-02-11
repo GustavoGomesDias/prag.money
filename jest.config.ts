@@ -205,6 +205,7 @@ export default {
     "!**/config/**",
     "!**/src/service/**",
     "!**/pages/**",
+    "!**/tests/**",
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
