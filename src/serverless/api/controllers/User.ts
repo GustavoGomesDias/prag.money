@@ -1,4 +1,4 @@
-import { validateEmail } from '../../../utils/validations';
+import { validateEmail, validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
@@ -55,10 +55,10 @@ export default class UserController {
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
     try {
       const { email, password } = infos;
-      if (!email || email === '' || email === ' ') {
+      if (validationField(email)) {
         return badRequest('E-mail requerido (a).');
       }
-      if (!password || password === '' || password === ' ') {
+      if (validationField(password)) {
         return badRequest('Senha requerido (a).');
       }
 
@@ -74,6 +74,7 @@ export default class UserController {
       if (!this.emailValidator.isEmail(email)) {
         return badRequest('E-mail inválido.')
       }
+
       return ok('Login efetuado com sucesso!');
     } catch (err) {
       console.log(err);
