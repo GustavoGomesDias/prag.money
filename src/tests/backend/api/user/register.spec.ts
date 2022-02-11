@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, HttpResponse, ok } from '../../../../serverless/api/helpers/http';
+import { badRequest, created, HttpResponse, ok } from '../../../../serverless/api/helpers/http';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 const prisma = new PrismaClient();
@@ -173,6 +173,6 @@ describe('Handle User Register test', () => {
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
-    expect(httpResponse).toEqual(ok('Usuário criado com sucesso!'));
+    expect(httpResponse).toEqual(created('Usuário criado com sucesso!'));
   });
 });

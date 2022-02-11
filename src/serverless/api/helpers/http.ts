@@ -27,6 +27,11 @@ export const ok = (message: string): HttpResponse => ({
   message: message,
 })
 
+export const created = (message: string): HttpResponse => ({
+  statusCode: 201,
+  message: message,
+})
+
 export const notFound = (error: string): HttpResponse => ({
   statusCode: 404,
   error: error,

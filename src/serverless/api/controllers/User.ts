@@ -3,7 +3,7 @@ import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAda
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import UserRepository from '../../repositories/users/UserRepository';
-import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound } from '../helpers/http';
+import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, created } from '../helpers/http';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -44,7 +44,7 @@ export default class UserController {
         email, name, password,
       });
 
-      return ok('Usuário criado com sucesso!');
+      return created('Usuário criado com sucesso!');
 
     } catch (err) {
       console.log(err);
