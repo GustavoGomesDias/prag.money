@@ -58,6 +58,20 @@ describe('Handle User Login Tests', () => {
     expect(httpResponse).toEqual(notFound('Usuário não existente, considere criar uma conta.'));
   });
 
+  test('Should return 400 if email is not valid', async () => {
+    const infos = {
+      email: 'email2email.com',
+      password: 'password',
+    };
+
+    const emailValidatorStub = makeEmailValidator();
+    jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked);
+    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+
+    expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
+  });
+
   test('Should return 400 if password is incorrect', async () => {
     const infos = {
       email: 'email@email.com',

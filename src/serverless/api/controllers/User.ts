@@ -1,3 +1,4 @@
+import { validateEmail } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
@@ -68,6 +69,10 @@ export default class UserController {
 
       if (user.password !== password) {
         return badRequest('Senha incorreta.');
+      }
+
+      if (!this.emailValidator.isEmail(email)) {
+        return badRequest('E-mail inválido.')
       }
       return ok('Login efetuado com sucesso!');
     } catch (err) {
