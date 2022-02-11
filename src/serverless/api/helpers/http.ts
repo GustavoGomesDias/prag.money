@@ -4,7 +4,7 @@ import RegisterUser from "../../data/usecases/RegisterUser";
 export interface HttpResponse {
   message?: string
   error?: string
-  infos?: Omit<UserModel, 'password'>
+  infos?: string
   statusCode: number
 }
 
@@ -29,7 +29,7 @@ export const ok = (message: string): HttpResponse => ({
   message: message,
 });
 
-export const okWithContent = (content: Omit<UserModel, 'password'>): HttpResponse => ({
+export const okWithContent = (content: string): HttpResponse => ({
   statusCode: 200,
   infos: content,
 });

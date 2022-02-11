@@ -1,6 +1,8 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
 import { badRequest, HttpResponse, notFound, okWithContent } from '../../../../serverless/api/helpers/http';
+import UserModel from '../../../../serverless/data/models/UserModel';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 jest.mock('../../../mocks/mockUserRepository');
@@ -15,9 +17,24 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   return new EmailValidatorStub();
 }
 
+const makeWebToken = (): WebTokenAdapter => {
+  class WebTokenStub implements WebTokenAdapter {
+    sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
+      return 'token';
+    }
+    verify(token: string): Omit<UserModel, 'password'> {
+      throw new Error('Method not implemented.');
+    }
+    
+  }
+
+  return new WebTokenStub();
+}
+
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
-  return new UserController(emailValidatorStub, UserRepositoryMocked);
+  const webTokenStub = makeWebToken();
+  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
 }
 
 
@@ -65,8 +82,9 @@ describe('Handle User Login Tests', () => {
     };
 
     const emailValidatorStub = makeEmailValidator();
+    const webTokenStub = makeWebToken();
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked);
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
@@ -93,9 +111,6 @@ describe('Handle User Login Tests', () => {
 
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithContent({
-      name: 'name',
-      email: 'email@email.com',
-    }));
+    expect(httpResponse).toEqual(okWithContent('token'));
   });
 });

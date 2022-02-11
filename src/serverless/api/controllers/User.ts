@@ -1,5 +1,6 @@
 import { validateEmail, validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
+import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import UserRepository from '../../repositories/users/UserRepository';
@@ -8,10 +9,12 @@ import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, creat
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
   private readonly repository: UserRepository;
+  private readonly webToken: WebTokenAdapter;
 
-  constructor(emailValidator: EmailValidatorAdapter, repository: UserRepository) {
+  constructor(emailValidator: EmailValidatorAdapter, repository: UserRepository, webToken: WebTokenAdapter) {
     this.emailValidator = emailValidator;
     this.repository = repository;
+    this.webToken = webToken;
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -75,10 +78,13 @@ export default class UserController {
         return badRequest('E-mail inválido.')
       }
 
-      return okWithContent({
-        name: user.name,
+      const payload = this.webToken.sign({
         email: user.email,
-      });
+        name: user.name,
+      }, '2d');
+
+      return okWithContent(payload);
+
     } catch (err) {
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde');
