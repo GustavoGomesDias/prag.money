@@ -65,6 +65,10 @@ export default class UserController {
       if (!user || user === undefined) {
         return notFound('Usuário não existente, considere criar uma conta.');
       }
+
+      if (user.password !== password) {
+        return badRequest('Senha incorreta.');
+      }
       return ok('Login efetuado com sucesso!');
     } catch (err) {
       console.log(err);

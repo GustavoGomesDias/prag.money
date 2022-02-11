@@ -13,6 +13,7 @@ UserRepositoryMocked.findByEmail = jest.fn(async (info: string) => {
   return await Promise.resolve({
     email: 'email@email.com',
     name: 'name',
+    password: 'password',
   })
 });
 

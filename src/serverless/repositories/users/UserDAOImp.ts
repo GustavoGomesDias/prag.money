@@ -7,7 +7,7 @@ import UserDAO from './UserDAO';
 
 export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> implements UserDAO<C, R, U, D>{
 
-  async findByEmail(info: string): Promise<Omit<UserModel, 'password'> | undefined> {
+  async findByEmail(info: string): Promise<UserModel | undefined> {
     const prisma = new PrismaClient();
 
     const user = await prisma.user.findUnique({
@@ -20,11 +20,12 @@ export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> im
       return undefined
     }
 
-    const { email, name } = user as UserModel;
+    const { email, name, password } = user as UserModel;
 
     return {
       email,
       name,
+      password,
     }
   }
 

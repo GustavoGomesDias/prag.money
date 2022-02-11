@@ -57,4 +57,15 @@ describe('Handle User Login Tests', () => {
 
     expect(httpResponse).toEqual(notFound('Usuário não existente, considere criar uma conta.'));
   });
+
+  test('Should return 400 if password is incorrect', async () => {
+    const infos = {
+      email: 'email@email.com',
+      password: 'incorrect_password',
+    };
+    const userController = makeSut();
+    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+
+    expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
+  });
 });
