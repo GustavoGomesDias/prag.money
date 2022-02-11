@@ -1,20 +1,28 @@
 import { validateEmail, validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import UserRepository from '../../repositories/users/UserRepository';
-import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, created, okWithContent } from '../helpers/http';
+import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, created, okWithPayload } from '../helpers/http';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
   private readonly repository: UserRepository;
   private readonly webToken: WebTokenAdapter;
+  private readonly encrypter: EncryptAdapter;
 
-  constructor(emailValidator: EmailValidatorAdapter, repository: UserRepository, webToken: WebTokenAdapter) {
+  constructor(
+    emailValidator: EmailValidatorAdapter,
+    repository: UserRepository,
+    webToken: WebTokenAdapter,
+    encrypter: EncryptAdapter
+  ) {
     this.emailValidator = emailValidator;
     this.repository = repository;
     this.webToken = webToken;
+    this.encrypter = encrypter;
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -70,7 +78,7 @@ export default class UserController {
         return notFound('Usuário não existente, considere criar uma conta.');
       }
 
-      if (user.password !== password) {
+      if (!(await this.encrypter.compare(password, user.password))) {
         return badRequest('Senha incorreta.');
       }
 
@@ -83,7 +91,7 @@ export default class UserController {
         name: user.name,
       }, '2d');
 
-      return okWithContent(payload);
+      return okWithPayload(payload);
 
     } catch (err) {
       console.log(err);

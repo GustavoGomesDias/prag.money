@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
 import { badRequest, created, HttpResponse, ok } from '../../../../serverless/api/helpers/http';
@@ -34,10 +35,25 @@ const makeWebToken = (): WebTokenAdapter => {
   return new WebTokenStub();
 }
 
+const makeEncrypter = (): EncryptAdapter => {
+  class EncryptStub implements EncryptAdapter {
+    encrypt(password: string): Promise<string> {
+      throw new Error('Method not implemented.');
+    }
+    compare(password: string, passHashed: string): Promise<boolean> {
+      throw new Error('Method not implemented.');
+    }
+    
+  }
+
+  return new EncryptStub();
+}
+
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken()
-  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
+  const encrypterStub = makeEncrypter();
+  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 }
 
 afterAll(async () => {
@@ -167,8 +183,10 @@ describe('Handle User Register test', () => {
 
     const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
+    const encrypterStub = makeEncrypter();
+    
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 

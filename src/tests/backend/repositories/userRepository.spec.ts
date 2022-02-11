@@ -14,6 +14,9 @@ afterAll(async () => {
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncrypterStub implements EncryptAdapter {
+    compare(password: string, passHashed: string): Promise<boolean> {
+      throw new Error('Method not implemented.');
+    }
     async encrypt(password: string): Promise<string> {
       return new Promise((resolve) => resolve('hash'));
     }

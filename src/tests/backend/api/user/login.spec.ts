@@ -1,7 +1,8 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, HttpResponse, notFound, okWithContent } from '../../../../serverless/api/helpers/http';
+import { badRequest, HttpResponse, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
@@ -31,10 +32,25 @@ const makeWebToken = (): WebTokenAdapter => {
   return new WebTokenStub();
 }
 
+const makeEncrypter = (): EncryptAdapter => {
+  class EncryptStub implements EncryptAdapter {
+    encrypt(password: string): Promise<string> {
+      throw new Error('Method not implemented.');
+    }
+    async compare(password: string, passHashed: string): Promise<boolean> {
+      return await Promise.resolve(true);
+    }
+    
+  }
+
+  return new EncryptStub();
+}
+
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
-  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
+  const encrypterStub = makeEncrypter()
+  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 }
 
 
@@ -83,8 +99,10 @@ describe('Handle User Login Tests', () => {
 
     const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
+    const encrypterStub =  makeEncrypter();
+    
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub);
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
@@ -95,7 +113,14 @@ describe('Handle User Login Tests', () => {
       email: 'email@email.com',
       password: 'incorrect_password',
     };
-    const userController = makeSut();
+    const emailValidatorStub = makeEmailValidator();
+    const webTokenStub = makeWebToken();
+    const encrypterStub =  makeEncrypter();
+    
+    jest.spyOn(encrypterStub, 'compare').mockImplementationOnce(async (): Promise<boolean> => {
+      return await Promise.resolve(false);
+    });
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
@@ -111,6 +136,6 @@ describe('Handle User Login Tests', () => {
 
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithContent('token'));
+    expect(httpResponse).toEqual(okWithPayload('token'));
   });
 });

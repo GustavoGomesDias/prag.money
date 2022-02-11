@@ -52,10 +52,11 @@ const Login = (): JSX.Element => {
 
     const response = await api.post('/user/login', data);
 
-    if (response.data.message) {
+    if (response.data.payload) {
+      console.log(response.data.payload);
       toast({
         title: 'Sucesso! 😎',
-        description: response.data.message,
+        description: 'Login efetuado com sucesso!',
         status: 'success',
         ...toastConfig,
       });

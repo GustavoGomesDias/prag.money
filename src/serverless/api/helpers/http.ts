@@ -1,10 +1,9 @@
-import UserModel from "../../data/models/UserModel";
-import RegisterUser from "../../data/usecases/RegisterUser";
+import RegisterUser from '../../data/usecases/RegisterUser';
 
 export interface HttpResponse {
   message?: string
   error?: string
-  infos?: string
+  payload?: string
   statusCode: number
 }
 
@@ -29,9 +28,9 @@ export const ok = (message: string): HttpResponse => ({
   message: message,
 });
 
-export const okWithContent = (content: string): HttpResponse => ({
+export const okWithPayload = (payload: string): HttpResponse => ({
   statusCode: 200,
-  infos: content,
+  payload: payload,
 });
 
 export const created = (message: string): HttpResponse => ({
