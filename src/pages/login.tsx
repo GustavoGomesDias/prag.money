@@ -9,10 +9,12 @@ import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import api from '../utils/config/api';
+import ModalLoader from '../components/Loader/ModalLoader';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -24,7 +26,7 @@ const Login = (): JSX.Element => {
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-
+    setIsLoading(true);
     if (validationField(email) || validationField(password)) {
       toast({
         title: '🤨',
@@ -32,6 +34,7 @@ const Login = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
 
@@ -42,6 +45,7 @@ const Login = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
     
@@ -60,6 +64,7 @@ const Login = (): JSX.Element => {
         status: 'success',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
 
@@ -70,12 +75,14 @@ const Login = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
   }
 
   return (
     <>
+      {isLoading && <ModalLoader isOpen={isLoading} />}
       <SEO title='p.$_ | Login de usuário' description='User login page' />
       <Flex
         flexDir="column"

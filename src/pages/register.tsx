@@ -10,12 +10,14 @@ import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import api from '../utils/config/api';
 import SEO from '../components/SEO';
+import ModalLoader from '../components/Loader/ModalLoader';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -26,6 +28,7 @@ const Register = (): JSX.Element => {
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+    setIsLoading(true);
     if (validationField(email) || validationField(name) || validationField(password) || validationField(passwordConfirmation)) {
       toast({
         title: '🤨',
@@ -43,6 +46,7 @@ const Register = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
 
@@ -53,6 +57,7 @@ const Register = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
 
@@ -63,6 +68,7 @@ const Register = (): JSX.Element => {
         status: 'error',
         ...toastConfig,
       });
+      setIsLoading(false);
       return;
     }
 
@@ -77,6 +83,9 @@ const Register = (): JSX.Element => {
         status: 'success',
         ...toastConfig,
       });
+      setIsLoading(false);
+      push('/login', '/login');
+      return;
     }
 
     if (response.data.error) {
@@ -87,13 +96,13 @@ const Register = (): JSX.Element => {
         ...toastConfig,
       });
     }
-
+    setIsLoading(false);
     return;
   }
 
   return (
     <>
-
+      {isLoading && <ModalLoader isOpen={isLoading} />}
       <SEO title='p.$_ | Cadastro de usuário' description='User registrer page' />
       <Flex
         flexDir="column"
