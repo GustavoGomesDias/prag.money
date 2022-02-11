@@ -1,6 +1,6 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, HttpResponse, notFound } from '../../../../serverless/api/helpers/http';
+import { badRequest, HttpResponse, notFound, okWithContent } from '../../../../serverless/api/helpers/http';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 jest.mock('../../../mocks/mockUserRepository');
@@ -81,5 +81,21 @@ describe('Handle User Login Tests', () => {
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
+  });
+
+  test('Should return 200 and user infos if success login ', async () => {
+    const infos = {
+      email: 'email@email.com',
+      password: 'password',
+    };
+
+    const userController = makeSut();
+
+    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+
+    expect(httpResponse).toEqual(okWithContent({
+      name: 'name',
+      email: 'email@email.com',
+    }));
   });
 });
