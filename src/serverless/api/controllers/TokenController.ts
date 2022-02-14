@@ -3,6 +3,7 @@ import { validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
+import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
 import UserRepository from '../../repositories/users/UserRepository';
 import { badRequest, HttpResponse, notFound, okWithPayload, serverError, ok } from '../helpers/http';
@@ -80,13 +81,23 @@ export default class TokenController {
         where: {
           id: result.id,
         }
-      });
+      }) as UserModel;
 
       if (!user || user === undefined || user === null) {
         return notFound('Usuário não existe.')
       }
 
-      return ok('Teste');
+      const newToken = this.webToken.sign({
+        id: user.id,
+        email: user.email as string,
+        name: user.name as string,
+      }, '2d');
+
+      return okWithPayload(newToken, {
+        id: user.id,
+        email: user.email as string,
+        name: user.name as string,
+      });
     } catch(err: any | Error | TokenExpiredError) {
       if (err instanceof TokenExpiredError) {
         return badRequest('Token expirado.')

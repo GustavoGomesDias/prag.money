@@ -3,7 +3,7 @@ import { EmailValidatorAdapter } from "../../../../serverless/adapters/services/
 import EncryptAdapter from "../../../../serverless/adapters/services/EncryptAdapter";
 import WebTokenAdapter from "../../../../serverless/adapters/services/WebTokenAdapter";
 import TokenController from "../../../../serverless/api/controllers/TokenController";
-import { badRequest, notFound } from "../../../../serverless/api/helpers/http";
+import { badRequest, notFound, okWithPayload } from "../../../../serverless/api/helpers/http";
 import UserModel from "../../../../serverless/data/models/UserModel";
 import UserRepositoryMocked from "../../../mocks/mockUserRepository";
 
@@ -95,5 +95,18 @@ describe('Handle Recovering User Infos', () => {
     const response = await tokenController.handleRecoverUserInfos(token);
 
     expect(response).toEqual(notFound('Usuário não existe.'));
+  });
+
+  test('Should return 200 and user infos if success recovering user infos', async () => {
+    const token = 'token';
+
+    const tokenController = makeSut();
+    const response = await tokenController.handleRecoverUserInfos(token);
+
+    expect(response).toEqual(okWithPayload(response.payload as string, {
+      id: response.userInfo?.userInfo.id,
+      email: response.userInfo?.userInfo.email as string,
+      name: response.userInfo?.userInfo.name  as string,
+    }));
   });
 });
