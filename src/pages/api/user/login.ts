@@ -18,6 +18,6 @@ export default async function handlerLogin(
     return res.status(response.statusCode).json({ error });
   }
 
-  const payload = response.payload as string;
-  return res.status(response.statusCode).json({ payload });
+  const { payload, userInfo } = response;
+  return res.status(response.statusCode).json({ payload, userInfo });
 }

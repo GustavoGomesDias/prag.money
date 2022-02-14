@@ -136,6 +136,9 @@ describe('Handle User Login Tests', () => {
 
     const httpResponse: HttpResponse = await userController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithPayload('token'));
+    expect(httpResponse).toEqual(okWithPayload('token' ,{
+      name: 'name',
+      email: 'email@email.com',
+    }));
   });
 });

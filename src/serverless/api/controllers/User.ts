@@ -87,11 +87,18 @@ export default class UserController {
       }
 
       const payload = this.webToken.sign({
+        id: user.id,
         email: user.email,
         name: user.name,
       }, '2d');
 
-      return okWithPayload(payload);
+
+      const userInfo = {
+        name: user.name,
+        email: user.email,
+      };
+      
+      return okWithPayload(payload, userInfo);
 
     } catch (err) {
       console.log(err);

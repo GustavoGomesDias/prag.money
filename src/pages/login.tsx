@@ -1,20 +1,22 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useContext, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
 import BasicInput from '../components/Login/BasicInput';
 import Form from '../components/Login/Form/Form';
 import Logo from '../components/Logo/Logo';
-import { useRouter } from 'next/router';
 import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import api from '../utils/config/api';
 import ModalLoader from '../components/Loader/ModalLoader';
+import { AuthContext } from '../context/AuthContext';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { signIn } = useContext(AuthContext);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -54,30 +56,7 @@ const Login = (): JSX.Element => {
       email, password,
     }
 
-    const response = await api.post('/user/login', data);
-
-    if (response.data.payload) {
-      console.log(response.data.payload);
-      toast({
-        title: 'Sucesso! 😎',
-        description: 'Login efetuado com sucesso!',
-        status: 'success',
-        ...toastConfig,
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    if (response.data.error) {
-      toast({
-        title: '😔',
-        description: response.data.error,
-        status: 'error',
-        ...toastConfig,
-      });
-      setIsLoading(false);
-      return;
-    }
+    await signIn(data);
   }
 
   return (

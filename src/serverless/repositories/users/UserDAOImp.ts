@@ -20,9 +20,10 @@ export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> im
       return undefined
     }
 
-    const { email, name, password } = user as UserModel;
+    const { id, email, name, password } = user as UserModel;
 
     return {
+      id,
       email,
       name,
       password,
