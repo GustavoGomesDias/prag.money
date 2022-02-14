@@ -9,6 +9,15 @@ UserRepositoryMocked.addUser = jest.fn(async (req) => {
   })
 });
 
+
+UserRepositoryMocked.findById = jest.fn(async (data) => {
+  return await Promise.resolve({
+    id: 1,
+    email: 'email@email.com',
+    name: 'name',
+  });
+});
+
 UserRepositoryMocked.findByEmail = jest.fn(async (info: string) => {
   return await Promise.resolve({
     id: 1,

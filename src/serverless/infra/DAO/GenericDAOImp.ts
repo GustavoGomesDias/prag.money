@@ -13,8 +13,8 @@ export default abstract class GenericDAOImp<C, R, U, D> implements GenericDAO<C,
       data: data,
     });
   }
-  async findById(id: number): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async findById(data: R): Promise<unknown> {
+    return await this.entity.findUnique(data)
   }
   async update(data: unknown): Promise<unknown> {
     throw new Error('Method not implemented.');

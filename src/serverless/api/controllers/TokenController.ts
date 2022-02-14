@@ -73,12 +73,25 @@ export default class TokenController {
       if (validationField(token)) {
         return badRequest('Não foi encontrado nenhum Token.')
       }
-      const { id, email, name } = this.webToken.verify(token);
+
+      const result = this.webToken.verify(token);
+
+      const user = await this.repository.findById({
+        where: {
+          id: result.id,
+        }
+      });
+
+      if (!user || user === undefined || user === null) {
+        return notFound('Usuário não existe.')
+      }
+
       return ok('Teste');
     } catch(err: any | Error | TokenExpiredError) {
       if (err instanceof TokenExpiredError) {
         return badRequest('Token expirado.')
       }
+      console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde');
     }
   }

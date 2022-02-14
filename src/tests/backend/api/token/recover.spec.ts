@@ -3,7 +3,7 @@ import { EmailValidatorAdapter } from "../../../../serverless/adapters/services/
 import EncryptAdapter from "../../../../serverless/adapters/services/EncryptAdapter";
 import WebTokenAdapter from "../../../../serverless/adapters/services/WebTokenAdapter";
 import TokenController from "../../../../serverless/api/controllers/TokenController";
-import { badRequest } from "../../../../serverless/api/helpers/http";
+import { badRequest, notFound } from "../../../../serverless/api/helpers/http";
 import UserModel from "../../../../serverless/data/models/UserModel";
 import UserRepositoryMocked from "../../../mocks/mockUserRepository";
 
@@ -71,7 +71,7 @@ describe('Handle Recovering User Infos', () => {
     const webTokenStub = makeWebToken();
 
     jest.spyOn(webTokenStub, 'verify').mockImplementationOnce(() => {
-      throw new TokenExpiredError('jwt expired', new Date())
+      throw new TokenExpiredError('jwt expired', new Date());
     })
 
     const emailValidatorStub = makeEmailValidator();
@@ -82,5 +82,18 @@ describe('Handle Recovering User Infos', () => {
     const response = await tokenController.handleRecoverUserInfos(token);
 
     expect(response).toEqual(badRequest('Token expirado.'));
+  });
+
+  test('Should return 404 if token id no return a user', async () => {
+    const token = 'token';
+    const webTokenStub = makeWebToken();
+    const emailValidatorStub = makeEmailValidator();
+    const encrypterStub = makeEncrypter()
+    jest.spyOn(UserRepositoryMocked, 'findById').mockResolvedValueOnce(await Promise.resolve(undefined));
+    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+
+    const response = await tokenController.handleRecoverUserInfos(token);
+
+    expect(response).toEqual(notFound('Usuário não existe.'));
   });
 });
