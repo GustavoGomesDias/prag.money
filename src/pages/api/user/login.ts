@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import LoginProps from '../../../serverless/data/usecases/Login';
-import { makeUserController } from '../../../serverless/factories/users/UserFacotory';
+import { makeTokenController } from '../../../serverless/factories/token/TokenFactory';
 
 export default async function handlerLogin(
   req: NextApiRequest,
@@ -9,9 +9,9 @@ export default async function handlerLogin(
 ) {
 
   const { email, password } = req.body as LoginProps;
-  const userController = makeUserController();
+  const tokenController = makeTokenController();
 
-  const response = await userController.handleLogin({ email, password });
+  const response = await tokenController.handleLogin({ email, password });
 
   if (response.error) {
     const { error } = response;

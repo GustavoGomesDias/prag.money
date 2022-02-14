@@ -1,7 +1,7 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
-import UserController from '../../../../serverless/api/controllers/User';
+import TokenController from '../../../../serverless/api/controllers/TokenController';
 import { badRequest, HttpResponse, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
@@ -46,11 +46,11 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncryptStub();
 }
 
-const makeSut = (): UserController => {
+const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter()
-  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+  return new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 }
 
 
@@ -60,9 +60,9 @@ describe('Handle User Login Tests', () => {
       email: '',
       password: 'password',
     };
-    const userController = makeSut();
+    const tokenController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('E-mail requerido (a).'));
   });
@@ -72,9 +72,9 @@ describe('Handle User Login Tests', () => {
       email: 'email@email.com',
       password: '',
     };
-    const userController = makeSut();
+    const tokenController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('Senha requerido (a).'));
   });
@@ -85,8 +85,8 @@ describe('Handle User Login Tests', () => {
       password: 'password',
     };
     jest.spyOn(UserRepositoryMocked, 'findByEmail').mockReturnValueOnce(Promise.resolve(undefined));
-    const userController = makeSut();
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const tokenController = makeSut();
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(notFound('Usuário não existente, considere criar uma conta.'));
   });
@@ -102,8 +102,8 @@ describe('Handle User Login Tests', () => {
     const encrypterStub =  makeEncrypter();
     
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
   });
@@ -120,8 +120,8 @@ describe('Handle User Login Tests', () => {
     jest.spyOn(encrypterStub, 'compare').mockImplementationOnce(async (): Promise<boolean> => {
       return await Promise.resolve(false);
     });
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
   });
@@ -132,9 +132,9 @@ describe('Handle User Login Tests', () => {
       password: 'password',
     };
 
-    const userController = makeSut();
+    const tokenController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleLogin(infos);
+    const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(okWithPayload('token' ,{
       name: 'name',
