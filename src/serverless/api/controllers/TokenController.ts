@@ -1,10 +1,11 @@
+import { TokenExpiredError } from 'jsonwebtoken';
 import { validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import LoginProps from '../../data/usecases/Login';
 import UserRepository from '../../repositories/users/UserRepository';
-import { badRequest, HttpResponse, notFound, okWithPayload, serverError } from '../helpers/http';
+import { badRequest, HttpResponse, notFound, okWithPayload, serverError, ok } from '../helpers/http';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -63,6 +64,21 @@ export default class TokenController {
 
     } catch (err) {
       console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde');
+    }
+  }
+
+  async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
+    try {
+      if (validationField(token)) {
+        return badRequest('Não foi encontrado nenhum Token.')
+      }
+      const { id, email, name } = this.webToken.verify(token);
+      return ok('Teste');
+    } catch(err: any | Error | TokenExpiredError) {
+      if (err instanceof TokenExpiredError) {
+        return badRequest('Token expirado.')
+      }
       return serverError('Erro no servidor, tente novamente mais tarde');
     }
   }
