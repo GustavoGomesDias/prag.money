@@ -28,11 +28,20 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    const { authToken } = parseCookies();
+    const handleRecoverUserInfo = async () => {
+      const { authToken } = parseCookies();
 
-    if (authToken) {
-      
+      if (authToken) {
+        const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/recover', {
+          token: authToken,
+        });
+
+        const { userInfo } = response.data;
+
+        if (userInfo) setUser(userInfo);
+      }
     }
+    handleRecoverUserInfo();
   }, []);
 
   const signIn = async ({ email, password }: LoginProps): Promise<void> => {
