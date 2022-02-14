@@ -48,7 +48,7 @@ const Login = (): JSX.Element => {
       setIsLoading(false);
       return;
     }
-    
+
 
     const data = {
       email, password,
@@ -102,8 +102,20 @@ const Login = (): JSX.Element => {
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
             <BasicInput id="email" label="E-mail" placeholder="example@example.com" onChangehandle={setEmail} />
             <BasicInput id="password" label="Senha" placeholder="************" type="password" onChangehandle={setPassword} />
-            <ButtonGroup>
-              <Button bg="#fff" fontSize="24px" border="2px #00735C solid" w="100%" h="60px" type="submit">Entrar</Button>
+            <ButtonGroup
+              flexDir="column"
+              py="1em"
+            >
+              <Button
+                bg="#fff"
+                fontSize="24px"
+                border="2px #00735C solid"
+                w="100%"
+                h="60px"
+                type="submit"
+              >
+                Entrar
+              </Button>
               <Button
                 onClick={() => handleRedirect('/register')}
                 bg="#00735C"
@@ -111,6 +123,8 @@ const Login = (): JSX.Element => {
                 color="#fff"
                 w="100%"
                 h="60px"
+                mx="0px !important"
+                mt="15px"
                 _hover={{
                   bg: '#00E091',
                 }}
