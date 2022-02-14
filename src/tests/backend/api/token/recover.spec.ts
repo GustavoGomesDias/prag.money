@@ -1,11 +1,11 @@
-import { TokenExpiredError } from "jsonwebtoken";
-import { EmailValidatorAdapter } from "../../../../serverless/adapters/services/EmailValidatorAdapter";
-import EncryptAdapter from "../../../../serverless/adapters/services/EncryptAdapter";
-import WebTokenAdapter from "../../../../serverless/adapters/services/WebTokenAdapter";
-import TokenController from "../../../../serverless/api/controllers/TokenController";
-import { badRequest, notFound, okWithPayload } from "../../../../serverless/api/helpers/http";
-import UserModel from "../../../../serverless/data/models/UserModel";
-import UserRepositoryMocked from "../../../mocks/mockUserRepository";
+import { TokenExpiredError } from 'jsonwebtoken';
+import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
+import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
+import TokenController from '../../../../serverless/api/controllers/TokenController';
+import { badRequest, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
+import UserModel from '../../../../serverless/data/models/UserModel';
+import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
