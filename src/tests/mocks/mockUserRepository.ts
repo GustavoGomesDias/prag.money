@@ -24,7 +24,7 @@ UserRepositoryMocked.findByEmail = jest.fn(async (info: string) => {
     email: 'email@email.com',
     name: 'name',
     password: 'hash',
-  })
+  });
 });
 
 export default UserRepositoryMocked;

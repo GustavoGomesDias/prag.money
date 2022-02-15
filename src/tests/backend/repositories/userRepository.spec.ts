@@ -58,4 +58,26 @@ describe('User Repository test', () => {
       name: 'name',
     });
   });
+
+  test('Should call findByEmail with correct email', async () => {
+    const req: string = 'email@email.com'
+    const repository = makeSut()
+    const spy = jest.spyOn(repository, 'findByEmail');
+    await repository.findByEmail(req);
+
+    expect(spy).toHaveBeenCalledWith(req);
+  });
+
+  test('Should returns account user infos', async () => {
+    const req: string = 'email@email.com'
+    const repository = makeSut()
+    const result = await repository.findByEmail(req);
+
+    expect(result).toEqual({
+      id: 1,
+      email: 'email@email.com',
+      name: 'name',
+      password: 'hash',
+    });
+  });
 });
