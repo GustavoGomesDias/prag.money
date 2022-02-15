@@ -1,8 +1,9 @@
-import UserModel from "../../data/models/UserModel";
-import { AddUser } from "../../data/usecases/RegisterUser";
-import { Prisma, PrismaClient } from "@prisma/client";
-import EncryptAdapter from "../../adapters/services/EncryptAdapter";
-import UserDAOImp from "./UserDAOImp";
+import UserModel from '../../data/models/UserModel';
+import { AddUser } from '../../data/usecases/RegisterUser';
+import { Prisma, PrismaClient } from '@prisma/client';
+import EncryptAdapter from '../../adapters/services/EncryptAdapter';
+import UserDAOImp from './UserDAOImp';
+import prisma from '../../data/prisma/config';
 
 export default class UserRepository extends UserDAOImp<
   UserModel,
@@ -13,7 +14,7 @@ export default class UserRepository extends UserDAOImp<
   private readonly encrypter: EncryptAdapter;
 
   constructor(encrypter: EncryptAdapter) {
-    const prisma = new PrismaClient();
+    // const prisma = new PrismaClient();
     super(prisma.user);
     this.encrypter = encrypter;
   }

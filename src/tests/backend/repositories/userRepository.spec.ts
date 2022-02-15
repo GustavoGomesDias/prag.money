@@ -25,21 +25,7 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncrypterStub();
 }
 
-// const makeAddUser = (encrypter: EncryptAdapter): UserRepository => {
-//   const respository = new UserRepository(encrypter);
-//   jest.spyOn(respository, 'addUser').mockImplementation(async (req) => {
-//     return await Promise.resolve({
-//       email: req.email,
-//       name: req.name,
-//     });
-//   });
-
-//   return respository;
-// }
-
 const makeSut = (): UserRepository => {
-  const encrypter = makeEncrypter();
-
   return UserRepositoryMocked;
 }
 

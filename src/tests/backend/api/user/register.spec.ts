@@ -51,9 +51,7 @@ const makeEncrypter = (): EncryptAdapter => {
 
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
-  const webTokenStub = makeWebToken()
-  const encrypterStub = makeEncrypter();
-  return new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+  return new UserController(emailValidatorStub, UserRepositoryMocked);
 }
 
 afterAll(async () => {
@@ -186,7 +184,7 @@ describe('Handle User Register test', () => {
     const encrypterStub = makeEncrypter();
     
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const userController = new UserController(emailValidatorStub, UserRepositoryMocked);
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
