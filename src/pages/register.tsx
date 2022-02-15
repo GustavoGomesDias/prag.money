@@ -21,16 +21,9 @@ const Register = (): JSX.Element => {
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { signIn, user } = useContext(AuthContext);
 
   const { push } = useRouter();
   const toast = useToast();
-
-  useEffect(() => {
-    if (user?.userInfo !== undefined) {
-      push('/dashboard', '/dashboard');
-    }
-  }, []);
 
   const handleRedirect = (path: string): void => {
     push(path, path);

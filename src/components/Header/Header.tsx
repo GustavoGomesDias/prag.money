@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Link } from '@chakra-ui/react';
 
 import Logo from '../Logo/Logo';
+import { AuthContext } from '../../context/AuthContext';
 
+export interface HeaderProps {
+  logo: string
+}
 
-const Header = (): JSX.Element => {
+const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
+  const { user } = useContext(AuthContext);
 
   const handleRedirect = (path: string): void => {
     push(path, path);
@@ -23,14 +28,22 @@ const Header = (): JSX.Element => {
       <Flex
         justifyContent="space-between"
       >
-        <Logo fontSize="64px" />
+        <Logo fontSize="64px" logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
-          <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-            Cadastre-se
-          </Button>
-          <Button onClick={() => handleRedirect('/login')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-            Login
-          </Button>
+          {user?.userInfo !== undefined ? (
+            <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+              Sair
+            </Button>
+          ) : (
+            <>
+              <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+                Cadastre-se
+              </Button><Button onClick={() => handleRedirect('/login')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+                Login
+              </Button>
+            </>
+          )}
+
         </ButtonGroup>
       </Flex>
     </chakra.header>

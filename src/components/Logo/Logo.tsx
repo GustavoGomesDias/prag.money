@@ -5,9 +5,10 @@ import classes from './Logo.module.css';
 
 export interface Size {
   fontSize: string
+  logo: string
 }
 
-const Logo = ({ fontSize }: Size): JSX.Element => {
+const Logo = ({ fontSize, logo }: Size): JSX.Element => {
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
   return (
     <div
@@ -17,7 +18,7 @@ const Logo = ({ fontSize }: Size): JSX.Element => {
       }}
     >
       <p className={`${classes['logo-type']}`}>
-        {isSmallScreen ? 'p.$' : 'Prag.Money$'}
+        {isSmallScreen ? 'p.$' : `Prag.${logo}$`}
       </p>
       <span className={`${classes['typing-cursor']} ${classes['cursor']}`}>
         _

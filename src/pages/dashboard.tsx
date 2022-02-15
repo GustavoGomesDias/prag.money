@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 
+import Header from '../components/Header/Header';
+import SEO from '../components/SEO';
+import { AuthContext } from '../context/AuthContext';
+
 const Dashboard = (): JSX.Element => {
+  const {} = useContext(AuthContext);
+
   return (
-    <h1>Dashboard</h1>
+    <>
+      <SEO title="p.$ | Dashboard" description="Dashboard page" />
+      <Header logo="Dash" />
+    </>
   )
 }
 

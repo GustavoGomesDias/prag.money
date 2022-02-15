@@ -15,7 +15,7 @@ const HomePage: NextPage = () => {
   return (
     <>
       <SEO title="p.$_ | Home" description="Home Page" />
-      <Header />
+      <Header logo="Money" />
       <Home />
     </>
   );
