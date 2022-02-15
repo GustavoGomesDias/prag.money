@@ -19,7 +19,7 @@ describe('Handler Create Payment', () => {
       user_id: 1,
     };
 
-    const paymentControllerStub= new PaymentController();
+    const paymentControllerStub= makeSut();
 
     const response = await paymentControllerStub.handleAdd(infos);
 
