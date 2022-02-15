@@ -1,4 +1,4 @@
-import React, { FormEvent, useContext, useState } from 'react';
+import React, { FormEvent, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
@@ -8,15 +8,17 @@ import Logo from '../components/Logo/Logo';
 import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
-import api from '../utils/config/api';
+import api from '../services/api';
 import ModalLoader from '../components/Loader/ModalLoader';
 import { AuthContext } from '../context/AuthContext';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { signIn } = useContext(AuthContext);
+  const { signIn, user } = useContext(AuthContext);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -57,6 +59,7 @@ const Login = (): JSX.Element => {
     }
 
     await signIn(data);
+    setIsLoading(false);
   }
 
   return (
@@ -119,3 +122,20 @@ const Login = (): JSX.Element => {
 };
 
 export default Login;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { authToken } = parseCookies(ctx);
+
+  if (authToken) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {},
+  }
+}

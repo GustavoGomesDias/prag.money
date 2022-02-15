@@ -1,13 +1,13 @@
 import { createContext, useEffect, useState } from 'react';
 import { setCookie, parseCookies } from 'nookies';
 import { useRouter } from 'next/router';
+import { useToast } from '@chakra-ui/react';
 
 import { HttpResponse } from '../serverless/api/helpers/http';
 import LoginProps from '../serverless/data/usecases/Login';
-import api from '../utils/config/api';
+import api from '../services/api';
 import UserModel from '../serverless/data/models/UserModel';
 import toastConfig from '../utils/config/tostConfig';
-import { useToast } from '@chakra-ui/react';
 
 export interface AuthProviderProps {
   children: JSX.Element | JSX.Element[]
@@ -63,10 +63,12 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
       setCookie(undefined, 'authToken', response.data.payload as string, {
         maxAge: (60 * 60) * 48, // 2 days
       });
-      console.log(response.data.userInfo);
+
+      api.defaults.headers.common['Authorization'] = `Bearer ${response.data.payload}`
       if (response.data.userInfo !== undefined) {
         setUser(response.data.userInfo);
-        push('/', '/');
+        push('/dashboard', '/dashboard');
+        return;
       }
     }
   };

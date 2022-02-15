@@ -10,7 +10,7 @@ const HomePage: NextPage = () => {
 
   const { user } = useContext(AuthContext);
 
-  console.log(user?.userInfo.email);
+  console.log(user?.userInfo);
 
   return (
     <>
