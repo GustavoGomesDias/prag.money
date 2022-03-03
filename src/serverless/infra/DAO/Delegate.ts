@@ -1,3 +1,5 @@
+
+// @ts-nocheck
 export interface Delegate {
   aggregate(data: unknown): Promise<unknown>;
   count(data: unknown): Promise<unknown>;

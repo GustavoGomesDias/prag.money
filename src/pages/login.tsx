@@ -77,7 +77,7 @@ const Login = (): JSX.Element => {
           py="3em"
         >
           <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px"> <FaLongArrowAltLeft />Voltar</Button>
-          <Logo fontSize="40px" />
+          <Logo fontSize="40px" logo={'Money'}  />
         </Flex>
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Entrar</chakra.h1>

@@ -1,3 +1,4 @@
+// @ts-ignore
 export default interface GenericDAO<C, R, U, D> {
   add(data: C): Promise<unknown>
   findById(data: R): Promise<unknown>

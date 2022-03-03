@@ -70,7 +70,7 @@ describe('User Repository test', () => {
 
   test('Should returns account user infos', async () => {
     const req: string = 'email@email.com'
-    const repository = makeSut()
+    const repository = makeSut();
     const result = await repository.findByEmail(req);
 
     expect(result).toEqual({

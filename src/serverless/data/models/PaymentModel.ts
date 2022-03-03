@@ -1,3 +1,4 @@
+// @ts-ignore
 export default interface PaymentModel {
   id?: number
   nickname: string

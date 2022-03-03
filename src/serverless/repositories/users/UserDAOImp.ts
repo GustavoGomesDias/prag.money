@@ -1,15 +1,11 @@
-import { PrismaClient } from '@prisma/client';
 import UserModel from '../../data/models/UserModel';
-import LoginProps from '../../data/usecases/Login';
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import UserDAO from './UserDAO';
+import prisma from '../../data/prisma/config';
 
 
 export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> implements UserDAO<C, R, U, D>{
-
   async findByEmail(info: string): Promise<UserModel | undefined> {
-    const prisma = new PrismaClient();
-
     const user = await prisma.user.findUnique({
       where: {
         email: info
@@ -27,7 +23,6 @@ export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> im
       email,
       name,
       password,
-    }
+    };
   }
-
 }

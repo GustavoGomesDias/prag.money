@@ -7,9 +7,8 @@ import Logo from '../Logo/Logo';
 const Loader = (): JSX.Element => {
   return (
     <Flex>
-
       <Image src="/dollar.svg" alt="Image Loading" width="60px" height="60px" className={classes.loader} />
-      <Logo fontSize={'36px'} />
+      <Logo fontSize={'36px'} logo={'Money'} />
     </Flex>
   );
 };

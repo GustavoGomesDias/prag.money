@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 /*
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
@@ -203,9 +204,10 @@ export default {
     "!**/models/**",
     "!**/usecases/**",
     "!**/config/**",
-    "!**/src/service/**",
+    "!**/services/**",
     "!**/pages/**",
     "!**/tests/**",
+    "!**/factories/**",
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
@@ -234,5 +236,5 @@ export default {
   transformIgnorePatterns: [
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
-  ],
+  ]
 };
