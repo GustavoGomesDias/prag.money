@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
@@ -189,6 +189,29 @@ describe('Handle User Register test', () => {
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
     expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
+  });
+
+  test('Should return 400 if unique field (email) already existis', async () => {
+    const httpRequest = {
+      body: {
+        user: {
+          name: 'name',
+          email: 'already_existis@email.com',
+          password: 'password',
+          passwordConfirmation: 'password',
+        }
+      },
+    };
+
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(UserRepositoryMocked, 'addUser').mockImplementationOnce(async () => {
+      throw new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', 'P2002', '3.9.1')
+    });
+    const userControllerStub = makeSut();
+
+    const response = await userControllerStub.handleRegister(httpRequest);
+
+    expect(response).toEqual(badRequest('Email já existe, tente novamente.'))
   });
 
   test('Should return 200 if user is creted', async () => {

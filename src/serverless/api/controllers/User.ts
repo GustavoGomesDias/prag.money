@@ -1,9 +1,11 @@
+import { Prisma } from '@prisma/client';
 import { validateEmail, validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
+import uniqueError from '../../error/uniqueError';
 import UserRepository from '../../repositories/users/UserRepository';
 import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, created, okWithPayload } from '../helpers/http';
 
@@ -53,6 +55,11 @@ export default class UserController {
 
     } catch (err) {
       console.log(err);
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2002') {
+          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);  
+        }
+      }
       return serverError('Erro no servidor, tente novamente mais tarde');
     }
   }

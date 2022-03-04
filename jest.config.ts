@@ -208,6 +208,7 @@ export default {
     "!**/pages/**",
     "!**/tests/**",
     "!**/factories/**",
+    "!**/context/**",
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
