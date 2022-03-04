@@ -53,7 +53,6 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
 
 
     if (response.data.error) {
-      console.log(response.data.error);
       toast({
         title: '😔',
         description: response.data.error,

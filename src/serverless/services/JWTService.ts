@@ -4,7 +4,6 @@ import UserModel from '../data/models/UserModel';
 
 export default class JWTService implements WebTokenAdapter {
   sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
-    console.log(payload);
     return jwt.sign(payload, `${process.env.JWT_SECRET}` as string, {
       expiresIn: expiresIn,
     });

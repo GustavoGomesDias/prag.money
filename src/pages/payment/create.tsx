@@ -80,7 +80,6 @@ const Create = (): JSX.Element => {
     }
 
     if (response.data.error) {
-      console.log(response.data.error);
       toast({
         title: '😔',
         description: response.data.error,
@@ -156,7 +155,6 @@ export default Create;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { authToken } = parseCookies(ctx);
-  const { res } = ctx;
 
   if (!authToken || authToken === undefined || authToken === null) {
     return {

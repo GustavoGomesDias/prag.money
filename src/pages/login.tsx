@@ -21,10 +21,6 @@ const Login = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signIn, user } = useContext(AuthContext);
 
-  const cookies = parseCookies();
-
-  console.log(cookies);
-
   const { push } = useRouter();
   const toast = useToast();
 

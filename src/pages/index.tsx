@@ -10,8 +10,6 @@ const HomePage: NextPage = () => {
 
   const { user } = useContext(AuthContext);
 
-  console.log(user?.userInfo);
-
   return (
     <>
       <SEO title="p.$_ | Home" description="Home Page" />
