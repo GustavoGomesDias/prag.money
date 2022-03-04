@@ -7,9 +7,12 @@ export interface InputControlProps {
   placeholder: string
   onChangehandle: React.SetStateAction<any>
   type?: HTMLInputTypeAttribute
+  step?: string | number
+  min?: string
+  max?: string | number
 }
 
-const BasicInput = ({ id, label, placeholder, onChangehandle, type }: InputControlProps): JSX.Element => {
+const BasicInput = ({ id, label, placeholder, onChangehandle, type, step, min, max }: InputControlProps): JSX.Element => {
   return (
     <FormControl
       id={id}
@@ -27,6 +30,9 @@ const BasicInput = ({ id, label, placeholder, onChangehandle, type }: InputContr
         w="full"
         fontSize="18px"
         type={type ? type : ''}
+        step={step ? step : ''}
+        min={min ? min : ''}
+        max={max ? max : ''}
         onChange={((e) => onChangehandle(e.target.value))}
         _hover={{
           borderColor: '#00735C',

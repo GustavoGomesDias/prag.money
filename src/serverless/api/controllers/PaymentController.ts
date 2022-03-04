@@ -1,5 +1,7 @@
-import { validationDate, validationField } from '../../../utils/validations';
+import { Prisma } from '@prisma/client';
+import { validationDay, validationField } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
+import uniqueError from '../../error/uniqueError';
 import PaymentRepository from '../../repositories/payment/PaymentRepository';
 import { badRequest, HttpResponse, ok, serverError } from '../helpers/http';
 
@@ -12,7 +14,7 @@ export default class PaymentController {
 
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
     try {
-      const { default_value, nickname, reset_date, user_id } = paymentInfos;
+      const { default_value, nickname, reset_day, user_id } = paymentInfos;
 
       if (validationField(nickname)) {
         return badRequest('É preciso dar um apelido para a forma de pagamento.');
@@ -22,8 +24,8 @@ export default class PaymentController {
         return badRequest('É preciso dar um valor padrão para a forma de pagamento.');
       }
 
-      if (!validationDate(reset_date)) {
-        return badRequest('Por favor, forneca uma data que seja valida.');
+      if (!validationDay(reset_day)) {
+        return badRequest('Por favor, forneça um dia que seja valida.');
       }
 
       if (!user_id) {
@@ -35,7 +37,11 @@ export default class PaymentController {
       return ok('Forma de pagamento criado com sucesso!');
     } catch (err) {
       console.log(err);
-
+      if (err instanceof Prisma.PrismaClientKnownRequestError) {
+        if (err.code === 'P2002') {
+          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);  
+        }
+      }
       return serverError('Erro no servidor, tente novamente mais tarde.');
     }
   }

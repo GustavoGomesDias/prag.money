@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { setCookie, parseCookies } from 'nookies';
+import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import { useRouter } from 'next/router';
 import { useToast } from '@chakra-ui/react';
 
@@ -17,6 +17,7 @@ export interface AuthContextProps {
   user: { userInfo: Omit<UserModel, 'password'> } | null
   isAuthenticated: boolean
   signIn({ email, password }: LoginProps): Promise<void>
+  signOut(): void
 }
 
 export const AuthContext = createContext({} as AuthContextProps);
@@ -71,10 +72,19 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
         return;
       }
     }
+
+  };
+  
+  const signOut = (): void => {
+    destroyCookie({}, 'authToken', {
+      path: '/',
+    });
+    setUser(null);
+    return;
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

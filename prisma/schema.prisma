@@ -24,8 +24,8 @@ model User {
 model Payment {
   id            Int       @id @default(autoincrement())
   nickname      String    @unique @db.VarChar(255)
-  defalut_value Float
-  reset_date    DateTime
+  default_value Decimal
+  reset_day     Int
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
   user          User      @relation(fields: [user_id], references: [id])

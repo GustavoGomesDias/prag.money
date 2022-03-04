@@ -11,7 +11,12 @@ export interface HeaderProps {
 
 const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
-  const { user } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
+
+  const logout = (): void =>{
+    signOut();
+    push('/', '/');
+  }
 
   const handleRedirect = (path: string): void => {
     push(path, path);
@@ -31,7 +36,7 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
         <Logo fontSize="64px" logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
           {user?.userInfo !== undefined ? (
-            <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            <Button onClick={() => logout()} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
               Sair
             </Button>
           ) : (
