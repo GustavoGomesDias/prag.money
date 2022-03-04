@@ -1,5 +1,5 @@
 import React, { FormEvent, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
 import BasicInput from '../components/Login/BasicInput';
@@ -13,12 +13,17 @@ import ModalLoader from '../components/Loader/ModalLoader';
 import { AuthContext } from '../context/AuthContext';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
+import { parse } from 'node:path/win32';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { signIn, user } = useContext(AuthContext);
+
+  const cookies = parseCookies();
+
+  console.log(cookies);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -125,7 +130,6 @@ export default Login;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { authToken } = parseCookies(ctx);
-
   if (authToken) {
     return {
       redirect: {

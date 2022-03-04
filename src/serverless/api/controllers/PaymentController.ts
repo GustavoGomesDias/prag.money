@@ -25,7 +25,7 @@ export default class PaymentController {
       }
 
       if (!validationDay(reset_day)) {
-        return badRequest('Por favor, forneça um dia que seja valida.');
+        return badRequest('Por favor, forneça um dia que seja valido.');
       }
 
       if (!user_id) {

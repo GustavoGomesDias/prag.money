@@ -1,5 +1,7 @@
 import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
+import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import nookies, { parseCookies, setCookie } from 'nookies';
 import React, { FormEvent, useContext, useState } from 'react';
 import Header from '../../components/Header/Header';
 import ModalLoader from '../../components/Loader/ModalLoader';
@@ -7,6 +9,7 @@ import BasicInput from '../../components/Login/BasicInput';
 import Form from '../../components/Login/Form/Form';
 import SEO from '../../components/SEO';
 import { AuthContext } from '../../context/AuthContext';
+import HistoryContext from '../../context/history/HistoryContext';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
 import api from '../../services/api';
 import toastConfig from '../../utils/config/tostConfig';
@@ -150,3 +153,21 @@ const Create = (): JSX.Element => {
 }
 
 export default Create;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { authToken } = parseCookies(ctx);
+  const { res } = ctx;
+
+  if (!authToken || authToken === undefined || authToken === null) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {}
+  }
+}

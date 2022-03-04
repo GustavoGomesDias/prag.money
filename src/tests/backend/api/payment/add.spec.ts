@@ -54,7 +54,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('Por favor, forneça um dia que seja valida.'))
+    expect(response).toEqual(badRequest('Por favor, forneça um dia que seja valido.'))
   });
 
   test('Should return 400 if no user id is provided', async () => {
