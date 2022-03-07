@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
-import { badRequest, HttpResponse, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, HttpResponse, notFound, okWithPayload,
+} from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
@@ -16,43 +20,43 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   }
 
   return new EmailValidatorStub();
-}
+};
 
 const makeWebToken = (): WebTokenAdapter => {
   class WebTokenStub implements WebTokenAdapter {
     sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
       return 'token';
     }
+
     verify(token: string): Omit<UserModel, 'password'> {
       throw new Error('Method not implemented.');
     }
-    
   }
 
   return new WebTokenStub();
-}
+};
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncryptStub implements EncryptAdapter {
     encrypt(password: string): Promise<string> {
       throw new Error('Method not implemented.');
     }
+
     async compare(password: string, passHashed: string): Promise<boolean> {
-      return await Promise.resolve(true);
+      const result = await Promise.resolve(true);
+      return result;
     }
-    
   }
 
   return new EncryptStub();
-}
+};
 
 const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
-  const encrypterStub = makeEncrypter()
+  const encrypterStub = makeEncrypter();
   return new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
-}
-
+};
 
 describe('Handle User Login Tests', () => {
   test('Should return 400 if no email is provided', async () => {
@@ -99,8 +103,8 @@ describe('Handle User Login Tests', () => {
 
     const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
-    const encrypterStub =  makeEncrypter();
-    
+    const encrypterStub = makeEncrypter();
+
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
     const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
@@ -115,10 +119,11 @@ describe('Handle User Login Tests', () => {
     };
     const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
-    const encrypterStub =  makeEncrypter();
-    
+    const encrypterStub = makeEncrypter();
+
     jest.spyOn(encrypterStub, 'compare').mockImplementationOnce(async (): Promise<boolean> => {
-      return await Promise.resolve(false);
+      const result = await Promise.resolve(false);
+      return result;
     });
     const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
@@ -136,7 +141,7 @@ describe('Handle User Login Tests', () => {
 
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithPayload('token' ,{
+    expect(httpResponse).toEqual(okWithPayload('token', {
       name: 'name',
       email: 'email@email.com',
     }));
@@ -152,7 +157,7 @@ describe('Handle User Login Tests', () => {
 
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithPayload('token' ,{
+    expect(httpResponse).toEqual(okWithPayload('token', {
       name: 'name',
       email: 'email@email.com',
     }));

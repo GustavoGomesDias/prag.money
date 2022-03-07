@@ -2,6 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    jest: true,
   },
   extends: [
     'next/core-web-vitals',
@@ -36,5 +37,6 @@ module.exports = {
     'no-plusplus': 'off',
     'react/require-default-props': 'off',
     'class-methods-use-this': 'off',
+    'max-classes-per-file': 'off',
   },
 };
