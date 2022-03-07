@@ -1,8 +1,14 @@
-import React, { FormEvent, useContext, useEffect, useState } from 'react';
+import React, {
+  FormEvent, useState,
+} from 'react';
 import { useRouter } from 'next/router';
-import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
+import {
+  Button, ButtonGroup, chakra, Flex, Grid, useToast,
+} from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
 
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 import BasicInput from '../components/Login/BasicInput';
 import Form from '../components/Login/Form/Form';
 import Logo from '../components/Logo/Logo';
@@ -11,9 +17,6 @@ import toastConfig from '../utils/config/tostConfig';
 import api from '../services/api';
 import SEO from '../components/SEO';
 import ModalLoader from '../components/Loader/ModalLoader';
-import { AuthContext } from '../context/AuthContext';
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -75,8 +78,9 @@ const Register = (): JSX.Element => {
       return;
     }
 
-
-    const data = { name, email, password, passwordConfirmation };
+    const data = {
+      name, email, password, passwordConfirmation,
+    };
     const response = await api.post('/user/register', data);
 
     if (response.data.message) {
@@ -100,13 +104,12 @@ const Register = (): JSX.Element => {
       });
     }
     setIsLoading(false);
-    return;
-  }
+  };
 
   return (
     <>
       {isLoading && <ModalLoader isOpen={isLoading} />}
-      <SEO title='p.$_ | Cadastro de usuário' description='User registrer page' />
+      <SEO title="p.$_ | Cadastro de usuário" description="User registrer page" />
       <Flex
         flexDir="column"
         alignItems="center"
@@ -117,8 +120,12 @@ const Register = (): JSX.Element => {
           px="1em"
           py="3em"
         >
-          <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px"> <FaLongArrowAltLeft />Voltar</Button>
-          <Logo fontSize="40px" logo={'Money'} />
+          <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px">
+            {' '}
+            <FaLongArrowAltLeft />
+            Voltar
+          </Button>
+          <Logo fontSize="40px" logo="Money" />
         </Flex>
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastre-se</chakra.h1>
@@ -160,12 +167,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       redirect: {
         destination: '/dashboard',
         permanent: false,
-      }
-    }
+      },
+    };
   }
 
   return {
     props: {},
-  }
-}
-
+  };
+};

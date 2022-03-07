@@ -1,7 +1,9 @@
-import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
+import {
+  Button, ButtonGroup, chakra, Flex, Grid, useToast,
+} from '@chakra-ui/react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import nookies, { parseCookies, setCookie } from 'nookies';
+import { parseCookies } from 'nookies';
 import React, { FormEvent, useContext, useState } from 'react';
 import Header from '../../components/Header/Header';
 import ModalLoader from '../../components/Loader/ModalLoader';
@@ -9,7 +11,6 @@ import BasicInput from '../../components/Login/BasicInput';
 import Form from '../../components/Login/Form/Form';
 import SEO from '../../components/SEO';
 import { AuthContext } from '../../context/AuthContext';
-import HistoryContext from '../../context/history/HistoryContext';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
 import api from '../../services/api';
 import toastConfig from '../../utils/config/tostConfig';
@@ -28,7 +29,6 @@ const Create = (): JSX.Element => {
   const handleRedirect = (path: string): void => {
     push(path, path);
   };
-
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
@@ -66,8 +66,10 @@ const Create = (): JSX.Element => {
       return;
     }
 
-    const data: PaymentModel = { nickname, default_value: defaultValue, reset_day: Number(resetDay), user_id: (user?.userInfo.id as number) }
-    const response = await api.post('/payment/register', data)
+    const data: PaymentModel = {
+      nickname, default_value: defaultValue, reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
+    };
+    const response = await api.post('/payment/register', data);
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',
@@ -90,8 +92,7 @@ const Create = (): JSX.Element => {
       return;
     }
     setIsLoading(false);
-    return;
-  }
+  };
 
   return (
     <>
@@ -108,7 +109,7 @@ const Create = (): JSX.Element => {
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
             <BasicInput id="nickname" label="Apelido" placeholder="bitcoin wallet" onChangehandle={setNickName} />
             <BasicInput id="defaultValue" label="Valor padrão" type="number" step="any" placeholder="800,00" onChangehandle={setDefaultValue} />
-            <BasicInput id="resetDate" label="Data de reset" type="number" min="1" max="31" onChangehandle={setResetDay} placeholder={''} />
+            <BasicInput id="resetDate" label="Data de reset" type="number" min="1" max="31" onChangehandle={setResetDay} placeholder="" />
             <ButtonGroup
               flexDir="column"
               py="1em"
@@ -149,7 +150,7 @@ const Create = (): JSX.Element => {
       </Flex>
     </>
   );
-}
+};
 
 export default Create;
 
@@ -162,10 +163,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         destination: '/login',
         permanent: false,
       },
-    }
+    };
   }
 
   return {
-    props: {}
-  }
-}
+    props: {},
+  };
+};

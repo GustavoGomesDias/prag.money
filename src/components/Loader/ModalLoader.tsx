@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
 import { Flex, Modal, ModalOverlay } from '@chakra-ui/react';
 import Loader from './Loader';
 
 export interface ModalLoaderProps {
   isOpen: boolean
-  onClose: () => void | undefined
+  onClose?: () => void
 }
 
 const ModalLoader = ({ isOpen, onClose }: ModalLoaderProps): JSX.Element => (
   <Modal
     isOpen={isOpen}
-    onClose={onClose || undefined}
+    onClose={onClose || (() => {})}
   >
     <ModalOverlay>
       <Flex

@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
-import { Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Flex, Grid } from '@chakra-ui/react';
 
 import Header from '../components/Header/Header';
 import SEO from '../components/SEO';
 import { AuthContext } from '../context/AuthContext';
 
 const Dashboard = (): JSX.Element => {
-  const { } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   return (
     <>
@@ -23,7 +23,7 @@ const Dashboard = (): JSX.Element => {
           gap={4}
           px="1em"
         >
-          <Flex bg="tomato">1</Flex>
+          <Flex bg="tomato">{user?.userInfo.email}</Flex>
           <Grid templateRows="repeat(2, 1fr)" gap={4}>
             <Flex bg="papayawhip" w="full">1</Flex>
             <Flex bg="papayawhip" w="full">1</Flex>
@@ -31,8 +31,8 @@ const Dashboard = (): JSX.Element => {
         </Grid>
       </Flex>
     </>
-  )
-}
+  );
+};
 
 export default Dashboard;
 
@@ -44,11 +44,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       redirect: {
         destination: '/login',
         permanent: false,
-      }
-    }
+      },
+    };
   }
 
   return {
-    props: {}
-  }
-}
+    props: {},
+  };
+};
