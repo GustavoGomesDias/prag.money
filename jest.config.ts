@@ -209,6 +209,7 @@ export default {
     "!**/tests/**",
     "!**/factories/**",
     "!**/context/**",
+    "!**/.eslintrc.js"
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
