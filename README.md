@@ -5,11 +5,10 @@
 </div>
 
 ## 📕 Sumário
-- [Descrição](https://github.com/GustavoGomesDias/<nome_repo>t#1--preview)
-- [Tecnologias usadas](https://github.com/GustavoGomesDias/<nome_repo>#2--o-que-eu-aprendi-de-novo-nesse-projeto)
-- [Como contribuir](https://github.com/GustavoGomesDias/<nome_repo>#3--tecnologias-usadas)
-- [Autor](https://github.com/GustavoGomesDias/<nome_repo>#4--para-rodar-o-projeto)
-- [Licença](https://github.com/GustavoGomesDias/<nome_repo>#4--documenta%C3%A7%C3%A3o)
+- [Descrição](https://github.com/GustavoGomesDias/prag.money#descri%C3%A7%C3%A3o)
+- [Tecnologias usadas](https://github.com/GustavoGomesDias/prag.money#tecnologias-usadas)
+- [Como contribuir](https://github.com/GustavoGomesDias/prag.money#como-contribuir)
+- [Licença](https://github.com/GustavoGomesDias/prag.money#licen%C3%A7a)
 
 ## Descrição
 
@@ -28,9 +27,9 @@ Este é um site que te ajuda a controlar seus gastos de forma dinâmica. Ele ain
 
 ## Como contribuir
 
-1. Abra uma Issue seguindo o [padrão estipulado](#)
+1. Abra uma Issue seguindo o [padrão estipulado](https://github.com/GustavoGomesDias/prag.money/blob/main/docs/issue.md)
 2. Crie uma branch com base nessa issue
-3. Crie um PR seguindo o [padrão estipulado](#)
+3. Crie um PR seguindo o [padrão estipulado](https://github.com/GustavoGomesDias/prag.money/blob/main/docs/issue.md)
 
 ## Autor
 <table>
