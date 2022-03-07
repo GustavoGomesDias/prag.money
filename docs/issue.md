@@ -9,7 +9,7 @@
 
 - <span style="color: lightskyblue; font-size: 16px;">dependencies</span> ── Para denotar atualizações de dependências **[Trabalho]**
 
-- <span style="color: lightgrey; font-size: 16px;">bug</span> ── Para denotar issues duplicados **[Descritiva]**
+- <span style="color: lightgrey; font-size: 16px;">duplicated</span> ── Para denotar issues duplicados **[Descritiva]**
 
 - <span style="color: red; font-size: 16px;">bug</span> ── Para denotar algum bug no programa **[Descritiva]**
 
