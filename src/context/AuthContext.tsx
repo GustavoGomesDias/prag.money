@@ -2,7 +2,6 @@ import React, {
   createContext, useCallback, useEffect, useMemo, useState,
 } from 'react';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
-import { useRouter } from 'next/router';
 import { useToast } from '@chakra-ui/react';
 
 import { HttpResponse } from '../serverless/api/helpers/http';
@@ -18,7 +17,7 @@ export interface AuthProviderProps {
 export interface AuthContextProps {
   user: { userInfo: Omit<UserModel, 'password'> } | null
   isAuthenticated: boolean
-  signIn({ email, password }: LoginProps): Promise<void>
+  signIn({ email, password }: LoginProps): Promise<boolean>
   signOut(): void
 }
 
@@ -26,7 +25,6 @@ export const AuthContext = createContext({} as AuthContextProps);
 
 export default function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<{ userInfo: Omit<UserModel, 'password'> } | null>(null);
-  const { push } = useRouter();
   const toast = useToast();
   const isAuthenticated = !!user;
 
@@ -47,7 +45,7 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
     handleRecoverUserInfo();
   }, []);
 
-  const signIn = useCallback(async ({ email, password }: LoginProps): Promise<void> => {
+  const signIn = useCallback(async ({ email, password }: LoginProps): Promise<boolean> => {
     const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/login', {
       email,
       password,
@@ -60,17 +58,19 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
         status: 'error',
         ...toastConfig,
       });
-    } else {
-      setCookie(undefined, 'authToken', response.data.payload as string, {
-        maxAge: (60 * 60) * 48, // 2 days
-      });
-
-      api.defaults.headers.common.Authorization = `Bearer ${response.data.payload}`;
-      if (response.data.userInfo !== undefined) {
-        setUser(response.data.userInfo);
-        push('/dashboard', '/dashboard');
-      }
+      return false;
     }
+    setCookie(undefined, 'authToken', response.data.payload as string, {
+      maxAge: (60 * 60) * 48, // 2 days
+    });
+
+    api.defaults.headers.common.Authorization = `Bearer ${response.data.payload}`;
+    if (response.data.userInfo !== undefined) {
+      setUser(response.data.userInfo);
+      return true;
+      // push('/dashboard', '/dashboard');
+    }
+    return false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

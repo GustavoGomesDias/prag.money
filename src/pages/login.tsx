@@ -59,8 +59,18 @@ const Login = (): JSX.Element => {
       email, password,
     };
 
-    await signIn(data);
+    const result = await signIn(data);
     setIsLoading(false);
+    if (!result) {
+      toast({
+        title: '😔',
+        description: 'Não foi possível fazer login. Verifique se e-mail ou senha estão errados',
+        status: 'error',
+        ...toastConfig,
+      });
+    } else {
+      push('/dashboard', '/dashboard');
+    }
   };
 
   return (
