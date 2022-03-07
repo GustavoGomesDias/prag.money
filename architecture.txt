@@ -17,7 +17,8 @@ src
   ├        ├── /api	            api layer: controllers
   ├        ├     ├── /controllers 
   ├        ├     └── /helpers   controllers helpers
-  ├        ├── /reositories	    call database
+  ├        ├── /repositories	    call database
+  ├        ├── /error 	          cusom handle errors
   ├        ├── /factories	      make controllers
   ├        └── /data			      data access layer: database models and usecases
   ├              ├── /models			   database models	
