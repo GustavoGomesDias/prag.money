@@ -1,4 +1,6 @@
-import { createContext, useEffect, useState } from 'react';
+import React, {
+  createContext, useCallback, useEffect, useMemo, useState,
+} from 'react';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import { useRouter } from 'next/router';
 import { useToast } from '@chakra-ui/react';
@@ -41,16 +43,15 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
 
         if (userInfo) setUser(userInfo);
       }
-    }
+    };
     handleRecoverUserInfo();
   }, []);
 
-  const signIn = async ({ email, password }: LoginProps): Promise<void> => {
+  const signIn = useCallback(async ({ email, password }: LoginProps): Promise<void> => {
     const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/login', {
-      email: email,
-      password: password,
+      email,
+      password,
     });
-
 
     if (response.data.error) {
       toast({
@@ -64,26 +65,31 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
         maxAge: (60 * 60) * 48, // 2 days
       });
 
-      api.defaults.headers.common['Authorization'] = `Bearer ${response.data.payload}`
+      api.defaults.headers.common.Authorization = `Bearer ${response.data.payload}`;
       if (response.data.userInfo !== undefined) {
         setUser(response.data.userInfo);
         push('/dashboard', '/dashboard');
-        return;
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  };
-  
-  const signOut = (): void => {
+  const signOut = useCallback((): void => {
     destroyCookie({}, 'authToken', {
       path: '/',
     });
     setUser(null);
-    return;
-  };
+  }, []);
+
+  const context: AuthContextProps = useMemo(() => ({
+    user,
+    isAuthenticated,
+    signIn,
+    signOut,
+  }), [user, isAuthenticated, signIn, signOut]);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={context}>
       {children}
     </AuthContext.Provider>
   );

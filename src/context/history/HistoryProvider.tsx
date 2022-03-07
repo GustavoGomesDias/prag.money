@@ -26,17 +26,16 @@ export default function HistoryProvider({ children }: HistoryProviderProps): JSX
     });
   };
 
-  const context: HistoryContextType = {
+  const context: HistoryContextType = useMemo(() => ({
     prevPath: historyState.prevPath as string,
     nextPath: historyState.nextPath as string,
     handleUpdatePrevPath,
-    handleUpdateNextPath
-  }
+    handleUpdateNextPath,
+  }), [historyState]);
 
   return (
     <HistoryContext.Provider value={context}>
       {children}
     </HistoryContext.Provider>
   );
-
 }

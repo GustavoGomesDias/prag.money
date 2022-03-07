@@ -14,19 +14,19 @@ const historyReducer = (state: HistoryState, actions: HistoryActions): HistorySt
     return {
       prevPath: actions.prevPath,
       nextPath: state.nextPath,
-    }
+    };
   }
 
   if (actions.type === 'UPDATE_NEXT') {
     return {
       prevPath: state.prevPath,
       nextPath: actions.nextPath,
-    }
+    };
   }
   return {
     nextPath: '/',
-    prevPath: '/'
-  }
-}
+    prevPath: '/',
+  };
+};
 
 export default historyReducer;
