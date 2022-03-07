@@ -5,9 +5,8 @@ import { makeTokenController } from '../../../serverless/factories/token/TokenFa
 
 export default async function handlerLogin(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<HttpResponse>>
+  res: NextApiResponse<Partial<HttpResponse>>,
 ) {
-
   const { email, password } = req.body as LoginProps;
   const tokenController = makeTokenController();
 

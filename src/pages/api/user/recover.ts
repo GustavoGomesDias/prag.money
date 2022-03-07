@@ -4,9 +4,8 @@ import { makeTokenController } from '../../../serverless/factories/token/TokenFa
 
 export default async function handlerRecoverUserInfos(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<HttpResponse>>
+  res: NextApiResponse<Partial<HttpResponse>>,
 ) {
-
   const token = req.body.token as string;
   const tokenController = makeTokenController();
 

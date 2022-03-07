@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
@@ -5,13 +6,16 @@ import { makePaymentController } from '../../../serverless/factories/payment/Pay
 
 export default async function handlerLogin(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<HttpResponse>>
+  res: NextApiResponse<Partial<HttpResponse>>,
 ) {
-
-  const { nickname, default_value, reset_day, user_id } = req.body as PaymentModel;
+  const {
+    nickname, default_value, reset_day, user_id,
+  } = req.body as PaymentModel;
   const paymentController = makePaymentController();
 
-  const response = await paymentController.handleAdd({ nickname, default_value, reset_day, user_id });
+  const response = await paymentController.handleAdd({
+    nickname, default_value, reset_day, user_id,
+  });
 
   if (response.error) {
     const { error } = response;
