@@ -1,4 +1,4 @@
-// @ts-ignore
+/* eslint-disable semi */
 export default interface PaymentModel {
   id?: number
   nickname: string

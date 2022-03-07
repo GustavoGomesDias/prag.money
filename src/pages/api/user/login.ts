@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import LoginProps from '../../../serverless/data/usecases/Login';
-import { makeTokenController } from '../../../serverless/factories/token/TokenFactory';
+import makeTokenController from '../../../serverless/factories/token/TokenFactory';
 
 export default async function handlerLogin(
   req: NextApiRequest,

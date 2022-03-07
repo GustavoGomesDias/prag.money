@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
-import { makePaymentController } from '../../../serverless/factories/payment/PaymentFactory';
+import makePaymentController from '../../../serverless/factories/payment/PaymentFactory';
 
 export default async function handlerLogin(
   req: NextApiRequest,

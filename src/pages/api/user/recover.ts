@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
-import { makeTokenController } from '../../../serverless/factories/token/TokenFactory';
+import makeTokenController from '../../../serverless/factories/token/TokenFactory';
 
 export default async function handlerRecoverUserInfos(
   req: NextApiRequest,

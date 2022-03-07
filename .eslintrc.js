@@ -35,5 +35,6 @@ module.exports = {
     'max-len': 'off',
     'no-plusplus': 'off',
     'react/require-default-props': 'off',
+    'class-methods-use-this': 'off',
   },
 };

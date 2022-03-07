@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import RegisterUser from '../../../serverless/data/usecases/RegisterUser';
-import { makeUserController } from '../../../serverless/factories/users/UserFacotory';
+import makeUserController from '../../../serverless/factories/users/UserFacotory';
 
 export default async function handlerRegister(
   req: NextApiRequest,

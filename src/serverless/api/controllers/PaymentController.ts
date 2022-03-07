@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Prisma } from '@prisma/client';
 import { validationDay, validationField } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
