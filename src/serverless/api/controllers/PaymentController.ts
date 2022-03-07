@@ -3,7 +3,9 @@ import { validationDay, validationField } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import uniqueError from '../../error/uniqueError';
 import PaymentRepository from '../../repositories/payment/PaymentRepository';
-import { badRequest, HttpResponse, ok, serverError } from '../helpers/http';
+import {
+  badRequest, HttpResponse, ok, serverError,
+} from '../helpers/http';
 
 export default class PaymentController {
   private readonly paymentRepository: PaymentRepository;
@@ -14,7 +16,9 @@ export default class PaymentController {
 
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
     try {
-      const { default_value, nickname, reset_day, user_id } = paymentInfos;
+      const {
+        default_value, nickname, reset_day, user_id,
+      } = paymentInfos;
 
       if (validationField(nickname)) {
         return badRequest('É preciso dar um apelido para a forma de pagamento.');
@@ -39,7 +43,7 @@ export default class PaymentController {
       console.log(err);
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === 'P2002') {
-          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);  
+          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);
         }
       }
       return serverError('Erro no servidor, tente novamente mais tarde.');
