@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
-import { Button, ButtonGroup, chakra, Flex, Link } from '@chakra-ui/react';
+import {
+  Button, ButtonGroup, chakra, Flex,
+} from '@chakra-ui/react';
 
+import Link from 'next/link';
 import Logo from '../Logo/Logo';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -13,13 +16,9 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
   const { user, signOut } = useContext(AuthContext);
 
-  const logout = (): void =>{
+  const logout = (): void => {
     signOut();
     push('/', '/');
-  }
-
-  const handleRedirect = (path: string): void => {
-    push(path, path);
   };
 
   return (
@@ -36,16 +35,21 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
         <Logo fontSize="64px" logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
           {user?.userInfo !== undefined ? (
-            <Button onClick={() => logout()} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
+            <Button onClick={() => logout()} colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
               Sair
             </Button>
           ) : (
             <>
-              <Button onClick={() => handleRedirect('/register')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-                Cadastre-se
-              </Button><Button onClick={() => handleRedirect('/login')} colorScheme='teal' size="lg" variant='outline' fontWeight="bold">
-                Login
-              </Button>
+              <Link href="/register" passHref>
+                <Button colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
+                  Cadastre-se
+                </Button>
+              </Link>
+              <Link href="/login" passHref>
+                <Button colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
+                  Login
+                </Button>
+              </Link>
             </>
           )}
 
@@ -53,6 +57,6 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
       </Flex>
     </chakra.header>
   );
-}
+};
 
 export default Header;

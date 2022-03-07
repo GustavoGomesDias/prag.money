@@ -1,25 +1,27 @@
-import React, { FormEvent, useContext, useEffect, useState } from 'react';
-import Router, { useRouter } from 'next/router';
-import { Button, ButtonGroup, chakra, Flex, Grid, useToast } from '@chakra-ui/react';
+import React, {
+  FormEvent, useContext, useState,
+} from 'react';
+import { useRouter } from 'next/router';
+import {
+  Button, ButtonGroup, chakra, Flex, Grid, useToast,
+} from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 import BasicInput from '../components/Login/BasicInput';
 import Form from '../components/Login/Form/Form';
 import Logo from '../components/Logo/Logo';
 import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
-import api from '../services/api';
 import ModalLoader from '../components/Loader/ModalLoader';
 import { AuthContext } from '../context/AuthContext';
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies';
-import { parse } from 'node:path/win32';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { signIn, user } = useContext(AuthContext);
+  const { signIn } = useContext(AuthContext);
 
   const { push } = useRouter();
   const toast = useToast();
@@ -27,7 +29,6 @@ const Login = (): JSX.Element => {
   const handleRedirect = (path: string): void => {
     push(path, path);
   };
-
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
@@ -54,19 +55,18 @@ const Login = (): JSX.Element => {
       return;
     }
 
-
     const data = {
       email, password,
-    }
+    };
 
     await signIn(data);
     setIsLoading(false);
-  }
+  };
 
   return (
     <>
       {isLoading && <ModalLoader isOpen={isLoading} />}
-      <SEO title='p.$_ | Login de usuário' description='User login page' />
+      <SEO title="p.$_ | Login de usuário" description="User login page" />
       <Flex
         flexDir="column"
         alignItems="center"
@@ -77,8 +77,12 @@ const Login = (): JSX.Element => {
           px="1em"
           py="3em"
         >
-          <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px"> <FaLongArrowAltLeft />Voltar</Button>
-          <Logo fontSize="40px" logo={'Money'}  />
+          <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px">
+            {' '}
+            <FaLongArrowAltLeft />
+            Voltar
+          </Button>
+          <Logo fontSize="40px" logo="Money" />
         </Flex>
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Entrar</chakra.h1>
@@ -131,11 +135,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       redirect: {
         destination: '/dashboard',
         permanent: false,
-      }
-    }
+      },
+    };
   }
 
   return {
     props: {},
-  }
-}
+  };
+};

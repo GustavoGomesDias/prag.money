@@ -6,8 +6,8 @@ const toastConfig: Partial<UseToastOptions> = {
   variant: 'top-accent',
   position: 'top',
   containerStyle: {
-    fontSize: '20px'
-  }
+    fontSize: '20px',
+  },
 };
 
 export default toastConfig;

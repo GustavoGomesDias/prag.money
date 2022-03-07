@@ -6,19 +6,24 @@ import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
 import UserRepository from '../../repositories/users/UserRepository';
-import { badRequest, HttpResponse, notFound, okWithPayload, serverError, ok } from '../helpers/http';
+import {
+  badRequest, HttpResponse, notFound, okWithPayload, serverError,
+} from '../helpers/http';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
+
   private readonly repository: UserRepository;
+
   private readonly webToken: WebTokenAdapter;
+
   private readonly encrypter: EncryptAdapter;
 
   constructor(
     emailValidator: EmailValidatorAdapter,
     repository: UserRepository,
     webToken: WebTokenAdapter,
-    encrypter: EncryptAdapter
+    encrypter: EncryptAdapter,
   ) {
     this.emailValidator = emailValidator;
     this.repository = repository;
@@ -46,7 +51,7 @@ export default class TokenController {
       }
 
       if (!this.emailValidator.isEmail(email)) {
-        return badRequest('E-mail inválido.')
+        return badRequest('E-mail inválido.');
       }
 
       const payload = this.webToken.sign({
@@ -55,14 +60,12 @@ export default class TokenController {
         name: user.name,
       }, '2d');
 
-
       const userInfo = {
         name: user.name,
         email: user.email,
       };
-      
-      return okWithPayload(payload, userInfo);
 
+      return okWithPayload(payload, userInfo);
     } catch (err) {
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde');
@@ -72,7 +75,7 @@ export default class TokenController {
   async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
     try {
       if (validationField(token)) {
-        return badRequest('Não foi encontrado nenhum Token.')
+        return badRequest('Não foi encontrado nenhum Token.');
       }
 
       const result = this.webToken.verify(token);
@@ -80,11 +83,11 @@ export default class TokenController {
       const user = await this.repository.findById({
         where: {
           id: result.id,
-        }
+        },
       }) as UserModel;
 
       if (!user || user === undefined || user === null) {
-        return notFound('Usuário não existe.')
+        return notFound('Usuário não existe.');
       }
 
       const newToken = this.webToken.sign({
@@ -98,9 +101,9 @@ export default class TokenController {
         email: user.email as string,
         name: user.name as string,
       });
-    } catch(err: any | Error | TokenExpiredError) {
+    } catch (err: unknown | Error | TokenExpiredError) {
       if (err instanceof TokenExpiredError) {
-        return badRequest('Token expirado.')
+        return badRequest('Token expirado.');
       }
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde');

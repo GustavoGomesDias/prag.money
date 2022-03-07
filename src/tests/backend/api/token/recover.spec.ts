@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { TokenExpiredError } from 'jsonwebtoken';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
@@ -15,46 +17,47 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   }
 
   return new EmailValidatorStub();
-}
+};
 
 const makeWebToken = (): WebTokenAdapter => {
   class WebTokenStub implements WebTokenAdapter {
     sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
       return 'token';
     }
+
     verify(token: string): Omit<UserModel, 'password'> {
       return {
         id: 1,
         email: 'email@email.com',
         name: 'name',
-      }
+      };
     }
-
   }
 
   return new WebTokenStub();
-}
+};
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncryptStub implements EncryptAdapter {
     encrypt(password: string): Promise<string> {
       throw new Error('Method not implemented.');
     }
-    async compare(password: string, passHashed: string): Promise<boolean> {
-      return await Promise.resolve(true);
-    }
 
+    async compare(password: string, passHashed: string): Promise<boolean> {
+      const result = await Promise.resolve(true);
+      return result;
+    }
   }
 
   return new EncryptStub();
-}
+};
 
 const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
-  const encrypterStub = makeEncrypter()
+  const encrypterStub = makeEncrypter();
   return new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
-}
+};
 
 describe('Handle Recovering User Infos', () => {
   test('Should return 400 if no token is provided', async () => {
@@ -72,10 +75,10 @@ describe('Handle Recovering User Infos', () => {
 
     jest.spyOn(webTokenStub, 'verify').mockImplementationOnce(() => {
       throw new TokenExpiredError('jwt expired', new Date());
-    })
+    });
 
     const emailValidatorStub = makeEmailValidator();
-    const encrypterStub = makeEncrypter()
+    const encrypterStub = makeEncrypter();
 
     const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 
@@ -88,7 +91,7 @@ describe('Handle Recovering User Infos', () => {
     const token = 'token';
     const webTokenStub = makeWebToken();
     const emailValidatorStub = makeEmailValidator();
-    const encrypterStub = makeEncrypter()
+    const encrypterStub = makeEncrypter();
     jest.spyOn(UserRepositoryMocked, 'findById').mockResolvedValueOnce(await Promise.resolve(undefined));
     const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
 
@@ -106,7 +109,7 @@ describe('Handle Recovering User Infos', () => {
     expect(response).toEqual(okWithPayload(response.payload as string, {
       id: response.userInfo?.userInfo.id,
       email: response.userInfo?.userInfo.email as string,
-      name: response.userInfo?.userInfo.name  as string,
+      name: response.userInfo?.userInfo.name as string,
     }));
   });
 });

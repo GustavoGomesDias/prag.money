@@ -3,14 +3,13 @@ import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter
 import BcryptService from '../../../serverless/services/BcryptService';
 
 jest.mock('bcrypt', () => ({
-  async hash (): Promise<string> {
-    return new Promise((resolve) => resolve('hash'));
-  }
+  async hash(): Promise<string> {
+    const result: string = await Promise.resolve('hash');
+    return result;
+  },
 }));
 
-const makeSut = (): EncryptAdapter => {
-  return new BcryptService();
-}
+const makeSut = (): EncryptAdapter => new BcryptService();
 
 describe('Bcrypt Service', () => {
   test('Should call with correct password', async () => {
@@ -23,8 +22,8 @@ describe('Bcrypt Service', () => {
   });
 
   test('Should return hash on success', async () => {
-      const sut = makeSut();
-      const hash = await sut.encrypt('password');
-      expect(hash).toBe('hash');
+    const sut = makeSut();
+    const hash = await sut.encrypt('password');
+    expect(hash).toBe('hash');
   });
 });

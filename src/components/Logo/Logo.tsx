@@ -12,19 +12,19 @@ const Logo = ({ fontSize, logo }: Size): JSX.Element => {
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
   return (
     <div
-      className={classes['logo']}
+      className={classes.logo}
       style={{
-        fontSize: fontSize,
+        fontSize,
       }}
     >
       <p className={`${classes['logo-type']}`}>
         {isSmallScreen ? 'p.$' : `Prag.${logo}$`}
       </p>
-      <span className={`${classes['typing-cursor']} ${classes['cursor']}`}>
+      <span className={`${classes['typing-cursor']} ${classes.cursor}`}>
         _
       </span>
     </div>
   );
-}
+};
 
 export default Logo;

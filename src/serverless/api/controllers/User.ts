@@ -1,16 +1,17 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable eqeqeq */
 import { Prisma } from '@prisma/client';
-import { validateEmail, validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
-import EncryptAdapter from '../../adapters/services/EncryptAdapter';
-import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
-import LoginProps from '../../data/usecases/Login';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import uniqueError from '../../error/uniqueError';
 import UserRepository from '../../repositories/users/UserRepository';
-import { badRequest, ok, serverError, HttpRequest, HttpResponse, notFound, created, okWithPayload } from '../helpers/http';
+import {
+  badRequest, serverError, HttpRequest, HttpResponse, created,
+} from '../helpers/http';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
+
   private readonly repository: UserRepository;
 
   constructor(
@@ -23,12 +24,14 @@ export default class UserController {
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
     try {
-      const { email, name, password, passwordConfirmation } = req.body.user as RegisterUser;
+      const {
+        email, name, password, passwordConfirmation,
+      } = req.body.user as RegisterUser;
 
       const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
 
       for (const field of lst) {
-        let response;
+        let response = '';
         if (field === 'name') response = 'Nome';
         if (field === 'email') response = 'E-mail';
         if (field == 'password') response = 'Senha';
@@ -40,7 +43,7 @@ export default class UserController {
       }
 
       if (!this.emailValidator.isEmail(email)) {
-        return badRequest('E-mail inválido.');;
+        return badRequest('E-mail inválido.');
       }
 
       if (password !== passwordConfirmation) {
@@ -52,12 +55,11 @@ export default class UserController {
       });
 
       return created('Usuário criado com sucesso!');
-
     } catch (err) {
       console.log(err);
       if (err instanceof Prisma.PrismaClientKnownRequestError) {
         if (err.code === 'P2002') {
-          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);  
+          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);
         }
       }
       return serverError('Erro no servidor, tente novamente mais tarde');

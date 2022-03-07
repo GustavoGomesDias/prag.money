@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 import UserModel from '../../data/models/UserModel';
 
 export default interface WebTokenAdapter {

@@ -9,9 +9,7 @@ export default class PaymentRepository extends GenericDAOImp<
   Prisma.PaymentUpdateArgs,
   Prisma.PaymentDeleteArgs
 > {
-
   constructor() {
     super(prisma.payment);
   }
-
 }

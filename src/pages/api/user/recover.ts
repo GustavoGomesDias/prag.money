@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
-import { makeTokenController } from '../../../serverless/factories/token/TokenFactory';
+import makeTokenController from '../../../serverless/factories/token/TokenFactory';
 
 export default async function handlerRecoverUserInfos(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<HttpResponse>>
+  res: NextApiResponse<Partial<HttpResponse>>,
 ) {
-
   const token = req.body.token as string;
   const tokenController = makeTokenController();
 

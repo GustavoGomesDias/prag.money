@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { Prisma, PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, created, HttpResponse, ok } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, created, HttpResponse,
+} from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import UserRepositoryMocked from '../../../mocks/mockUserRepository';
 
@@ -19,40 +23,12 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
   }
 
   return new EmailValidatorStub();
-}
-
-const makeWebToken = (): WebTokenAdapter => {
-  class WebTokenStub implements WebTokenAdapter {
-    sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
-      throw new Error('Method not implemented.');
-    }
-    verify(token: string): Omit<UserModel, 'password'> {
-      throw new Error('Method not implemented.');
-    }
-    
-  }
-
-  return new WebTokenStub();
-}
-
-const makeEncrypter = (): EncryptAdapter => {
-  class EncryptStub implements EncryptAdapter {
-    encrypt(password: string): Promise<string> {
-      throw new Error('Method not implemented.');
-    }
-    compare(password: string, passHashed: string): Promise<boolean> {
-      throw new Error('Method not implemented.');
-    }
-    
-  }
-
-  return new EncryptStub();
-}
+};
 
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
   return new UserController(emailValidatorStub, UserRepositoryMocked);
-}
+};
 
 afterAll(async () => {
   prisma.$disconnect();
@@ -67,7 +43,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: 'password',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -76,7 +52,7 @@ describe('Handle User Register test', () => {
 
     expect(httpResponse).toEqual(badRequest('Nome requerido (a).'));
   });
-  
+
   test('Should return 400 if no email is provided', async () => {
     const httpRequest = {
       body: {
@@ -85,7 +61,7 @@ describe('Handle User Register test', () => {
           email: '',
           password: 'password',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -103,7 +79,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: '',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -121,7 +97,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: 'password',
           passwordConfirmation: '',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -139,7 +115,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: '',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -157,7 +133,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: 'password',
           passwordConfirmation: 'pass',
-        }
+        },
       },
     };
     const userController = makeSut();
@@ -175,14 +151,12 @@ describe('Handle User Register test', () => {
           email: 'invalid_email2email,com',
           password: 'password',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
 
     const emailValidatorStub = makeEmailValidator();
-    const webTokenStub = makeWebToken();
-    const encrypterStub = makeEncrypter();
-    
+
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
     const userController = new UserController(emailValidatorStub, UserRepositoryMocked);
 
@@ -199,19 +173,19 @@ describe('Handle User Register test', () => {
           email: 'already_existis@email.com',
           password: 'password',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
     jest.spyOn(UserRepositoryMocked, 'addUser').mockImplementationOnce(async () => {
-      throw new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', 'P2002', '3.9.1')
+      throw new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', 'P2002', '3.9.1');
     });
     const userControllerStub = makeSut();
 
     const response = await userControllerStub.handleRegister(httpRequest);
 
-    expect(response).toEqual(badRequest('Email já existe, tente novamente.'))
+    expect(response).toEqual(badRequest('Email já existe, tente novamente.'));
   });
 
   test('Should return 200 if user is creted', async () => {
@@ -222,7 +196,7 @@ describe('Handle User Register test', () => {
           email: 'email@email.com',
           password: 'password',
           passwordConfirmation: 'password',
-        }
+        },
       },
     };
 

@@ -15,4 +15,4 @@ export default createContext<HistoryContextType>({
   nextPath: '/',
   handleUpdatePrevPath: (prevPath: string) => console.log(prevPath),
   handleUpdateNextPath: (nextPath: string) => console.log(nextPath),
-})
+});
