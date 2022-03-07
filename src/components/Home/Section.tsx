@@ -1,6 +1,10 @@
 import React from 'react';
-import { Flex, Box, chakra, useMediaQuery, Image, Button, Link } from '@chakra-ui/react';
-import { FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile } from 'react-icons/fa';
+import {
+  Flex, Box, chakra, useMediaQuery, Image, Button, Link,
+} from '@chakra-ui/react';
+import {
+  FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile,
+} from 'react-icons/fa';
 import classes from './Home.module.css';
 
 const Section = (): JSX.Element => {
@@ -53,14 +57,14 @@ const Section = (): JSX.Element => {
               marginRight="15px"
               w="full"
             >
-              <FaTshirt size="60px" style={{ marginRight: "15px" }} />
+              <FaTshirt size="60px" style={{ marginRight: '15px' }} />
             </Box>
             <Box
               borderRight="2px #00735C solid"
               marginRight="15px"
               w="full"
             >
-              <FaHamburger size="60px" style={{ marginRight: "15px" }} />
+              <FaHamburger size="60px" style={{ marginRight: '15px' }} />
             </Box>
             <Box
               marginRight="15px"
@@ -73,7 +77,7 @@ const Section = (): JSX.Element => {
         </Flex>
         {!isSmallScreen && (
           <Link href="/register">
-            <Button colorScheme='teal' width="100%" bg="#fff" size="lg" variant='outline' fontWeight="bold">
+            <Button colorScheme="teal" width="100%" bg="#fff" size="lg" variant="outline" fontWeight="bold">
               Cadastre-se
             </Button>
           </Link>
@@ -82,6 +86,6 @@ const Section = (): JSX.Element => {
       {!isSmallScreen && <Image src="/wallet.svg" alt="Wallet image" w="40%" />}
     </Flex>
   );
-}
+};
 
 export default Section;
