@@ -31,6 +31,8 @@ Este é um site que te ajuda a controlar seus gastos de forma dinâmica. Ele ain
 2. Crie uma branch com base nessa issue
 3. Crie um PR seguindo o [padrão estipulado](https://github.com/GustavoGomesDias/prag.money/blob/main/docs/issue.md)
 
+**Caso queira ver o que estou fazendo agora, pode entrar em [Projects](https://github.com/GustavoGomesDias/prag.money/projects/1)**
+
 ## Autor
 <table>
   <tr>
