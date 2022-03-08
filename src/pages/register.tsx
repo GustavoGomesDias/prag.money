@@ -14,9 +14,9 @@ import Form from '../components/Login/Form/Form';
 import Logo from '../components/Logo/Logo';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
-import api from '../services/api';
 import SEO from '../components/SEO';
 import ModalLoader from '../components/Loader/ModalLoader';
+import createAPI from '../services/fetchAPI/init';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -81,7 +81,9 @@ const Register = (): JSX.Element => {
     const data = {
       name, email, password, passwordConfirmation,
     };
-    const response = await api.post('/user/register', data);
+
+    const fetchAPI = createAPI();
+    const response = await fetchAPI.post('/user/register', data);
 
     if (response.data.message) {
       toast({

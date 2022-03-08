@@ -7,7 +7,7 @@ import { HttpResponse } from '../serverless/api/helpers/http';
 import LoginProps from '../serverless/data/usecases/Login';
 import api from '../services/api';
 import UserModel from '../serverless/data/models/UserModel';
-import FetchAPI from '../services/fetchAPI/FetchAPI';
+import createAPI from '../services/fetchAPI/init';
 
 export interface AuthProviderProps {
   children: JSX.Element | JSX.Element[]
@@ -44,9 +44,9 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   }, []);
 
   const signIn = useCallback(async ({ email, password }: LoginProps): Promise<boolean> => {
-    const fetchAPI = new FetchAPI('http://localhost:3000/api/user/login');
+    const fetchAPI = createAPI();
 
-    const response = await fetchAPI.post({
+    const response = await fetchAPI.post('/user/login', {
       email,
       password,
     });

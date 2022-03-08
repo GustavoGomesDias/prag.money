@@ -13,8 +13,8 @@ export default class FetchAPI {
     this.apiURL = apiURL;
   }
 
-  async get(): Promise<FetchReturns> {
-    const result = await fetch(this.apiURL, {
+  async get(complementUrl: string): Promise<FetchReturns> {
+    const result = await fetch(`${this.apiURL}/${complementUrl}`, {
       method: 'GET',
       headers: this.headers,
     });
@@ -27,8 +27,8 @@ export default class FetchAPI {
     };
   }
 
-  async post(info: any): Promise<FetchReturns> {
-    const result = await fetch(this.apiURL, {
+  async post(complementUrl: string, info: any): Promise<FetchReturns> {
+    const result = await fetch(`${this.apiURL}/${complementUrl}`, {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify(info),
