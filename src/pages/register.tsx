@@ -2,21 +2,20 @@ import React, {
   FormEvent, useState,
 } from 'react';
 import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { parseCookies } from 'nookies';
 import {
   Button, ButtonGroup, chakra, Flex, Grid, useToast,
 } from '@chakra-ui/react';
-import { FaLongArrowAltLeft } from 'react-icons/fa';
 
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies';
 import BasicInput from '../components/Login/BasicInput';
 import Form from '../components/Login/Form/Form';
-import Logo from '../components/Logo/Logo';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import SEO from '../components/SEO';
 import ModalLoader from '../components/Loader/ModalLoader';
 import api from '../services/fetchAPI/init';
+import FormHeader from '../components/FormHeader/FormHeader';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -115,19 +114,7 @@ const Register = (): JSX.Element => {
         flexDir="column"
         alignItems="center"
       >
-        <Flex
-          justifyContent="space-between"
-          w="full"
-          px="1em"
-          py="3em"
-        >
-          <Button onClick={() => handleRedirect('/')} variant="link" color="#00735C" fontSize="26px">
-            {' '}
-            <FaLongArrowAltLeft />
-            Voltar
-          </Button>
-          <Logo fontSize="40px" logo="Money" />
-        </Flex>
+        <FormHeader />
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastre-se</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>

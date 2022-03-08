@@ -1,6 +1,7 @@
 import React from 'react';
+import Link from 'next/link';
 import {
-  Flex, Box, chakra, useMediaQuery, Image, Button, Link,
+  Flex, Box, chakra, useMediaQuery, Image, Button,
 } from '@chakra-ui/react';
 import {
   FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile,
@@ -9,8 +10,7 @@ import classes from './Home.module.css';
 
 const Section = (): JSX.Element => {
   const [isSmallScreen] = useMediaQuery('(max-width: 768px)');
-  // const [isMdScreen] = useMediaQuery('(max-width: 1000px)');
-  // const [isLargeScreen] = useMediaQuery('(min-width: 1200px)');
+
   return (
     <Flex
       justifyContent="center"
@@ -76,7 +76,7 @@ const Section = (): JSX.Element => {
           <chakra.h3 fontSize="36px" textAlign="center">Use-as para trackear suas compras</chakra.h3>
         </Flex>
         {!isSmallScreen && (
-          <Link href="/register">
+          <Link href="/register" passHref>
             <Button colorScheme="teal" width="100%" bg="#fff" size="lg" variant="outline" fontWeight="bold">
               Cadastre-se
             </Button>
