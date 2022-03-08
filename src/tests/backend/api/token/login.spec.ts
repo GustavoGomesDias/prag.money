@@ -8,9 +8,9 @@ import {
   badRequest, HttpResponse, notFound, okWithPayload,
 } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
-import UserRepositoryMocked from '../../../mocks/mockUserRepository';
+import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
-jest.mock('../../../mocks/mockUserRepository');
+jest.mock('../../../mocks/mockUserDAOImp');
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -55,7 +55,7 @@ const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
-  return new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+  return new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
 };
 
 describe('Handle User Login Tests', () => {
@@ -88,7 +88,7 @@ describe('Handle User Login Tests', () => {
       email: 'email@email.com',
       password: 'password',
     };
-    jest.spyOn(UserRepositoryMocked, 'findByEmail').mockReturnValueOnce(Promise.resolve(undefined));
+    jest.spyOn(mockUserDAOImp, 'findByEmail').mockReturnValueOnce(Promise.resolve(undefined));
     const tokenController = makeSut();
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
@@ -106,7 +106,7 @@ describe('Handle User Login Tests', () => {
     const encrypterStub = makeEncrypter();
 
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
@@ -125,7 +125,7 @@ describe('Handle User Login Tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest('Senha incorreta.'));

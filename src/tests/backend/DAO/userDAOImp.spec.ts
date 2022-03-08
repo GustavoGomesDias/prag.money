@@ -1,9 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import UserModel from '../../../serverless/data/models/UserModel';
-import UserRepository from '../../../serverless/repositories/users/UserRepository';
-import UserRepositoryMocked from '../../mocks/mockUserRepository';
+import UserDAOImp from '../../../serverless/repositories/users/UserDAOImp';
+import mockUserDAOImp from '../../mocks/mockUserDAOImp';
 
-jest.mock('../../mocks/mockUserRepository');
+jest.mock('../../mocks/mockUserDAOImp');
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-const makeSut = (): UserRepository => UserRepositoryMocked;
+const makeSut = (): UserDAOImp => mockUserDAOImp;
 
 describe('User Repository test', () => {
   test('Should call addUer with correct values', async () => {
@@ -20,9 +20,9 @@ describe('User Repository test', () => {
       name: 'name',
       password: 'password',
     };
-    const repository = makeSut();
-    const spy = jest.spyOn(repository, 'addUser');
-    await repository.addUser(req);
+    const dao = makeSut();
+    const spy = jest.spyOn(dao, 'addUser');
+    await dao.addUser(req);
 
     expect(spy).toHaveBeenCalledWith(req);
   });
@@ -33,8 +33,8 @@ describe('User Repository test', () => {
       name: 'name',
       password: 'password',
     };
-    const repository = makeSut();
-    const result = await repository.addUser(req);
+    const dao = makeSut();
+    const result = await dao.addUser(req);
 
     expect(result).toEqual({
       email: 'email@email.com',
@@ -44,17 +44,17 @@ describe('User Repository test', () => {
 
   test('Should call findByEmail with correct email', async () => {
     const req = 'email@email.com';
-    const repository = makeSut();
-    const spy = jest.spyOn(repository, 'findByEmail');
-    await repository.findByEmail(req);
+    const dao = makeSut();
+    const spy = jest.spyOn(dao, 'findByEmail');
+    await dao.findByEmail(req);
 
     expect(spy).toHaveBeenCalledWith(req);
   });
 
   test('Should returns account user infos', async () => {
     const req = 'email@email.com';
-    const repository = makeSut();
-    const result = await repository.findByEmail(req);
+    const dao = makeSut();
+    const result = await dao.findByEmail(req);
 
     expect(result).toEqual({
       id: 1,

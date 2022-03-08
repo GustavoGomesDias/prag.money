@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import UserRepository from '../../serverless/repositories/users/UserRepository';
+import UserDAOImp from '../../serverless/repositories/users/UserDAOImp';
 
-const UserRepositoryMocked: UserRepository = jest.genMockFromModule('../../serverless/repositories/users/UserRepository');
+const mockUserDAOImp: UserDAOImp = jest.genMockFromModule('../../serverless/repositories/users/UserDAOImp');
 
-UserRepositoryMocked.addUser = jest.fn(async (req) => {
+mockUserDAOImp.addUser = jest.fn(async (req) => {
   const result = await Promise.resolve({
     email: req.email,
     name: req.name,
@@ -12,7 +12,7 @@ UserRepositoryMocked.addUser = jest.fn(async (req) => {
   return result;
 });
 
-UserRepositoryMocked.findById = jest.fn(async (data) => {
+mockUserDAOImp.findById = jest.fn(async (data) => {
   const result = await Promise.resolve({
     id: 1,
     email: 'email@email.com',
@@ -21,7 +21,7 @@ UserRepositoryMocked.findById = jest.fn(async (data) => {
   return result;
 });
 
-UserRepositoryMocked.findByEmail = jest.fn(async (info: string) => {
+mockUserDAOImp.findByEmail = jest.fn(async (info: string) => {
   const result = await Promise.resolve({
     id: 1,
     email: 'email@email.com',
@@ -32,4 +32,4 @@ UserRepositoryMocked.findByEmail = jest.fn(async (info: string) => {
   return result;
 });
 
-export default UserRepositoryMocked;
+export default mockUserDAOImp;

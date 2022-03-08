@@ -7,7 +7,7 @@ import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAd
 import TokenController from '../../../../serverless/api/controllers/TokenController';
 import { badRequest, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
-import UserRepositoryMocked from '../../../mocks/mockUserRepository';
+import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -56,7 +56,7 @@ const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
-  return new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+  return new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
 };
 
 describe('Handle Recovering User Infos', () => {
@@ -80,7 +80,7 @@ describe('Handle Recovering User Infos', () => {
     const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
 
-    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
@@ -92,8 +92,8 @@ describe('Handle Recovering User Infos', () => {
     const webTokenStub = makeWebToken();
     const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
-    jest.spyOn(UserRepositoryMocked, 'findById').mockResolvedValueOnce(await Promise.resolve(undefined));
-    const tokenController = new TokenController(emailValidatorStub, UserRepositoryMocked, webTokenStub, encrypterStub);
+    jest.spyOn(mockUserDAOImp, 'findById').mockResolvedValueOnce(await Promise.resolve(undefined));
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 

@@ -1,11 +1,11 @@
 import EmailValidator from '../../services/EmailValidator';
 import BcryptService from '../../services/BcryptService';
 import UserController from '../../api/controllers/User';
-import UserRepository from '../../repositories/users/UserRepository';
+import UserDAOImp from '../../repositories/users/UserDAOImp';
 
 export default function makeUserController(): UserController {
   const emailValidator = new EmailValidator();
   const bcryptService = new BcryptService();
-  const repository = new UserRepository(bcryptService);
-  return new UserController(emailValidator, repository);
+  const userDAO = new UserDAOImp(bcryptService);
+  return new UserController(emailValidator, userDAO);
 }

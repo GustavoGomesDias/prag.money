@@ -4,7 +4,8 @@ import { Prisma } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import uniqueError from '../../error/uniqueError';
-import UserRepository from '../../repositories/users/UserRepository';
+import UserDAOImp from '../../repositories/users/UserDAOImp';
+
 import {
   badRequest, serverError, HttpRequest, HttpResponse, created,
 } from '../helpers/http';
@@ -12,14 +13,14 @@ import {
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
 
-  private readonly repository: UserRepository;
+  private readonly userDAO: UserDAOImp;
 
   constructor(
     emailValidator: EmailValidatorAdapter,
-    repository: UserRepository,
+    userDAO: UserDAOImp,
   ) {
     this.emailValidator = emailValidator;
-    this.repository = repository;
+    this.userDAO = userDAO;
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -50,7 +51,7 @@ export default class UserController {
         return badRequest('Senha diferente de confirmar senha.');
       }
 
-      await this.repository.addUser({
+      await this.userDAO.addUser({
         email, name, password,
       });
 

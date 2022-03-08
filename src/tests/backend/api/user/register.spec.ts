@@ -2,18 +2,15 @@
 /* eslint-disable no-unused-vars */
 import { Prisma, PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
-import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
-import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
 import {
   badRequest, created, HttpResponse,
 } from '../../../../serverless/api/helpers/http';
-import UserModel from '../../../../serverless/data/models/UserModel';
-import UserRepositoryMocked from '../../../mocks/mockUserRepository';
+import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const prisma = new PrismaClient();
 
-jest.mock('../../../mocks/mockUserRepository');
+jest.mock('../../../mocks/mockUserDAOImp');
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
@@ -27,7 +24,7 @@ const makeEmailValidator = (): EmailValidatorAdapter => {
 
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
-  return new UserController(emailValidatorStub, UserRepositoryMocked);
+  return new UserController(emailValidatorStub, mockUserDAOImp);
 };
 
 afterAll(async () => {
@@ -158,7 +155,7 @@ describe('Handle User Register test', () => {
     const emailValidatorStub = makeEmailValidator();
 
     jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
-    const userController = new UserController(emailValidatorStub, UserRepositoryMocked);
+    const userController = new UserController(emailValidatorStub, mockUserDAOImp);
 
     const httpResponse: HttpResponse = await userController.handleRegister(httpRequest);
 
@@ -178,7 +175,7 @@ describe('Handle User Register test', () => {
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(UserRepositoryMocked, 'addUser').mockImplementationOnce(async () => {
+    jest.spyOn(mockUserDAOImp, 'addUser').mockImplementationOnce(async () => {
       throw new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`email`)', 'P2002', '3.9.1');
     });
     const userControllerStub = makeSut();

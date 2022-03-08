@@ -1,9 +1,29 @@
+import { Prisma } from '@prisma/client';
 import UserModel from '../../data/models/UserModel';
+
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
+import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 
-export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> implements UserDAO<C, R, U, D> {
+export default class UserDAOImp extends GenericDAOImp<
+  UserModel,
+  Prisma.UserFindUniqueArgs,
+  Prisma.UserUpdateInput,
+  Prisma.UserDeleteArgs
+> implements UserDAO<
+  UserModel,
+  Prisma.UserFindUniqueArgs,
+  Prisma.UserUpdateInput,
+  Prisma.UserDeleteArgs
+> {
+  private readonly encrypter: EncryptAdapter;
+
+  constructor(encrypter: EncryptAdapter) {
+    super(prisma.user);
+    this.encrypter = encrypter;
+  }
+
   async findByEmail(info: string): Promise<UserModel | undefined> {
     const user = await prisma.user.findUnique({
       where: {
@@ -24,6 +44,17 @@ export default class UserDAOImp<C, R, U, D> extends GenericDAOImp<C, R, U, D> im
       email,
       name,
       password,
+    };
+  }
+
+  async addUser(req: UserModel): Promise<Omit<UserModel, 'password'>> {
+    const { email, name, password } = req;
+    const hash = await this.encrypter.encrypt(password);
+    const result = await this.add({ email, name, password: hash }) as Omit<UserModel, 'password'>;
+
+    return {
+      email: result.email,
+      name: result.name,
     };
   }
 }
