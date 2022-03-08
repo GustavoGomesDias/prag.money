@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface FetchReturns {
+export interface FetchReturns<T> {
   statusCode: number
-  data: any
+  data: T
 }
 
 export interface HeaderPropertie {

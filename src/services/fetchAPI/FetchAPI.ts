@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FetchReturns, HeaderPropertie } from '../../types/FetchAPI';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export default class FetchAPI {
+export default class FetchAPI<T> {
   private readonly apiURL: string;
 
   private headers: Headers = new Headers({
@@ -13,13 +13,13 @@ export default class FetchAPI {
     this.apiURL = apiURL;
   }
 
-  async get(complementUrl: string): Promise<FetchReturns> {
+  async get(complementUrl: string): Promise<FetchReturns<T>> {
     const result = await fetch(`${this.apiURL}/${complementUrl}`, {
       method: 'GET',
       headers: this.headers,
     });
 
-    const data = await result.json();
+    const data = await result.json() as T;
 
     return {
       statusCode: result.status,
@@ -27,14 +27,14 @@ export default class FetchAPI {
     };
   }
 
-  async post(complementUrl: string, info: any): Promise<FetchReturns> {
+  async post(complementUrl: string, info: any): Promise<FetchReturns<T>> {
     const result = await fetch(`${this.apiURL}/${complementUrl}`, {
       method: 'POST',
       headers: this.headers,
       body: JSON.stringify(info),
     });
 
-    const data = await result.json();
+    const data = await result.json() as T;
 
     return {
       statusCode: result.status,

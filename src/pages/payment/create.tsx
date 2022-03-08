@@ -11,8 +11,9 @@ import BasicInput from '../../components/Login/BasicInput';
 import Form from '../../components/Login/Form/Form';
 import SEO from '../../components/SEO';
 import { AuthContext } from '../../context/AuthContext';
+import { HttpResponse } from '../../serverless/api/helpers/http';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
-import api from '../../services/api';
+import createAPI from '../../services/fetchAPI/init';
 import toastConfig from '../../utils/config/tostConfig';
 import { validationDay, validationField } from '../../utils/validations';
 
@@ -69,7 +70,8 @@ const Create = (): JSX.Element => {
     const data: PaymentModel = {
       nickname, default_value: defaultValue, reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
-    const response = await api.post('/payment/register', data);
+    const fetchAPI = createAPI<HttpResponse>();
+    const response = await fetchAPI.post('/payment/register', data);
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',

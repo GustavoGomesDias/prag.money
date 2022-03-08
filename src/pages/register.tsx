@@ -17,6 +17,7 @@ import toastConfig from '../utils/config/tostConfig';
 import SEO from '../components/SEO';
 import ModalLoader from '../components/Loader/ModalLoader';
 import createAPI from '../services/fetchAPI/init';
+import { HttpResponse } from '../serverless/api/helpers/http';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -82,7 +83,7 @@ const Register = (): JSX.Element => {
       name, email, password, passwordConfirmation,
     };
 
-    const fetchAPI = createAPI();
+    const fetchAPI = createAPI<HttpResponse>();
     const response = await fetchAPI.post('/user/register', data);
 
     if (response.data.message) {

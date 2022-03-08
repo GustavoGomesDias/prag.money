@@ -1,6 +1,6 @@
 import FetchAPI from './FetchAPI';
 
-const createAPI = (): FetchAPI => {
+const createAPI = <T>(): FetchAPI<T> => {
   if (process.env.NODE_ENV === 'production') {
     return new FetchAPI('https://pragmoney.vercel.app/api');
   }

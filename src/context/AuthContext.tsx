@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   createContext, useCallback, useEffect, useMemo, useState,
 } from 'react';
@@ -5,7 +6,6 @@ import { setCookie, parseCookies, destroyCookie } from 'nookies';
 
 import { HttpResponse } from '../serverless/api/helpers/http';
 import LoginProps from '../serverless/data/usecases/Login';
-import api from '../services/api';
 import UserModel from '../serverless/data/models/UserModel';
 import createAPI from '../services/fetchAPI/init';
 
@@ -25,13 +25,14 @@ export const AuthContext = createContext({} as AuthContextProps);
 export default function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<{ userInfo: Omit<UserModel, 'password'> } | null>(null);
   const isAuthenticated = !!user;
+  const fetchAPI = createAPI<HttpResponse>();
 
   useEffect(() => {
     const handleRecoverUserInfo = async () => {
       const { authToken } = parseCookies();
 
       if (authToken) {
-        const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/recover', {
+        const response = await fetchAPI.post('/user/recover', {
           token: authToken,
         });
 
@@ -44,8 +45,6 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   }, []);
 
   const signIn = useCallback(async ({ email, password }: LoginProps): Promise<boolean> => {
-    const fetchAPI = createAPI();
-
     const response = await fetchAPI.post('/user/login', {
       email,
       password,
