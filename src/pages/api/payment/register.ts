@@ -1,10 +1,11 @@
 /* eslint-disable camelcase */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
+import withProtect from '../../../serverless/api/middlewares/withProtect';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
 import makePaymentController from '../../../serverless/factories/payment/PaymentFactory';
 
-export default async function handlerLogin(
+async function handleRegisterPayment(
   req: NextApiRequest,
   res: NextApiResponse<Partial<HttpResponse>>,
 ) {
@@ -26,3 +27,5 @@ export default async function handlerLogin(
   const { message } = response;
   return res.status(response.statusCode).json({ message });
 }
+
+export default withProtect(handleRegisterPayment);

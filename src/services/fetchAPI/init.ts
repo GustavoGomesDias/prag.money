@@ -1,6 +1,7 @@
+import { HttpResponse } from '../../serverless/api/helpers/http';
 import FetchAPI from './FetchAPI';
 
-const createAPI = <T>(): FetchAPI<T> => {
+const createAPI = (): FetchAPI<HttpResponse> => {
   if (process.env.NODE_ENV === 'production') {
     return new FetchAPI('https://pragmoney.vercel.app/api');
   }
@@ -8,4 +9,6 @@ const createAPI = <T>(): FetchAPI<T> => {
   return new FetchAPI('http://localhost:3000/api');
 };
 
-export default createAPI;
+const api = createAPI();
+
+export default api;

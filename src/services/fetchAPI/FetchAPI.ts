@@ -46,7 +46,7 @@ export default class FetchAPI<T> {
     this.headers.set(headerName, content);
   }
 
-  getHeader(headerName: string): string | null {
-    return this.headers.get(headerName);
+  getHeader(): Headers {
+    return this.headers;
   }
 }
