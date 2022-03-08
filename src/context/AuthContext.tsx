@@ -1,14 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   createContext, useCallback, useEffect, useMemo, useState,
 } from 'react';
 import { setCookie, parseCookies, destroyCookie } from 'nookies';
-import { useToast } from '@chakra-ui/react';
 
 import { HttpResponse } from '../serverless/api/helpers/http';
 import LoginProps from '../serverless/data/usecases/Login';
-import api from '../services/api';
 import UserModel from '../serverless/data/models/UserModel';
-import toastConfig from '../utils/config/tostConfig';
+import createAPI from '../services/fetchAPI/init';
 
 export interface AuthProviderProps {
   children: JSX.Element | JSX.Element[]
@@ -25,15 +24,15 @@ export const AuthContext = createContext({} as AuthContextProps);
 
 export default function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [user, setUser] = useState<{ userInfo: Omit<UserModel, 'password'> } | null>(null);
-  const toast = useToast();
   const isAuthenticated = !!user;
+  const fetchAPI = createAPI<HttpResponse>();
 
   useEffect(() => {
     const handleRecoverUserInfo = async () => {
       const { authToken } = parseCookies();
 
       if (authToken) {
-        const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/recover', {
+        const response = await fetchAPI.post('/user/recover', {
           token: authToken,
         });
 
@@ -46,32 +45,29 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   }, []);
 
   const signIn = useCallback(async ({ email, password }: LoginProps): Promise<boolean> => {
-    const response = await api.post<Omit<HttpResponse, 'statusCode'>>('/user/login', {
+    const response = await fetchAPI.post('/user/login', {
       email,
       password,
     });
 
     if (response.data.error) {
-      toast({
-        title: '😔',
-        description: response.data.error,
-        status: 'error',
-        ...toastConfig,
-      });
       return false;
     }
+
     setCookie(undefined, 'authToken', response.data.payload as string, {
       maxAge: (60 * 60) * 48, // 2 days
     });
 
-    api.defaults.headers.common.Authorization = `Bearer ${response.data.payload}`;
+    fetchAPI.setHeader({
+      headerName: 'Authorization',
+      content: `Bearer ${response.data.payload}`,
+    });
     if (response.data.userInfo !== undefined) {
       setUser(response.data.userInfo);
       return true;
-      // push('/dashboard', '/dashboard');
     }
     return false;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signOut = useCallback((): void => {

@@ -69,6 +69,12 @@ const Login = (): JSX.Element => {
         ...toastConfig,
       });
     } else {
+      toast({
+        title: '👏',
+        description: 'Login efetuado com sucesso!',
+        status: 'success',
+        ...toastConfig,
+      });
       push('/dashboard', '/dashboard');
     }
   };
