@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { promisify } from 'util';
 import UserModel from '../../data/models/UserModel';
-import UserRepository from '../../repositories/users/UserRepository';
+import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import BcryptService from '../../services/BcryptService';
 
 import JWTService from '../../services/JWTService';
@@ -14,9 +14,11 @@ export interface GetUserAuthInfoRequest extends NextApiRequest {
 export type HandlerFunction = (req: NextApiRequest, res: NextApiResponse<Partial<HttpResponse>>) => Promise<void>;
 
 const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoRequest, res: NextApiResponse) => {
-  const { authorization } = req.headers;
+  const auth = req.headers.authorization as string;
+  console.log(req.headers);
+  console.log(auth);
 
-  if (!authorization) {
+  if (!auth) {
     return res.status(401).json({ error: 'Por favor, faça login para ter acesso!' });
   }
 
@@ -24,16 +26,17 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
     const jwtService = new JWTService();
     const verify = promisify(jwtService.verify);
 
-    const decoded = await verify(authorization.split(' ')[1]) as Omit<UserModel, 'password'>;
+    const decoded = await verify(auth.split(' ')[1]) as Omit<UserModel, 'password'>;
     const bcryptService = new BcryptService();
-    const repository = new UserRepository(bcryptService);
-    const user = await repository.findById({
+    const userDAO = new UserDAOImp(bcryptService);
+    const user = await userDAO.findById({
       where: {
         id: decoded.id,
       },
     }) as Omit<UserModel, 'password'>;
 
     if (!user) {
+      console.log('entrou 2');
       return res.status(401).json({ error: 'Usuário cadastrado neste Token aparenta não existir.' });
     }
 

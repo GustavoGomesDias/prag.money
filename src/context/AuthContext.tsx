@@ -34,7 +34,9 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
           token: authToken,
         });
 
-        const { userInfo } = response.data;
+        const { userInfo, payload } = response.data;
+
+        api.setAuthHeader(`Bearer ${payload}`);
 
         if (userInfo) setUser(userInfo);
       }
@@ -56,10 +58,9 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
       maxAge: (60 * 60) * 48, // 2 days
     });
 
-    api.setHeader({
-      headerName: 'authorization',
-      content: `Bearer ${response.data.payload}`,
-    });
+    const header = api.getHeader();
+    console.log(header);
+    api.setAuthHeader(`Bearer ${response.data.payload}`);
     if (response.data.userInfo !== undefined) {
       setUser(response.data.userInfo);
       return true;

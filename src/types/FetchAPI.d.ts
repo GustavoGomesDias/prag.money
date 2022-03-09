@@ -4,7 +4,8 @@ export interface FetchReturns<T> {
   data: T
 }
 
-export interface HeaderPropertie {
-  headerName: string
-  content: string
+export interface FetchAPIHeader {
+  'Content-Type': string
+  Accept: string
+  Authorization?: string
 }
