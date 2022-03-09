@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { promisify } from 'util';
+// import { promisify } from 'util';
 import UserModel from '../../data/models/UserModel';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import BcryptService from '../../services/BcryptService';
@@ -15,8 +15,6 @@ export type HandlerFunction = (req: NextApiRequest, res: NextApiResponse<Partial
 
 const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoRequest, res: NextApiResponse) => {
   const auth = req.headers.authorization as string;
-  console.log(req.headers);
-  console.log(auth);
 
   if (!auth) {
     return res.status(401).json({ error: 'Por favor, faça login para ter acesso!' });
@@ -24,9 +22,8 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
 
   try {
     const jwtService = new JWTService();
-    const verify = promisify(jwtService.verify);
 
-    const decoded = await verify(auth.split(' ')[1]) as Omit<UserModel, 'password'>;
+    const decoded = jwtService.verify(auth.split(' ')[1]) as Omit<UserModel, 'password'>;
     const bcryptService = new BcryptService();
     const userDAO = new UserDAOImp(bcryptService);
     const user = await userDAO.findById({
@@ -36,13 +33,13 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
     }) as Omit<UserModel, 'password'>;
 
     if (!user) {
-      console.log('entrou 2');
       return res.status(401).json({ error: 'Usuário cadastrado neste Token aparenta não existir.' });
     }
 
     req.user = user;
 
-    return handler(req, res);
+    console.log('Chegou aqui!');
+    return await handler(req, res);
   } catch (err) {
     console.log(err);
 

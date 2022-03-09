@@ -57,9 +57,6 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
     setCookie(undefined, 'authToken', response.data.payload as string, {
       maxAge: (60 * 60) * 48, // 2 days
     });
-
-    const header = api.getHeader();
-    console.log(header);
     api.setAuthHeader(`Bearer ${response.data.payload}`);
     if (response.data.userInfo !== undefined) {
       setUser(response.data.userInfo);
