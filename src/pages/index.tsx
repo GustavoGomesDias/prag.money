@@ -1,6 +1,7 @@
 import React from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 
+import { parseCookies } from 'nookies';
 import Header from '../components/Header/Header';
 import SEO from '../components/SEO';
 import Home from '../components/Home/Home';
@@ -14,3 +15,19 @@ const HomePage: NextPage = () => (
 );
 
 export default HomePage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const { authToken } = parseCookies(ctx);
+  if (authToken) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
