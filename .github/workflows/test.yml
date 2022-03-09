@@ -11,17 +11,18 @@ jobs:
   Job1:
     name: run tests
     runs-on: "ubuntu-latest"
-    env:
-      DATABASE_URL: ${{ env.DATABASE_URL }}
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
     steps:
+      - uses: allenevans/set-env@v2.0.0
       - uses: actions/checkout@v2
       - name: use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
       - run: npm ci
       - run: npm test
