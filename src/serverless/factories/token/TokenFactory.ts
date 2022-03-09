@@ -2,7 +2,7 @@ import EmailValidator from '../../services/EmailValidator';
 import BcryptService from '../../services/BcryptService';
 import JWTService from '../../services/JWTService';
 import TokenController from '../../api/controllers/TokenController';
-import UserDAOImp from '../../repositories/users/UserDAOImp';
+import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 export default function makeTokenController(): TokenController {
   const emailValidator = new EmailValidator();

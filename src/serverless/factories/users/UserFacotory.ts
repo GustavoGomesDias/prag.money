@@ -1,7 +1,7 @@
 import EmailValidator from '../../services/EmailValidator';
 import BcryptService from '../../services/BcryptService';
 import UserController from '../../api/controllers/User';
-import UserDAOImp from '../../repositories/users/UserDAOImp';
+import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 export default function makeUserController(): UserController {
   const emailValidator = new EmailValidator();

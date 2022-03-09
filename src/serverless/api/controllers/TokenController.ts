@@ -5,7 +5,7 @@ import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
-import UserRepository from '../../repositories/users/UserRepository';
+import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import {
   badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../helpers/http';
@@ -13,7 +13,7 @@ import {
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
 
-  private readonly repository: UserRepository;
+  private readonly userDAOImp: UserDAOImp;
 
   private readonly webToken: WebTokenAdapter;
 
@@ -21,12 +21,12 @@ export default class TokenController {
 
   constructor(
     emailValidator: EmailValidatorAdapter,
-    repository: UserRepository,
+    userDAOImp: UserDAOImp,
     webToken: WebTokenAdapter,
     encrypter: EncryptAdapter,
   ) {
     this.emailValidator = emailValidator;
-    this.repository = repository;
+    this.userDAOImp = userDAOImp;
     this.webToken = webToken;
     this.encrypter = encrypter;
   }
@@ -41,7 +41,7 @@ export default class TokenController {
         return badRequest('Senha requerido (a).');
       }
 
-      const user = await this.repository.findByEmail(email);
+      const user = await this.userDAOImp.findByEmail(email);
       if (!user || user === undefined) {
         return notFound('Usuário não existente, considere criar uma conta.');
       }
@@ -80,7 +80,7 @@ export default class TokenController {
 
       const result = this.webToken.verify(token);
 
-      const user = await this.repository.findById({
+      const user = await this.userDAOImp.findById({
         where: {
           id: result.id,
         },

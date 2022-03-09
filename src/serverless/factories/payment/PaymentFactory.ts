@@ -1,7 +1,7 @@
 import PaymentController from '../../api/controllers/PaymentController';
-import PaymentRepository from '../../repositories/payment/PaymentRepository';
+import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 
 export default function makePaymentController(): PaymentController {
-  const paymentRepository = new PaymentRepository();
+  const paymentRepository = new PaymentDAOImp();
   return new PaymentController(paymentRepository);
 }

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import UserDAOImp from '../../serverless/repositories/users/UserDAOImp';
+import UserDAOImp from '../../serverless/DAOImp/users/UserDAOImp';
 
-const mockUserDAOImp: UserDAOImp = jest.genMockFromModule('../../serverless/repositories/users/UserDAOImp');
+const mockUserDAOImp: UserDAOImp = jest.genMockFromModule('../../serverless/DAOImp/users/UserDAOImp');
 
 mockUserDAOImp.addUser = jest.fn(async (req) => {
   const result = await Promise.resolve({

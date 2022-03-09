@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import UserModel from '../../../serverless/data/models/UserModel';
-import UserDAOImp from '../../../serverless/repositories/users/UserDAOImp';
+import UserDAOImp from '../../../serverless/DAOImp/users/UserDAOImp';
 import mockUserDAOImp from '../../mocks/mockUserDAOImp';
 
 jest.mock('../../mocks/mockUserDAOImp');

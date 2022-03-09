@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { validationDay, validationField } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import uniqueError from '../../error/uniqueError';
-import PaymentRepository from '../../repositories/payment/PaymentRepository';
+import PaymentRepository from '../../DAOImp/payment/PaymentDAOImp';
 import {
   badRequest, HttpResponse, ok, serverError,
 } from '../helpers/http';

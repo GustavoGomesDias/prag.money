@@ -2,9 +2,9 @@ import { Prisma } from '@prisma/client';
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
 import { badRequest, ok } from '../../../../serverless/api/helpers/http';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
-import PaymentRepositoryMocked from '../../../mocks/mockPaymentRepository';
+import PaymentRepositoryMocked from '../../../mocks/mockPaymentDAOImp';
 
-jest.mock('../../../mocks/mockPaymentRepository');
+jest.mock('../../../mocks/mockPaymentDAOImp');
 
 const makeSut = (): PaymentController => new PaymentController(PaymentRepositoryMocked);
 
