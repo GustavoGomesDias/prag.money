@@ -44,7 +44,7 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
     handleRecoverUserInfo();
   }, []);
 
-  const signIn = useCallback(async ({ email, password }: LoginProps): Promise<boolean> => {
+  const signIn = async ({ email, password }: LoginProps): Promise<boolean> => {
     const response = await api.post('/user/login', {
       email,
       password,
@@ -64,7 +64,7 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
     }
     return false;
     // // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
   const signOut = useCallback((): void => {
     destroyCookie({}, 'authToken', {
