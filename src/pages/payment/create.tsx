@@ -70,7 +70,6 @@ const Create = (): JSX.Element => {
       nickname, default_value: defaultValue, reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
     const response = await api.post('/payment/register', data);
-    console.log(api.getHeader());
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',

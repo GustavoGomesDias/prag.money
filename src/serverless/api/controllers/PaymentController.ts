@@ -3,16 +3,16 @@ import { Prisma } from '@prisma/client';
 import { validationDay, validationField } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import uniqueError from '../../error/uniqueError';
-import PaymentRepository from '../../DAOImp/payment/PaymentDAOImp';
+import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
   badRequest, HttpResponse, ok, serverError,
 } from '../helpers/http';
 
 export default class PaymentController {
-  private readonly paymentRepository: PaymentRepository;
+  private readonly paymentDAOImp: PaymentDAOImp;
 
-  constructor(paymentRepository: PaymentRepository) {
-    this.paymentRepository = paymentRepository;
+  constructor(paymentDAOImp: PaymentDAOImp) {
+    this.paymentDAOImp = paymentDAOImp;
   }
 
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
@@ -37,7 +37,7 @@ export default class PaymentController {
         return badRequest('Id de usuário inválido.');
       }
 
-      await this.paymentRepository.add(paymentInfos);
+      await this.paymentDAOImp.add(paymentInfos);
 
       return ok('Forma de pagamento criado com sucesso!');
     } catch (err) {
