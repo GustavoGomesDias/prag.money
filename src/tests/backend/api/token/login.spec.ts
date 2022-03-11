@@ -5,7 +5,7 @@ import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdap
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
 import {
-  badRequest, HttpResponse, notFound, okWithPayload,
+  badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
@@ -131,23 +131,24 @@ describe('Handle User Login Tests', () => {
     expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
   });
 
-  test('Should return 200 and user infos if success login ', async () => {
+  test('Should return 500 if server error ocurred ', async () => {
     const infos = {
       email: 'email@email.com',
       password: 'password',
     };
 
-    const tokenController = makeSut();
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(mockUserDAOImp, 'findByEmail').mockImplementationOnce(async () => {
+      throw new Error('Server Error');
+    });
 
+    const tokenController = makeSut();
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(okWithPayload('token', {
-      name: 'name',
-      email: 'email@email.com',
-    }));
+    expect(httpResponse).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
   });
 
-  test('Should return 500 if server error ocurred', async () => {
+  test('Should return 200 and user infos if success login', async () => {
     const infos = {
       email: 'email@email.com',
       password: 'password',

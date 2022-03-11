@@ -5,7 +5,9 @@ import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
-import { badRequest, notFound, okWithPayload } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, HttpResponse, notFound, okWithPayload, serverError,
+} from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
@@ -98,6 +100,20 @@ describe('Handle Recovering User Infos', () => {
     const response = await tokenController.handleRecoverUserInfos(token);
 
     expect(response).toEqual(notFound('Usuário não existe.'));
+  });
+
+  test('Should return 500 if server error ocurred ', async () => {
+    const token = 'token';
+
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async () => {
+      throw new Error('Server Error');
+    });
+
+    const tokenController = makeSut();
+    const httpResponse: HttpResponse = await tokenController.handleRecoverUserInfos(token);
+
+    expect(httpResponse).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
   });
 
   test('Should return 200 and user infos if success recovering user infos', async () => {
