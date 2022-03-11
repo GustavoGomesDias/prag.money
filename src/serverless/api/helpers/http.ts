@@ -19,33 +19,33 @@ export interface HttpRequest {
 
 export const badRequest = (error: string): HttpResponse => ({
   statusCode: 400,
-  error: error,
+  error,
 });
 
 export const serverError = (error?: string): HttpResponse => ({
   statusCode: 500,
-  error: error,
+  error,
 });
 
 export const ok = (message: string): HttpResponse => ({
   statusCode: 200,
-  message: message,
+  message,
 });
 
 export const okWithPayload = (payload: string, userInfos: Omit<UserModel, 'password'>): HttpResponse => ({
   statusCode: 200,
-  payload: payload,
+  payload,
   userInfo: {
     userInfo: userInfos,
-  }
+  },
 });
 
 export const created = (message: string): HttpResponse => ({
   statusCode: 201,
-  message: message,
+  message,
 });
 
 export const notFound = (error: string): HttpResponse => ({
   statusCode: 404,
-  error: error,
+  error,
 });

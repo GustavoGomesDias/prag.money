@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import UserModel from '../../data/models/UserModel';
 
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
-import UserDAO from './UserDAO';
+import UserDAO from './IUserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 
