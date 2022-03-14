@@ -3,6 +3,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createMocks, MockResponse, RequestMethod } from 'node-mocks-http';
 import withProtect, { GetUserAuthInfoRequest } from '../../../../serverless/api/middlewares/withProtect';
+import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import JWTService from '../../../../serverless/services/JWTService';
 
 describe('Auth middleare test', () => {
@@ -51,6 +52,12 @@ describe('Auth middleare test', () => {
       name: 'name',
       email: 'email@email.com',
     }));
+
+    jest.spyOn(UserDAOImp.prototype, 'findById').mockImplementationOnce(async (data) => {
+      const result = await Promise.resolve(undefined);
+
+      return result;
+    });
     const response = await withProtect(mockAPIEndPointFunction)(req, res) as unknown as MockResponse<NextApiResponse>;
     expect(response.statusCode).toEqual(404);
     // eslint-disable-next-line no-underscore-dangle
