@@ -71,4 +71,24 @@ describe('Save Purchase controller tests', () => {
 
     expect(httpResponse).toEqual(notFound('Usuário não existe.'));
   });
+
+  test('Should return 400 if payment not exists', async () => {
+    const infos: AddPurchase = {
+      description: 'descripion',
+      purchase_date: '2021-1-1',
+      value: 50,
+      user_id: 1,
+      paymentId: 1,
+    };
+
+    jest.spyOn(mockPaymentDAOImp, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(false);
+      return result;
+    });
+    const userController = makeSut();
+
+    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+
+    expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
+  });
 });
