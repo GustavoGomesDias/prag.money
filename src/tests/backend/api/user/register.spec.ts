@@ -4,7 +4,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
 import {
-  badRequest, created, HttpResponse,
+  badRequest, created, HttpResponse, serverError,
 } from '../../../../serverless/api/helpers/http';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
@@ -183,6 +183,29 @@ describe('Handle User Register test', () => {
     const response = await userControllerStub.handleRegister(httpRequest);
 
     expect(response).toEqual(badRequest('Email já existe, tente novamente.'));
+  });
+
+  test('Should return 500 if server returns a error', async () => {
+    const httpRequest = {
+      body: {
+        user: {
+          name: 'name',
+          email: 'already_existis@email.com',
+          password: 'password',
+          passwordConfirmation: 'password',
+        },
+      },
+    };
+
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(mockUserDAOImp, 'addUser').mockImplementationOnce(async () => {
+      throw new Error('Server Error');
+    });
+    const userControllerStub = makeSut();
+
+    const response = await userControllerStub.handleRegister(httpRequest);
+
+    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
   });
 
   test('Should return 200 if user is creted', async () => {

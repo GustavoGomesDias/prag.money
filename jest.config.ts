@@ -24,23 +24,23 @@ export default {
   // collectCoverageFrom: undefined,
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/serverless/*/I[A-Z].ts',
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  coverageReporters: [
+    'json',
+    'text',
+    'lcov',
+    'clover',
+  ],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -199,17 +199,18 @@ export default {
     '!**/.next/**',
     '!**/*.config.*',
     '!**/coverage/**',
-    "!**/styles/**",
-    "!**/adapters/**",
-    "!**/models/**",
-    "!**/usecases/**",
-    "!**/config/**",
-    "!**/services/**",
-    "!**/pages/**",
-    "!**/tests/**",
-    "!**/factories/**",
-    "!**/context/**",
-    "!**/.eslintrc.js"
+    '!**/styles/**',
+    '!**/adapters/**',
+    '!**/models/**',
+    '!**/usecases/**',
+    '!**/config/**',
+    '!**/services/**',
+    '!**/pages/**',
+    '!**/tests/**',
+    '!**/factories/**',
+    '!**/context/**',
+    '!**/.eslintrc.js',
+    '!**/I[A-Z]*.{ts}',
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
@@ -221,7 +222,7 @@ export default {
 
     // Handle image imports
     // https://jestjs.io/docs/webpack#handling-static-assets
-    '^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$': `<rootDir>/__mocks__/fileMock.js`,
+    '^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$': '<rootDir>/__mocks__/fileMock.js',
 
     // Handle module aliases
     '^@/components/(.*)$': '<rootDir>/components/$1',
@@ -238,5 +239,5 @@ export default {
   transformIgnorePatterns: [
     '/node_modules/',
     '^.+\\.module\\.(css|sass|scss)$',
-  ]
+  ],
 };

@@ -1,7 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { PrismaClient } from '@prisma/client';
 import UserModel from '../../../serverless/data/models/UserModel';
 import UserDAOImp from '../../../serverless/DAOImp/users/UserDAOImp';
-import mockUserDAOImp from '../../mocks/mockUserDAOImp';
+import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
+import prismaConfig from '../../../serverless/data/prisma/config';
+import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
@@ -11,30 +15,78 @@ afterAll(async () => {
   await prisma.$disconnect();
 });
 
-const makeSut = (): UserDAOImp => mockUserDAOImp;
+const makeEncrypter = (): EncryptAdapter => {
+  class EncryptStub implements EncryptAdapter {
+    async encrypt(password: string): Promise<string> {
+      const result = await Promise.resolve('hash');
+      return result;
+    }
 
-describe('User Repository test', () => {
-  test('Should call addUer with correct values', async () => {
-    const req: UserModel = {
-      email: 'email@email.com',
-      name: 'name',
-      password: 'password',
-    };
-    const dao = makeSut();
-    const spy = jest.spyOn(dao, 'addUser');
-    await dao.addUser(req);
+    async compare(password: string, passHashed: string): Promise<boolean> {
+      const result = await Promise.resolve(true);
+      return result;
+    }
+  }
 
-    expect(spy).toHaveBeenCalledWith(req);
+  return new EncryptStub();
+};
+
+const makeSut = (): UserDAOImp => {
+  const encrypter = makeEncrypter();
+
+  return new UserDAOImp(encrypter);
+};
+
+describe('User DAO Implementation test', () => {
+  test('Should call constructor with prisma.user', () => {
+    const encrypter = makeEncrypter();
+    const instance = new UserDAOImp(encrypter);
+
+    // eslint-disable-next-line dot-notation
+    expect(instance['encrypter']).toEqual(encrypter);
+    // eslint-disable-next-line dot-notation
+    expect(instance['entity']).toEqual(prismaConfig.user);
   });
 
-  test('Should return created account email and name infos', async () => {
-    const req: UserModel = {
+  test('Should call addUer with correct values', async () => {
+    const info: UserModel = {
       email: 'email@email.com',
       name: 'name',
       password: 'password',
     };
-    const dao = makeSut();
-    const result = await dao.addUser(req);
+
+    jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async (req) => {
+      const result = await Promise.resolve({
+        email: req.email,
+        name: req.name,
+      });
+      return result;
+    });
+
+    const userDAOStub = makeSut();
+    const spy = jest.spyOn(userDAOStub, 'addUser');
+    await userDAOStub.addUser(info);
+
+    expect(spy).toHaveBeenCalledWith(info);
+  });
+
+  test('Should addUer returns correct values', async () => {
+    const info: UserModel = {
+      email: 'email@email.com',
+      name: 'name',
+      password: 'password',
+    };
+
+    jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async (req) => {
+      const result = await Promise.resolve({
+        email: req.email,
+        name: req.name,
+      });
+      return result;
+    });
+
+    const userDAOStub = makeSut();
+    const result = await userDAOStub.addUser(info);
 
     expect(result).toEqual({
       email: 'email@email.com',
@@ -42,25 +94,44 @@ describe('User Repository test', () => {
     });
   });
 
-  test('Should call findByEmail with correct email', async () => {
+  test('Should findByEmail with correct email', async () => {
     const req = 'email@email.com';
-    const dao = makeSut();
-    const spy = jest.spyOn(dao, 'findByEmail');
-    await dao.findByEmail(req);
+    const userDAOImpStub = makeSut();
+    const spy = jest.spyOn(userDAOImpStub, 'findByEmail');
+    await userDAOImpStub.findByEmail(req);
 
     expect(spy).toHaveBeenCalledWith(req);
   });
 
-  test('Should returns account user infos', async () => {
+  test('Should findByEmail returns account user infos', async () => {
     const req = 'email@email.com';
-    const dao = makeSut();
-    const result = await dao.findByEmail(req);
+
+    jest.spyOn(UserDAOImp.prototype, 'findByEmail').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        id: 1,
+        email: 'teste@teste.com',
+        name: 'name',
+        password: 'hash',
+      });
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.findByEmail(req);
 
     expect(result).toEqual({
       id: 1,
-      email: 'email@email.com',
+      email: 'teste@teste.com',
       name: 'name',
       password: 'hash',
     });
+  });
+
+  test('Should findByEmail returns undefined if user not exists', async () => {
+    const req = 'email@email.com';
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.findByEmail(req);
+
+    expect(result).toEqual(undefined);
   });
 });
