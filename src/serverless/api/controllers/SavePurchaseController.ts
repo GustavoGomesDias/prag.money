@@ -6,7 +6,9 @@ import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/Purchase';
 import AddPurchase from '../../data/usecases/AddPurchase';
-import { badRequest, HttpResponse, notFound } from '../helpers/http';
+import {
+  badRequest, HttpResponse, notFound, ok, serverError,
+} from '../helpers/http';
 
 export default class SavePurchaseController {
   private readonly paymentDAO: PaymentDAOImp;
@@ -25,20 +27,44 @@ export default class SavePurchaseController {
   }
 
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
-    const {
-      description, purchase_date, value, user_id, paymentId,
-    } = infos;
+    try {
+      const {
+        description, purchase_date, value, user_id, paymentId,
+      } = infos;
 
-    if (validationField(description) || validationField(purchase_date)) {
-      return badRequest('Descrição ou data de compra inválidas.');
-    }
+      if (validationField(description) || validationField(purchase_date)) {
+        return badRequest('Descrição ou data de compra inválidas.');
+      }
 
-    if (value < 0) {
-      return badRequest('Valor não pode ser menor que zero');
-    }
+      if (value < 0) {
+        return badRequest('Valor da compra inválido.');
+      }
 
-    if (!this.userDAO.checkIfUserExists(user_id)) {
-      return notFound('Usuário não existe');
+      if (!(await this.userDAO.checkIfUserExists(user_id))) {
+        return notFound('Usuário não existe.');
+      }
+
+      if (!(await this.paymentDAO.checkIfPaymentExists(paymentId))) {
+        return notFound('Forma de pagamento não existe.');
+      }
+
+      const result = await this.purchaseDAO.add({
+        description,
+        purchase_date,
+        user_id,
+        value,
+      }) as PurchaseModel;
+
+      await this.payWithDAO.add({
+        payment_id: paymentId,
+        purchase_id: result.id as number,
+      });
+
+      return ok('Compra criada com sucesso!');
+    } catch (err) {
+      console.log(err);
+
+      return serverError('Erro no servidor, tente novamente mais tarde.');
     }
   }
 }
