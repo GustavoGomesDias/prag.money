@@ -3,7 +3,6 @@
 import { PrismaClient } from '@prisma/client';
 import UserModel from '../../../serverless/data/models/UserModel';
 import UserDAOImp from '../../../serverless/DAOImp/users/UserDAOImp';
-import mockUserDAOImp from '../../mocks/mockUserDAOImp';
 import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
@@ -95,15 +94,16 @@ describe('User DAO Implementation test', () => {
     });
   });
 
-  test('Should call findByEmail with correct email', async () => {
+  test('Should findByEmail with correct email', async () => {
     const req = 'email@email.com';
-    const spy = jest.spyOn(mockUserDAOImp, 'findByEmail');
-    await mockUserDAOImp.findByEmail(req);
+    const userDAOImpStub = makeSut();
+    const spy = jest.spyOn(userDAOImpStub, 'findByEmail');
+    await userDAOImpStub.findByEmail(req);
 
     expect(spy).toHaveBeenCalledWith(req);
   });
 
-  test('Should returns account user infos', async () => {
+  test('Should findByEmail returns account user infos', async () => {
     const req = 'email@email.com';
 
     jest.spyOn(UserDAOImp.prototype, 'findByEmail').mockImplementationOnce(async (infos) => {
@@ -125,5 +125,13 @@ describe('User DAO Implementation test', () => {
       name: 'name',
       password: 'hash',
     });
+  });
+
+  test('Should findByEmail returns undefined if user not exists', async () => {
+    const req = 'email@email.com';
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.findByEmail(req);
+
+    expect(result).toEqual(undefined);
   });
 });
