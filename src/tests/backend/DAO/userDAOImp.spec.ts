@@ -105,11 +105,23 @@ describe('User DAO Implementation test', () => {
 
   test('Should returns account user infos', async () => {
     const req = 'email@email.com';
-    const result = await mockUserDAOImp.findByEmail(req);
+
+    jest.spyOn(UserDAOImp.prototype, 'findByEmail').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        id: 1,
+        email: 'teste@teste.com',
+        name: 'name',
+        password: 'hash',
+      });
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.findByEmail(req);
 
     expect(result).toEqual({
       id: 1,
-      email: 'email@email.com',
+      email: 'teste@teste.com',
       name: 'name',
       password: 'hash',
     });

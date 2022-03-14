@@ -7,7 +7,7 @@
     "start": "next start",
     "lint": "next lint",
     "test-w": "jest --watch",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.7.4",
