@@ -52,6 +52,21 @@ describe('Save Purchase controller tests', () => {
     expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
   });
 
+  test('Should return 400 if value is invalid', async () => {
+    const infos: AddPurchase = {
+      description: 'descripion',
+      purchase_date: '2022-01-1',
+      value: -50,
+      user_id: 1,
+      paymentId: 1,
+    };
+    const userController = makeSut();
+
+    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+
+    expect(httpResponse).toEqual(badRequest('Valor da compra inválido.'));
+  });
+
   test('Should return 400 if user not exists', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
