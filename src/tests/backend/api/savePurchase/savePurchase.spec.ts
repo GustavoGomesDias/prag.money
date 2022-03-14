@@ -35,4 +35,19 @@ describe('Save Purchase controller tests', () => {
 
     expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
   });
+
+  test('Should return 400 if no purchase date is provided', async () => {
+    const infos: AddPurchase = {
+      description: 'descripion',
+      purchase_date: '',
+      value: 50,
+      user_id: 1,
+      paymentId: 1,
+    };
+    const userController = makeSut();
+
+    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+
+    expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
+  });
 });
