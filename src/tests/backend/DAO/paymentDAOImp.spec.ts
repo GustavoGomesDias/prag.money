@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
 import prisma from '../../../serverless/data/prisma/config';
+import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 const makeSut = (): PaymentDAOImp => {
   const paymentDAOStub = new PaymentDAOImp();
@@ -33,7 +36,7 @@ describe('Payment DAO Implementation tests', () => {
 
       return result;
     });
-    const response = await userDAOImpStub.checkIfUserExists(req);
+    const response = await userDAOImpStub.checkIfPaymentExists(req);
 
     expect(response).toBeFalsy();
   });
@@ -45,13 +48,15 @@ describe('Payment DAO Implementation tests', () => {
     jest.spyOn(GenericDAOImp.prototype, 'findById').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
         id: 1,
-        name: 'name',
-        email: 'email@email.com',
+        nickname: 'nick',
+        default_value: 800,
+        reset_day: 1,
+        user_id: 1,
       });
 
       return result;
     });
-    const response = await userDAOImpStub.checkIfUserExists(req);
+    const response = await userDAOImpStub.checkIfPaymentExists(req);
 
     expect(response).toBeTruthy();
   });
