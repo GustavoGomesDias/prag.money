@@ -134,4 +134,46 @@ describe('User DAO Implementation test', () => {
 
     expect(result).toEqual(undefined);
   });
+
+  test('Should call checkIfUserExistis if correct user', async () => {
+    const req = 1;
+    const userDAOImpStub = makeSut();
+
+    const spy = jest.spyOn(userDAOImpStub, 'checkIfUserExists');
+    await userDAOImpStub.checkIfUserExists(req);
+
+    expect(spy).toHaveBeenCalledWith(req);
+  });
+
+  test('Should checkIfUserExistis returns false if user not exists', async () => {
+    const req = 1;
+    const userDAOImpStub = makeSut();
+
+    jest.spyOn(GenericDAOImp.prototype, 'findById').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(undefined);
+
+      return result;
+    });
+    const response = await userDAOImpStub.checkIfUserExists(req);
+
+    expect(response).toBeFalsy();
+  });
+
+  test('Should checkIfUserExistis returns true if user exists', async () => {
+    const req = 1;
+    const userDAOImpStub = makeSut();
+
+    jest.spyOn(GenericDAOImp.prototype, 'findById').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        id: 1,
+        name: 'name',
+        email: 'email@email.com',
+      });
+
+      return result;
+    });
+    const response = await userDAOImpStub.checkIfUserExists(req);
+
+    expect(response).toBeTruthy();
+  });
 });

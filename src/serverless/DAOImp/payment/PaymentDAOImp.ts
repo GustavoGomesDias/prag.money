@@ -3,7 +3,7 @@ import PaymentModel from '../../data/models/PaymentModel';
 import prisma from '../../data/prisma/config';
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 
-export default class PaymentRepository extends GenericDAOImp<
+export default class PaymentDAOImp extends GenericDAOImp<
   PaymentModel,
   Prisma.PaymentFindUniqueArgs,
   Prisma.PaymentUpdateArgs,

@@ -57,4 +57,18 @@ export default class UserDAOImp extends GenericDAOImp<
       name: result.name,
     };
   }
+
+  async checkIfUserExists(userId: number): Promise<boolean> {
+    const user = await this.findById({
+      where: {
+        id: userId,
+      },
+    }) as unknown as Omit<UserModel, 'password'> | undefined | null;
+
+    if (!user || user === undefined || user === null) {
+      return false;
+    }
+
+    return true;
+  }
 }
