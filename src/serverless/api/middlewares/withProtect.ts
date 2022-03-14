@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // import { promisify } from 'util';
+import { JsonWebTokenError } from 'jsonwebtoken';
 import UserModel from '../../data/models/UserModel';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import BcryptService from '../../services/BcryptService';
@@ -14,16 +15,20 @@ export interface GetUserAuthInfoRequest extends NextApiRequest {
 export type HandlerFunction = (req: NextApiRequest, res: NextApiResponse<Partial<HttpResponse>>) => Promise<void>;
 
 const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoRequest, res: NextApiResponse) => {
-  const auth = req.headers.authorization as string;
+  if (req.headers?.authorization === undefined) {
+    return res.status(401).json({ error: 'Por favor, faça login para ter acesso!' });
+  }
 
-  if (!auth) {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
     return res.status(401).json({ error: 'Por favor, faça login para ter acesso!' });
   }
 
   try {
     const jwtService = new JWTService();
 
-    const decoded = jwtService.verify(auth.split(' ')[1]) as Omit<UserModel, 'password'>;
+    const decoded = jwtService.verify(authorization.split(' ')[1]) as Omit<UserModel, 'password'>;
     const bcryptService = new BcryptService();
     const userDAO = new UserDAOImp(bcryptService);
     const user = await userDAO.findById({
@@ -33,16 +38,17 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
     }) as Omit<UserModel, 'password'>;
 
     if (!user) {
-      return res.status(401).json({ error: 'Usuário cadastrado neste Token aparenta não existir.' });
+      return res.status(404).json({ error: 'Usuário cadastrado neste Token aparenta não existir.' });
     }
 
     req.user = user;
 
-    console.log('Chegou aqui!');
     return await handler(req, res);
   } catch (err) {
     console.log(err);
-
+    if (err instanceof JsonWebTokenError) {
+      return res.status(401).json({ error: 'Token inválido.' });
+    }
     return res.status(500).json({ error: 'Erro no servidor, tente novamente mais tarde!' });
   }
 };

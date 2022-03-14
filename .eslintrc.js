@@ -38,5 +38,6 @@ module.exports = {
     'react/require-default-props': 'off',
     'class-methods-use-this': 'off',
     'max-classes-per-file': 'off',
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
   },
 };
