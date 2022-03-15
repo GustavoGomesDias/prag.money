@@ -34,27 +34,12 @@ describe('Save Purchase controller tests', () => {
       user_id: 1,
       paymentId: 1,
     };
-    const userController = makeSut();
+    const savePurchaseController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(badRequest('Descrição de compra inválidas.'));
   });
-
-  // test('Should return 400 if no purchase date is provided', async () => {
-  //   const infos: AddPurchase = {
-  //     description: 'descripion',
-  //     purchase_date: null,
-  //     value: 50,
-  //     user_id: 1,
-  //     paymentId: 1,
-  //   };
-  //   const userController = makeSut();
-
-  //   const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
-
-  //   expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
-  // });
 
   test('Should return 400 if value is invalid', async () => {
     const infos: AddPurchase = {
@@ -64,9 +49,9 @@ describe('Save Purchase controller tests', () => {
       user_id: 1,
       paymentId: 1,
     };
-    const userController = makeSut();
+    const savePurchaseController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(badRequest('Valor da compra inválido.'));
   });
@@ -84,9 +69,9 @@ describe('Save Purchase controller tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const userController = makeSut();
+    const savePurchaseController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Usuário não existe.'));
   });
@@ -104,9 +89,9 @@ describe('Save Purchase controller tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const userController = makeSut();
+    const savePurchaseController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
   });
@@ -124,9 +109,9 @@ describe('Save Purchase controller tests', () => {
     jest.spyOn(PurchaseDAOImp.prototype, 'add').mockImplementationOnce(async () => {
       throw new Error('Server Error');
     });
-    const userControllerStub = makeSut();
+    const savePurchaseController = makeSut();
 
-    const response = await userControllerStub.handleAddPurchase(infos);
+    const response = await savePurchaseController.handleAddPurchase(infos);
 
     expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
   });
