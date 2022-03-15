@@ -2,12 +2,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import SavePurchaseController from '../../../../serverless/api/controllers/SavePurchaseController';
-import { badRequest, HttpResponse, notFound } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, created, HttpResponse, notFound,
+} from '../../../../serverless/api/helpers/http';
 import AddPurchase from '../../../../serverless/data/usecases/AddPurchase';
 import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
+import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -25,7 +29,7 @@ describe('Save Purchase controller tests', () => {
   test('Should return 400 if no description is provided', async () => {
     const infos: AddPurchase = {
       description: '',
-      purchase_date: '2022-1-1',
+      purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
       paymentId: 1,
@@ -34,28 +38,28 @@ describe('Save Purchase controller tests', () => {
 
     const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
+    expect(httpResponse).toEqual(badRequest('Descrição de compra inválidas.'));
   });
 
-  test('Should return 400 if no purchase date is provided', async () => {
-    const infos: AddPurchase = {
-      description: 'descripion',
-      purchase_date: '',
-      value: 50,
-      user_id: 1,
-      paymentId: 1,
-    };
-    const userController = makeSut();
+  // test('Should return 400 if no purchase date is provided', async () => {
+  //   const infos: AddPurchase = {
+  //     description: 'descripion',
+  //     purchase_date: null,
+  //     value: 50,
+  //     user_id: 1,
+  //     paymentId: 1,
+  //   };
+  //   const userController = makeSut();
 
-    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+  //   const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
-  });
+  //   expect(httpResponse).toEqual(badRequest('Descrição ou data de compra inválidas.'));
+  // });
 
   test('Should return 400 if value is invalid', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
-      purchase_date: '2022-01-1',
+      purchase_date: new Date('2021-1-1'),
       value: -50,
       user_id: 1,
       paymentId: 1,
@@ -70,7 +74,7 @@ describe('Save Purchase controller tests', () => {
   test('Should return 400 if user not exists', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
-      purchase_date: '2021-1-1',
+      purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
       paymentId: 1,
@@ -90,7 +94,7 @@ describe('Save Purchase controller tests', () => {
   test('Should return 400 if payment not exists', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
-      purchase_date: '2021-1-1',
+      purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
       paymentId: 1,
@@ -105,5 +109,36 @@ describe('Save Purchase controller tests', () => {
     const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
+  });
+
+  test('Should return 200 if purchase is created', async () => {
+    const infos: AddPurchase = {
+      description: 'descripion',
+      purchase_date: new Date('2021-1-1'),
+      value: 50,
+      user_id: 1,
+      paymentId: 1,
+    };
+
+    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        payment_id: 1,
+        purchase_id: 1,
+      });
+      return result;
+    });
+
+    jest.spyOn(PurchaseDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        payment_id: 1,
+        purchase_id: 1,
+      });
+      return result;
+    });
+    const userController = makeSut();
+
+    const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
+
+    expect(httpResponse).toEqual(created('Compra cadastrada com sucesso!'));
   });
 });

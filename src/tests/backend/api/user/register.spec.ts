@@ -208,7 +208,7 @@ describe('Handle User Register test', () => {
     expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
   });
 
-  test('Should return 200 if user is creted', async () => {
+  test('Should return 200 if user is created', async () => {
     const httpRequest = {
       body: {
         user: {
