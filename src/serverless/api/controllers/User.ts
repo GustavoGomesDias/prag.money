@@ -7,8 +7,9 @@ import uniqueError from '../../error/uniqueError';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  badRequest, serverError, HttpRequest, HttpResponse, created,
+  badRequest, serverError, HttpRequest, HttpResponse, created, okWithPayload,
 } from '../helpers/http';
+import UserModel from '../../data/models/UserModel';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -64,6 +65,27 @@ export default class UserController {
         }
       }
       return serverError('Erro no servidor, tente novamente mais tarde');
+    }
+  }
+
+  async handleGetUserById(userId: number): Promise<HttpResponse> {
+    try {
+      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
+        return badRequest('Id de usuário inválido.');
+      }
+
+      const user = await this.userDAO.findById({
+        where: {
+          id: userId,
+        },
+      }) as Omit<UserModel, 'password'>;
+
+      console.log(user);
+
+      return okWithPayload('', user);
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde.');
     }
   }
 }
