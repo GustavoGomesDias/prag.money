@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 import SavePurchaseController from '../../../../serverless/api/controllers/SavePurchaseController';
 import {
-  badRequest, created, HttpResponse, notFound,
+  badRequest, created, HttpResponse, notFound, serverError,
 } from '../../../../serverless/api/helpers/http';
 import AddPurchase from '../../../../serverless/data/usecases/AddPurchase';
 import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
@@ -109,6 +109,26 @@ describe('Save Purchase controller tests', () => {
     const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
+  });
+
+  test('Should return 500 if server returns a error', async () => {
+    const infos: AddPurchase = {
+      description: 'descripion',
+      purchase_date: new Date('2021-1-1'),
+      value: 50,
+      user_id: 1,
+      paymentId: 1,
+    };
+
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(PurchaseDAOImp.prototype, 'add').mockImplementationOnce(async () => {
+      throw new Error('Server Error');
+    });
+    const userControllerStub = makeSut();
+
+    const response = await userControllerStub.handleAddPurchase(infos);
+
+    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
   });
 
   test('Should return 200 if purchase is created', async () => {
