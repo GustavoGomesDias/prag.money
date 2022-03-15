@@ -4,10 +4,10 @@ import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
-import PurchaseModel from '../../data/models/Purchase';
+import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase from '../../data/usecases/AddPurchase';
 import {
-  badRequest, HttpResponse, notFound, ok, serverError,
+  badRequest, created, HttpResponse, notFound, serverError,
 } from '../helpers/http';
 
 export default class SavePurchaseController {
@@ -32,8 +32,8 @@ export default class SavePurchaseController {
         description, purchase_date, value, user_id, paymentId,
       } = infos;
 
-      if (validationField(description) || validationField(purchase_date)) {
-        return badRequest('Descrição ou data de compra inválidas.');
+      if (validationField(description)) {
+        return badRequest('Descrição de compra inválidas.');
       }
 
       if (value < 0) {
@@ -50,7 +50,7 @@ export default class SavePurchaseController {
 
       const result = await this.purchaseDAO.add({
         description,
-        purchase_date,
+        purchase_date: new Date(purchase_date),
         user_id,
         value,
       }) as PurchaseModel;
@@ -60,10 +60,9 @@ export default class SavePurchaseController {
         purchase_id: result.id as number,
       });
 
-      return ok('Compra criada com sucesso!');
+      return created('Compra cadastrada com sucesso!');
     } catch (err) {
       console.log(err);
-
       return serverError('Erro no servidor, tente novamente mais tarde.');
     }
   }

@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import PurchaseModel from '../../data/models/Purchase';
+import PurchaseModel from '../../data/models/PurchaseModel';
 import prisma from '../../data/prisma/config';
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 
