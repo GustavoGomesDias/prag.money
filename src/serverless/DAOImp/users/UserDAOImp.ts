@@ -5,6 +5,8 @@ import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
+import PaymentModel from '../../data/models/PaymentModel';
+// import PaymentModel from '../../data/models/PaymentModel';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -22,6 +24,30 @@ export default class UserDAOImp extends GenericDAOImp<
   constructor(encrypter: EncryptAdapter) {
     super(prisma.user);
     this.encrypter = encrypter;
+  }
+
+  async getAllPaymentByUserId(userId: number): Promise<PaymentModel[] | undefined> {
+    const allPayments = await this.findById({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: false,
+        email: false,
+        name: false,
+        Purchase: false,
+        created_at: false,
+        _count: false,
+        password: false,
+        updated_at: false,
+        Payment: true,
+      },
+    });
+
+    if (allPayments === null || allPayments === undefined || !allPayments) {
+      return undefined;
+    }
+    return allPayments as unknown as PaymentModel[];
   }
 
   async findByEmail(info: string): Promise<UserModel | undefined> {
