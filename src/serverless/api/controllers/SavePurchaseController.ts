@@ -58,6 +58,7 @@ export default class SavePurchaseController {
       await this.payWithDAO.add({
         payment_id: paymentId,
         purchase_id: result.id as number,
+        value,
       });
 
       return created('Compra cadastrada com sucesso!');

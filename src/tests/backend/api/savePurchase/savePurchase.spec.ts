@@ -10,8 +10,6 @@ import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
-import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
-import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
