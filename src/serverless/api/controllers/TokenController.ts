@@ -61,6 +61,7 @@ export default class TokenController {
       }, '2d');
 
       const userInfo = {
+        id: user.id,
         name: user.name,
         email: user.email,
       };
