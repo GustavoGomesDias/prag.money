@@ -74,15 +74,13 @@ export default class UserController {
         return badRequest('Id de usuário inválido.');
       }
 
-      const user = await this.userDAO.findById({
+      const { id, email, name } = await this.userDAO.findById({
         where: {
-          id: userId,
+          id: Number(userId),
         },
       }) as Omit<UserModel, 'password'>;
 
-      console.log(user);
-
-      return okWithPayload('', user);
+      return okWithPayload('', { id, email, name });
     } catch (err) {
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde.');

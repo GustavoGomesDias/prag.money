@@ -72,28 +72,12 @@ describe('Handle Get User By Id, function', () => {
       id: 1,
       email: 'email@email.com',
       name: 'name',
-      password: 'hash',
-      payment: [{
-        id: 1,
-        nickname: 'nick',
-        default_value: 800,
-        reset_day: 1,
-        user_dya: 1,
-      }],
     };
     jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async (info) => {
       const result = Promise.resolve({
         id: 1,
         email: 'email@email.com',
         name: 'name',
-        password: 'hash',
-        payment: [{
-          id: 1,
-          nickname: 'nick',
-          default_value: 800,
-          reset_day: 1,
-          user_dya: 1,
-        }],
       });
 
       return result;
