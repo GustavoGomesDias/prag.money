@@ -176,4 +176,35 @@ describe('User DAO Implementation test', () => {
 
     expect(response).toBeTruthy();
   });
+
+  test('Should getAllPaymentsByUserId returns undefined if user not exists', async () => {
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.getAllPaymentByUserId(-1);
+
+    expect(result).toEqual(undefined);
+  });
+
+  test('Should getAllPaymentsByUserId returns account user infos', async () => {
+    const req = 1;
+
+    jest.spyOn(UserDAOImp.prototype, 'getAllPaymentByUserId').mockImplementationOnce(async (userId: number) => {
+      const result = await Promise.resolve([{
+        nickname: 'nickname',
+        default_value: 800,
+        reset_day: 1,
+        user_id: 1,
+      }]);
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+    const result = await userDAOImpStub.getAllPaymentByUserId(req);
+
+    expect(result).toEqual([{
+      nickname: 'nickname',
+      default_value: 800,
+      reset_day: 1,
+      user_id: 1,
+    }]);
+  });
 });
