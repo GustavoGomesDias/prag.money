@@ -101,6 +101,10 @@ export default class UserController {
 
       const { payments } = infos;
 
+      if (payments === undefined) {
+        return badRequest('Não a formas de pagamento cadastradas.');
+      }
+
       return okWithContent({ payments });
     } catch (err) {
       console.log(err);

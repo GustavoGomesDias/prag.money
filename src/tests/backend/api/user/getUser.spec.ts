@@ -69,7 +69,7 @@ describe('Handle Get User By Id function', () => {
     expect(response).toEqual(badRequest('Id de usuário inválido.'));
   });
 
-  test('Should return 200 if user is created', async () => {
+  test('Should return 200 if user is returned', async () => {
     const user = {
       id: 1,
       email: 'email@email.com',
