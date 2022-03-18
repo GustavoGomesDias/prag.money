@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, okWithContent } from '../../../../serverless/api/helpers/http';
+import { badRequest, okWithContent, serverError } from '../../../../serverless/api/helpers/http';
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import makePaymentController, {} from '../../../../serverless/factories/users/UserFacotory';
 import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
@@ -44,6 +44,32 @@ describe('Handle Get Payments Function', () => {
         user_id: 1,
       }],
     }));
+  });
+
+  test('Should return 400 if payments infos is undefined', async () => {
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
+      Payment: undefined,
+    }));
+
+    const userController = makeSut();
+
+    const response = await userController.handleGetPaymentsByUserId(1);
+
+    expect(response).toEqual(badRequest('Não a formas de pagamento cadastradas.'));
+  });
+
+  test('Should return 500 if server returns a error', async () => {
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+
+    jest.spyOn(UserDAOImp.prototype, 'getAllForeignInfosByUserId').mockImplementationOnce(async (info) => {
+      throw new Error('Error');
+    });
+
+    const userController = makeSut();
+
+    const response = await userController.handleGetPaymentsByUserId(1);
+
+    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
   });
 
   test('Should return 400 if invalid user id is provided', async () => {

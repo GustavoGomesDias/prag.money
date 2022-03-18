@@ -101,7 +101,7 @@ export default class UserController {
 
       const { payments } = infos;
 
-      if (payments === undefined) {
+      if (payments.length === 0 || payments[0] === undefined) {
         return badRequest('Não a formas de pagamento cadastradas.');
       }
 
