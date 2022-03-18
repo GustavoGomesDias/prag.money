@@ -227,7 +227,36 @@ describe('User DAO Implementation test', () => {
     });
   });
 
-  test('Should return Purchase and Payment array', async () => {
+  test('Should return Purchase and Payment array if findUnique returns array', async () => {
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        Payment: [{
+          nickname: 'nickname',
+          default_value: 800,
+          reset_day: 1,
+          user_id: 1,
+        }],
+        Purchase: [{
+          id: 1,
+          value: 800,
+          description: 'description',
+          purchase_date: purchaseDate,
+          user_id: 1,
+        }],
+      });
+
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+
+    const result = await userDAOImpStub.getAllForeignInfosByUserId(1);
+
+    expect(Array.isArray(result?.payments)).toBeTruthy();
+    expect(Array.isArray(result?.purchases)).toBeTruthy();
+  });
+
+  test('Should return Purchase and Payment array if findUnique no returns array', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
         Payment: {
