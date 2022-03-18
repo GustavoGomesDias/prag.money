@@ -31,7 +31,7 @@ describe('Payment DAO Implementation tests', () => {
     const req = 1;
     const userDAOImpStub = makeSut();
 
-    jest.spyOn(GenericDAOImp.prototype, 'findById').mockImplementationOnce(async (infos) => {
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve(undefined);
 
       return result;
@@ -45,7 +45,7 @@ describe('Payment DAO Implementation tests', () => {
     const req = 1;
     const userDAOImpStub = makeSut();
 
-    jest.spyOn(GenericDAOImp.prototype, 'findById').mockImplementationOnce(async (infos) => {
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
         id: 1,
         nickname: 'nick',

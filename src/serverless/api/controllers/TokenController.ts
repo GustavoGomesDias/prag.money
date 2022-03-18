@@ -81,7 +81,7 @@ export default class TokenController {
 
       const result = this.webToken.verify(token);
 
-      const user = await this.userDAOImp.findById({
+      const user = await this.userDAOImp.findUnique({
         where: {
           id: result.id,
         },

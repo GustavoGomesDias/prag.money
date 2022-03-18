@@ -15,7 +15,7 @@ export default abstract class GenericDAOImp<C, R, U, D> implements GenericDAO<C,
     return result;
   }
 
-  async findById(data: R): Promise<unknown> {
+  async findUnique(data: R): Promise<unknown> {
     const result = await this.entity.findUnique(data);
     return result;
   }

@@ -20,7 +20,7 @@ Prisma.PaymentDeleteArgs
   }
 
   async checkIfPaymentExists(paymentId: number): Promise<boolean> {
-    const payment = await this.findById({
+    const payment = await this.findUnique({
       where: {
         id: paymentId,
       },

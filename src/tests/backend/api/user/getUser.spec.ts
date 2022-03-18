@@ -2,7 +2,9 @@
 /* eslint-disable no-unused-vars */
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, okWithPayload, serverError } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, okWithContent, okWithPayload, serverError,
+} from '../../../../serverless/api/helpers/http';
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
@@ -26,11 +28,11 @@ const makeSut = (): UserController => {
   return new UserController(emailValidatorStub, mockUserDAOImp);
 };
 
-describe('Handle Get User By Id, function', () => {
+describe('Handle Get User By Id function', () => {
   test('Should return 500 if server returns a error', async () => {
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
 
-    jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async (info) => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async (info) => {
       throw new Error('Error');
     });
 
@@ -42,7 +44,7 @@ describe('Handle Get User By Id, function', () => {
   });
 
   test('Should return 400 if invalid user id is provided', async () => {
-    jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async (info) => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async (info) => {
       const result = Promise.resolve({
         id: 1,
         email: 'email@email.com',
@@ -73,7 +75,7 @@ describe('Handle Get User By Id, function', () => {
       email: 'email@email.com',
       name: 'name',
     };
-    jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async (info) => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async (info) => {
       const result = Promise.resolve({
         id: 1,
         email: 'email@email.com',
@@ -87,6 +89,6 @@ describe('Handle Get User By Id, function', () => {
 
     const response = await userController.handleGetUserById(1);
 
-    expect(response).toEqual(okWithPayload('', user as unknown as Omit<UserModel, 'password'>));
+    expect(response).toEqual(okWithContent(user as unknown as Omit<UserModel, 'password'>));
   });
 });

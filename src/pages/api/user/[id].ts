@@ -18,8 +18,8 @@ async function handleGetUserById(
     return res.status(response.statusCode).json({ error });
   }
 
-  const { message } = response;
-  return res.status(response.statusCode).json({ message });
+  const { content } = response;
+  return res.status(response.statusCode).json({ content });
 }
 
 export default handleGetUserById;

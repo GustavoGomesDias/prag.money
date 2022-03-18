@@ -5,8 +5,7 @@ import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
-import PaymentModel from '../../data/models/PaymentModel';
-// import PaymentModel from '../../data/models/PaymentModel';
+import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -26,8 +25,8 @@ export default class UserDAOImp extends GenericDAOImp<
     this.encrypter = encrypter;
   }
 
-  async getAllPaymentByUserId(userId: number): Promise<PaymentModel[] | undefined> {
-    const allPayments = await this.findById({
+  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos | undefined> {
+    const foreignInfos = await this.findUnique({
       where: {
         id: userId,
       },
@@ -35,23 +34,29 @@ export default class UserDAOImp extends GenericDAOImp<
         id: false,
         email: false,
         name: false,
-        Purchase: false,
         created_at: false,
         _count: false,
         password: false,
         updated_at: false,
         Payment: true,
+        Purchase: true,
       },
-    });
+    }) as ReturnForeignInfos;
 
-    if (allPayments === null || allPayments === undefined || !allPayments) {
+    if (foreignInfos === null || foreignInfos === undefined || !foreignInfos) {
       return undefined;
     }
-    return allPayments as unknown as PaymentModel[];
+
+    const { Payment, Purchase } = foreignInfos;
+
+    return {
+      payments: Array.isArray(Payment) ? Payment : [Payment],
+      purchases: Array.isArray(Purchase) ? Purchase : [Purchase],
+    };
   }
 
   async findByEmail(info: string): Promise<UserModel | undefined> {
-    const user = await prisma.user.findUnique({
+    const user = await this.findUnique({
       where: {
         email: info,
       },
@@ -85,7 +90,7 @@ export default class UserDAOImp extends GenericDAOImp<
   }
 
   async checkIfUserExists(userId: number): Promise<boolean> {
-    const user = await this.findById({
+    const user = await this.findUnique({
       where: {
         id: userId,
       },

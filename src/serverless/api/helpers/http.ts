@@ -9,6 +9,7 @@ export interface HttpResponse {
     userInfo: Omit<UserModel, 'password'>
   }
   statusCode: number
+  content?: unknown
 }
 
 export interface HttpRequest {
@@ -38,6 +39,11 @@ export const okWithPayload = (payload: string, userInfos: Omit<UserModel, 'passw
   userInfo: {
     userInfo: userInfos,
   },
+});
+
+export const okWithContent = (infos: unknown): HttpResponse => ({
+  statusCode: 200,
+  content: infos,
 });
 
 export const created = (message: string): HttpResponse => ({

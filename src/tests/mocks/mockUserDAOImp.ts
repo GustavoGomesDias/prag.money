@@ -12,7 +12,7 @@ mockUserDAOImp.addUser = jest.fn(async (req) => {
   return result;
 });
 
-mockUserDAOImp.findById = jest.fn(async (data) => {
+mockUserDAOImp.findUnique = jest.fn(async (data) => {
   const result = await Promise.resolve({
     id: 1,
     email: 'email@email.com',
