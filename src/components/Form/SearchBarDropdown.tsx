@@ -6,8 +6,8 @@ import {
 } from '@chakra-ui/react';
 import BasicInput from '../Login/BasicInput';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
-import classes from './SearchBarDropdown.module.css';
 import toastConfig from '../../utils/config/tostConfig';
+import InfoOfSelecteds from './InfoSelected';
 
 export interface SearchBarDropdownProps {
   payments: PaymentModel[]
@@ -51,12 +51,17 @@ const SearchBarDropdown = ({
 
     if (basicInputRef.current !== null) {
       basicInputRef.current.value = '';
-      console.log(basicInputRef.current.value);
     }
   };
   return (
     <div>
-      <BasicInput ref={basicInputRef} id="search-payment" label="Formas de pagamento:" onChangeHandle={hanldeSearchPayment} placeholder="Search" />
+      <BasicInput
+        ref={basicInputRef}
+        id="search-payment"
+        label="Formas de pagamento:"
+        onChangeHandle={hanldeSearchPayment}
+        placeholder="Search"
+      />
       <UnorderedList
         margin="0"
         width="100%"
@@ -83,24 +88,13 @@ const SearchBarDropdown = ({
         width="100%"
       >
         {paymentsSelecteds.length > 0 && paymentsSelecteds.map((payment) => (
-          <Flex
-            mt="5px"
-            background="#E2E8F0"
-            borderRadius="5px"
-            alignItems="center"
-            justifyContent="center"
-            ml="5px"
-            key={payment.nickname}
-          >
-            <span className={classes.nickname}>{payment.nickname}</span>
-            <button
-              type="button"
-              className={classes['remove-payment']}
-              onClick={(e) => handleDeletePaymentSelected(e, payment.nickname)}
-            >
-              x
-            </button>
-          </Flex>
+          <div key={payment.nickname}>
+            <InfoOfSelecteds
+              renderButton
+              payment={payment}
+              handleDeletePaymentSelected={handleDeletePaymentSelected}
+            />
+          </div>
         ))}
       </Flex>
     </div>
