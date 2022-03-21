@@ -14,9 +14,9 @@ export interface InputControlProps {
   max?: string | number
 }
 
-const BasicInput = ({
+const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
   id, label, placeholder, onSetHandle, onChangeHandle, type, step, min, max,
-}: InputControlProps): JSX.Element => (
+}: InputControlProps, ref): JSX.Element => (
   <FormControl
     id={id}
     isRequired
@@ -36,6 +36,7 @@ const BasicInput = ({
       step={step || ''}
       min={min || ''}
       max={max || ''}
+      ref={ref}
       onChange={onSetHandle !== undefined ? ((e) => onSetHandle(e.target.value)) : onChangeHandle}
       _hover={{
         borderColor: '#00735C',
@@ -44,6 +45,6 @@ const BasicInput = ({
       }}
     />
   </FormControl>
-);
+));
 
 export default BasicInput;
