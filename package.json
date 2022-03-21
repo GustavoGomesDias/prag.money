@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test-w": "jest --watch",
+    "test-w": "jest --coverage --watch",
     "test": "jest --coverage",
     "pstd": "prisma studio"
   },

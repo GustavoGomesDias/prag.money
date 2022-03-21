@@ -58,7 +58,6 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
       maxAge: (60 * 60) * 48, // 2 days
     });
 
-    console.log(response.data.userInfo?.userInfo);
     setCookie(undefined, 'userId', response.data.userInfo?.userInfo.id as unknown as string, {
       maxAge: (60 * 60) * 48,
     });

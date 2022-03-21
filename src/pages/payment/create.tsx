@@ -8,7 +8,7 @@ import React, { FormEvent, useContext, useState } from 'react';
 import Header from '../../components/Header/Header';
 import ModalLoader from '../../components/Loader/ModalLoader';
 import BasicInput from '../../components/Login/BasicInput';
-import Form from '../../components/Login/Form/Form';
+import Form from '../../components/Form/Form';
 import SEO from '../../components/SEO';
 import { AuthContext } from '../../context/AuthContext';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
@@ -67,7 +67,7 @@ const Create = (): JSX.Element => {
     }
 
     const data: PaymentModel = {
-      nickname, default_value: defaultValue, reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
+      nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
     const response = await api.post('/payment/register', data);
     if (response.data.message) {
@@ -107,9 +107,9 @@ const Create = (): JSX.Element => {
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Adicionar Forma de Pagamento</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
-            <BasicInput id="nickname" label="Apelido" placeholder="bitcoin wallet" onChangehandle={setNickName} />
-            <BasicInput id="defaultValue" label="Valor padrão" type="number" step="any" placeholder="800,00" onChangehandle={setDefaultValue} />
-            <BasicInput id="resetDate" label="Data de reset" type="number" min="1" max="31" onChangehandle={setResetDay} placeholder="" />
+            <BasicInput id="nickname" label="Apelido" placeholder="bitcoin wallet" onSetHandle={setNickName} />
+            <BasicInput id="defaultValue" label="Valor padrão" type="number" step="any" placeholder="800,00" onSetHandle={setDefaultValue} />
+            <BasicInput id="resetDate" label="Data de reset" type="number" min="1" max="31" onSetHandle={setResetDay} placeholder="" />
             <ButtonGroup
               flexDir="column"
               py="1em"

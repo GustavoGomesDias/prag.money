@@ -1,4 +1,4 @@
-import React, { HTMLInputTypeAttribute } from 'react';
+import React, { HTMLInputTypeAttribute, ChangeEvent } from 'react';
 import { FormControl, FormLabel, Input } from '@chakra-ui/react';
 
 export interface InputControlProps {
@@ -6,7 +6,8 @@ export interface InputControlProps {
   label: string
   placeholder: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChangehandle: React.SetStateAction<any>
+  onSetHandle?: React.SetStateAction<any>
+  onChangeHandle?: (e: ChangeEvent<HTMLInputElement>) => void
   type?: HTMLInputTypeAttribute
   step?: string | number
   min?: string
@@ -14,7 +15,7 @@ export interface InputControlProps {
 }
 
 const BasicInput = ({
-  id, label, placeholder, onChangehandle, type, step, min, max,
+  id, label, placeholder, onSetHandle, onChangeHandle, type, step, min, max,
 }: InputControlProps): JSX.Element => (
   <FormControl
     id={id}
@@ -35,7 +36,7 @@ const BasicInput = ({
       step={step || ''}
       min={min || ''}
       max={max || ''}
-      onChange={((e) => onChangehandle(e.target.value))}
+      onChange={onSetHandle !== undefined ? ((e) => onSetHandle(e.target.value)) : onChangeHandle}
       _hover={{
         borderColor: '#00735C',
         borderWidth: '2px',
