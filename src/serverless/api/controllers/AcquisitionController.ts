@@ -12,7 +12,7 @@ import {
   badRequest, created, HttpResponse, notFound, serverError,
 } from '../helpers/http';
 
-export default class SavePurchaseController {
+export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
 
   private readonly purchaseDAO: PurchaseDAOImp;
