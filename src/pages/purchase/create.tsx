@@ -77,9 +77,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent): Promise<void> => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleValidations = (): boolean => {
     if (validationField(description) || validationField(purchaseDate)) {
       toast({
         title: '🤨',
@@ -88,7 +86,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         ...toastConfig,
       });
       setIsLoading(false);
-      return;
+      return false;
     }
 
     if (payWith.length === 0) {
@@ -99,11 +97,23 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         ...toastConfig,
       });
       setIsLoading(false);
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: FormEvent): Promise<void> => {
+    e.preventDefault();
+    setIsLoading(true);
 
     const valueList = payWith.map((pay) => pay.value);
     const value = valueList.reduce((sumNumber, i) => sumNumber + i);
+    const isValid = handleValidations();
+
+    if (!isValid) {
+      return;
+    }
 
     const purchase: PurchaseModel = {
       description,
@@ -116,7 +126,32 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       ...purchase,
       payments: payWith,
     };
-    await api.post('/purchase/register', addPurchase);
+    const response = await api.post('/purchase/register', addPurchase);
+
+    if (response.data.error) {
+      toast({
+        title: '😢',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+    }
+
+    if (response.data.message) {
+      toast({
+        title: '😎',
+        description: response.data.message,
+        status: 'success',
+        ...toastConfig,
+      });
+    }
+
+    setDescription('');
+    setPayWith([]);
+    setPaymentsSelecteds([]);
+    setPurchaseDate('');
+    setUserPayments([]);
+
     setIsLoading(false);
   };
 
@@ -144,6 +179,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
               label="Descrição da compra:"
               placeholder="Almoço nas Bahamas"
               onSetHandle={setDescription}
+              inputValue={description}
             />
             <BasicInput
               id="date"
@@ -151,6 +187,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
               type="date"
               onSetHandle={setPurchaseDate}
               placeholder=""
+              inputValue={purchaseDate}
             />
             {paymentsSelecteds.length > 0 && paymentsSelecteds.map((payment) => (
               <Flex

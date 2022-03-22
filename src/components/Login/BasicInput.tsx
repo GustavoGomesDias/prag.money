@@ -14,10 +14,11 @@ export interface InputControlProps {
   step?: string | number
   min?: string
   max?: string | number
+  inputValue?: string | number | readonly string[] | undefined
 }
 
 const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
-  id, label, placeholder, onSetHandle, onChangeHandle, type, step, min, max, onChangeHandlePayWith, paymentId,
+  id, label, placeholder, onSetHandle, onChangeHandle, type, step, min, max, onChangeHandlePayWith, paymentId, inputValue,
 }: InputControlProps, ref): JSX.Element => {
   const handleFunction = (e: ChangeEvent<HTMLInputElement>) => {
     if (onSetHandle !== undefined) onSetHandle(e.target.value);
@@ -47,6 +48,7 @@ const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
         min={min || ''}
         max={max || ''}
         ref={ref}
+        value={inputValue}
         onChange={handleFunction}
         _hover={{
           borderColor: '#00735C',
