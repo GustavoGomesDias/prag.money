@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
 import AddPurchase from '../../../serverless/data/usecases/AddPurchase';
-import makePurchase from '../../../serverless/factories/purchase/PurchaseFactory';
+import makeAcquisition from '../../../serverless/factories/purchase/PurchaseFactory';
 
 async function handleRegisterPurchase(
   req: NextApiRequest,
@@ -12,9 +12,9 @@ async function handleRegisterPurchase(
   const {
     description, purchase_date, user_id, value, payments,
   } = req.body as AddPurchase;
-  const purchaseDAO = makePurchase();
+  const acquisitionController = makeAcquisition();
 
-  const response = await purchaseDAO.handleAddPurchase({
+  const response = await acquisitionController.handleAddPurchase({
     description, purchase_date, user_id, value, payments,
   });
 

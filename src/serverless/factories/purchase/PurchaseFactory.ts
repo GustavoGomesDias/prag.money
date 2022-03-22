@@ -4,7 +4,7 @@ import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import { makeUserDAO } from '../users/UserFacotory';
 
-const makePurchase = (): AcquisitionController => {
+const makeAcquisition = (): AcquisitionController => {
   const paymentDAO = new PaymentDAOImp();
   const purchaseDAO = new PurchaseDAOImp();
   const payWithDAO = new PayWithDAOImp();
@@ -13,4 +13,4 @@ const makePurchase = (): AcquisitionController => {
   return savePurchases;
 };
 
-export default makePurchase;
+export default makeAcquisition;

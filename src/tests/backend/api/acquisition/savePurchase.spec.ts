@@ -129,7 +129,7 @@ describe('Add acquisition tests', () => {
     expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
   });
 
-  test('Should return 200 if purchase is created', async () => {
+  test('Should return 201 if purchase is created', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
       purchase_date: new Date('2021-1-1'),

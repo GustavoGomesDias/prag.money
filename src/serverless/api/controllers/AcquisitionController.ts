@@ -9,7 +9,7 @@ import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase from '../../data/usecases/AddPurchase';
 import {
-  badRequest, created, HttpResponse, notFound, ok, serverError,
+  badRequest, created, HttpResponse, notFound, okWithContent, serverError,
 } from '../helpers/http';
 
 export default class AcquisitionController {
@@ -34,7 +34,22 @@ export default class AcquisitionController {
         return badRequest('ID inválido.');
       }
 
-      return ok('Ok!');
+      if (!(await this.paymentDAO.checkIfPaymentExists(paymentId))) {
+        return badRequest('Usuário não existe.');
+      }
+
+      const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
+
+      const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+
+      if (purchases === undefined) {
+        return badRequest('Não a compras relacionadas a essa forma de pagamento.');
+      }
+
+      return okWithContent({
+        ...paymentInfo,
+        purchases,
+      });
     } catch (err) {
       console.log(err);
       return serverError('Erro no servidor, tente novamente mais tarde.');
