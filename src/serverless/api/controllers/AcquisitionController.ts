@@ -9,7 +9,7 @@ import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase from '../../data/usecases/AddPurchase';
 import {
-  badRequest, created, HttpResponse, notFound, serverError,
+  badRequest, created, HttpResponse, notFound, ok, serverError,
 } from '../helpers/http';
 
 export default class AcquisitionController {
@@ -26,6 +26,19 @@ export default class AcquisitionController {
     this.purchaseDAO = purchaseDAO;
     this.payWithDAO = payWithDAO;
     this.userDAO = user;
+  }
+
+  async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+    try {
+      if (Number.isNaN(paymentId) || paymentId < 0) {
+        return badRequest('ID inválido.');
+      }
+
+      return ok('Ok!');
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde.');
+    }
   }
 
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
