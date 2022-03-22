@@ -61,6 +61,7 @@ export default class TokenController {
       }, '2d');
 
       const userInfo = {
+        id: user.id,
         name: user.name,
         email: user.email,
       };
@@ -80,7 +81,7 @@ export default class TokenController {
 
       const result = this.webToken.verify(token);
 
-      const user = await this.userDAOImp.findById({
+      const user = await this.userDAOImp.findUnique({
         where: {
           id: result.id,
         },

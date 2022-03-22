@@ -46,7 +46,7 @@ model Purchase {
 }
 
 model PayWith {
-  id          Int      @unique
+  id          Int      @id @default(autoincrement())
   value       Float
   purchase    Purchase @relation(fields: [purchase_id], references: [id])
   purchase_id Int

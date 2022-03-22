@@ -53,7 +53,7 @@ describe('Auth middleare test', () => {
       email: 'email@email.com',
     }));
 
-    jest.spyOn(UserDAOImp.prototype, 'findById').mockImplementationOnce(async (data) => {
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (data) => {
       const result = await Promise.resolve(undefined);
 
       return result;

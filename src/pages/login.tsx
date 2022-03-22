@@ -9,13 +9,13 @@ import {
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import BasicInput from '../components/Login/BasicInput';
-import Form from '../components/Login/Form/Form';
+import Form from '../components/Form/Form';
 import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import ModalLoader from '../components/Loader/ModalLoader';
 import { AuthContext } from '../context/AuthContext';
-import FormHeader from '../components/FormHeader/FormHeader';
+import FormHeader from '../components/Form/FormHeader';
 
 const Login = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -87,8 +87,8 @@ const Login = (): JSX.Element => {
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Entrar</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
-            <BasicInput id="email" label="E-mail" placeholder="example@example.com" onChangehandle={setEmail} />
-            <BasicInput id="password" label="Senha" placeholder="************" type="password" onChangehandle={setPassword} />
+            <BasicInput id="email" label="E-mail" placeholder="example@example.com" onSetHandle={setEmail} />
+            <BasicInput id="password" label="Senha" placeholder="************" type="password" onSetHandle={setPassword} />
             <ButtonGroup
               flexDir="column"
               py="1em"

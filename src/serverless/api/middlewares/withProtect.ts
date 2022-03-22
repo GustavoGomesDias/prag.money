@@ -31,7 +31,7 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
     const decoded = jwtService.verify(authorization.split(' ')[1]) as Omit<UserModel, 'password'>;
     const bcryptService = new BcryptService();
     const userDAO = new UserDAOImp(bcryptService);
-    const user = await userDAO.findById({
+    const user = await userDAO.findUnique({
       where: {
         id: decoded.id,
       },

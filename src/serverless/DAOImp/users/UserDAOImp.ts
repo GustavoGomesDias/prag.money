@@ -5,6 +5,7 @@ import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
+import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -24,8 +25,38 @@ export default class UserDAOImp extends GenericDAOImp<
     this.encrypter = encrypter;
   }
 
+  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos | undefined> {
+    const foreignInfos = await this.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: false,
+        email: false,
+        name: false,
+        created_at: false,
+        _count: false,
+        password: false,
+        updated_at: false,
+        Payment: true,
+        Purchase: true,
+      },
+    }) as ReturnForeignInfos;
+
+    if (foreignInfos === null || foreignInfos === undefined || !foreignInfos) {
+      return undefined;
+    }
+
+    const { Payment, Purchase } = foreignInfos;
+
+    return {
+      payments: Array.isArray(Payment) ? Payment : [Payment],
+      purchases: Array.isArray(Purchase) ? Purchase : [Purchase],
+    };
+  }
+
   async findByEmail(info: string): Promise<UserModel | undefined> {
-    const user = await prisma.user.findUnique({
+    const user = await this.findUnique({
       where: {
         email: info,
       },
@@ -56,5 +87,19 @@ export default class UserDAOImp extends GenericDAOImp<
       email: result.email,
       name: result.name,
     };
+  }
+
+  async checkIfUserExists(userId: number): Promise<boolean> {
+    const user = await this.findUnique({
+      where: {
+        id: userId,
+      },
+    }) as unknown as Omit<UserModel, 'password'> | undefined | null;
+
+    if (!user || user === undefined || user === null) {
+      return false;
+    }
+
+    return true;
   }
 }

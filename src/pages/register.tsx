@@ -9,13 +9,13 @@ import {
 } from '@chakra-ui/react';
 
 import BasicInput from '../components/Login/BasicInput';
-import Form from '../components/Login/Form/Form';
+import Form from '../components/Form/Form';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import SEO from '../components/SEO';
 import ModalLoader from '../components/Loader/ModalLoader';
 import api from '../services/fetchAPI/init';
-import FormHeader from '../components/FormHeader/FormHeader';
+import FormHeader from '../components/Form/FormHeader';
 
 const Register = (): JSX.Element => {
   const [email, setEmail] = useState<string>('');
@@ -118,10 +118,10 @@ const Register = (): JSX.Element => {
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Cadastre-se</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
-            <BasicInput id="name" label="Nome" placeholder="Seu nome completo aqui" onChangehandle={setName} />
-            <BasicInput id="email" label="E-mail" placeholder="example@example.com" onChangehandle={setEmail} />
-            <BasicInput id="password" label="Senha" placeholder="************" type="password" onChangehandle={setPassword} />
-            <BasicInput id="confirmPass" label="Confirmar senha" placeholder="************" type="password" onChangehandle={setPasswordConfirmation} />
+            <BasicInput id="name" label="Nome" placeholder="Seu nome completo aqui" onSetHandle={setName} />
+            <BasicInput id="email" label="E-mail" placeholder="example@example.com" onSetHandle={setEmail} />
+            <BasicInput id="password" label="Senha" placeholder="************" type="password" onSetHandle={setPassword} />
+            <BasicInput id="confirmPass" label="Confirmar senha" placeholder="************" type="password" onSetHandle={setPasswordConfirmation} />
             <ButtonGroup py="1em" flexDir="column">
               <Button
                 bg="#00735C"

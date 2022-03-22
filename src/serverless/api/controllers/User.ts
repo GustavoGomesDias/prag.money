@@ -7,8 +7,9 @@ import uniqueError from '../../error/uniqueError';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  badRequest, serverError, HttpRequest, HttpResponse, created,
+  badRequest, serverError, HttpRequest, HttpResponse, created, okWithContent,
 } from '../helpers/http';
+import UserModel from '../../data/models/UserModel';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -64,6 +65,50 @@ export default class UserController {
         }
       }
       return serverError('Erro no servidor, tente novamente mais tarde');
+    }
+  }
+
+  async handleGetUserById(userId: number): Promise<HttpResponse> {
+    try {
+      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
+        return badRequest('Id de usuário inválido.');
+      }
+
+      const { id, email, name } = await this.userDAO.findUnique({
+        where: {
+          id: Number(userId),
+        },
+      }) as Omit<UserModel, 'password'>;
+
+      return okWithContent({ id, email, name });
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde.');
+    }
+  }
+
+  async handleGetPaymentsByUserId(userId: number): Promise<HttpResponse> {
+    try {
+      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
+        return badRequest('Id de usuário inválido.');
+      }
+
+      const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
+
+      if (infos === undefined) {
+        return badRequest('Não a formas de pagamento cadastradas.');
+      }
+
+      const { payments } = infos;
+
+      if (payments.length === 0 || payments[0] === undefined) {
+        return badRequest('Não a formas de pagamento cadastradas.');
+      }
+
+      return okWithContent({ payments });
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde.');
     }
   }
 }

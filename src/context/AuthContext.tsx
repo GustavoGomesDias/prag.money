@@ -57,6 +57,11 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
     setCookie(undefined, 'authToken', response.data.payload as string, {
       maxAge: (60 * 60) * 48, // 2 days
     });
+
+    setCookie(undefined, 'userId', response.data.userInfo?.userInfo.id as unknown as string, {
+      maxAge: (60 * 60) * 48,
+    });
+
     api.setAuthHeader(`Bearer ${response.data.payload}`);
     if (response.data.userInfo !== undefined) {
       setUser(response.data.userInfo);
@@ -67,6 +72,7 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   };
 
   const signOut = useCallback((): void => {
+    destroyCookie({}, 'userId');
     destroyCookie({}, 'authToken', {
       path: '/',
     });

@@ -94,7 +94,7 @@ describe('Handle Recovering User Infos', () => {
     const webTokenStub = makeWebToken();
     const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
-    jest.spyOn(mockUserDAOImp, 'findById').mockResolvedValueOnce(await Promise.resolve(undefined));
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockResolvedValueOnce(await Promise.resolve(undefined));
     const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
@@ -106,7 +106,7 @@ describe('Handle Recovering User Infos', () => {
     const token = 'token';
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(mockUserDAOImp, 'findById').mockImplementationOnce(async () => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async () => {
       throw new Error('Server Error');
     });
 
