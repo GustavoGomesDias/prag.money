@@ -15,22 +15,25 @@ export default class PurchaseDAOImp extends GenericDAOImp<
   }
 
   async returnsPurchaseByAcquisitionsList(acquisitions: PayWithModel[]): Promise<PurchaseModel[] | undefined> {
-    if (acquisitions.length === 0) {
-      return undefined;
+    if (acquisitions.length > 0) {
+      const getAllPurchases = acquisitions.map(async (acquisition) => {
+        const purchase = await this.findUnique({
+          where: {
+            id: acquisition.purchase_id,
+          },
+        }) as PurchaseModel;
+
+        return purchase;
+      });
+
+      const purchases = await Promise.all(getAllPurchases) as unknown as PurchaseModel[];
+
+      if (purchases[0] === null) {
+        return undefined;
+      }
+
+      return purchases;
     }
-
-    const getAllPurchases = acquisitions.map(async (acquisition) => {
-      const purchase = await this.findUnique({
-        where: {
-          id: acquisition.purchase_id,
-        },
-      }) as PurchaseModel[];
-
-      return purchase;
-    });
-
-    const purchases = await Promise.all(getAllPurchases) as unknown as PurchaseModel[];
-
-    return purchases;
+    return undefined;
   }
 }
