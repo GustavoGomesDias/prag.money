@@ -20,6 +20,7 @@ import toastConfig from '../../utils/config/tostConfig';
 import ModalLoader from '../../components/Loader/ModalLoader';
 import PurchaseModel from '../../serverless/data/models/PurchaseModel';
 import { AuthContext } from '../../context/AuthContext';
+import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
 
 export interface CreatePurchaseProps {
   data: {
@@ -27,17 +28,12 @@ export interface CreatePurchaseProps {
   }
 }
 
-export interface AddPayWith {
-  value: number
-  paymentId: number
-}
-
 const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const [description, setDescription] = useState<string>('');
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [userPayments, setUserPayments] = useState<PaymentModel[]>([]);
   const [paymentsSelecteds, setPaymentsSelecteds] = useState<PaymentModel[]>([]);
-  const [payWith, setPayWith] = useState<AddPayWith[]>([]);
+  const [payWith, setPayWith] = useState<AddPayment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const toast = useToast();
   const { user } = useContext(AuthContext);
@@ -116,7 +112,11 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       value,
     };
 
-    console.log(purchase);
+    const addPurchase: AddPurchase = {
+      ...purchase,
+      payments: payWith,
+    };
+    await api.post('/purchase/register', addPurchase);
     setIsLoading(false);
   };
 

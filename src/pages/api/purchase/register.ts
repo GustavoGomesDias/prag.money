@@ -10,12 +10,12 @@ async function handleRegisterPurchase(
   res: NextApiResponse<Partial<HttpResponse>>,
 ) {
   const {
-    description, purchase_date, user_id, value, paymentId,
+    description, purchase_date, user_id, value, payments,
   } = req.body as AddPurchase;
   const purchaseDAO = makePurchase();
 
   const response = await purchaseDAO.handleAddPurchase({
-    description, purchase_date, user_id, value, paymentId,
+    description, purchase_date, user_id, value, payments,
   });
 
   if (response.error) {

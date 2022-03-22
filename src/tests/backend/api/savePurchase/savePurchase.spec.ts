@@ -10,6 +10,7 @@ import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -30,7 +31,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
     const savePurchaseController = makeSut();
 
@@ -45,7 +49,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: -50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
     const savePurchaseController = makeSut();
 
@@ -60,7 +67,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
 
     jest.spyOn(mockUserDAOImp, 'checkIfUserExists').mockImplementationOnce(async (infos) => {
@@ -80,7 +90,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
 
     jest.spyOn(mockPaymentDAOImp, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
@@ -100,7 +113,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
@@ -120,7 +136,10 @@ describe('Save Purchase controller tests', () => {
       purchase_date: new Date('2021-1-1'),
       value: 50,
       user_id: 1,
-      paymentId: 1,
+      payments: [{
+        paymentId: 1,
+        value: 1,
+      }],
     };
 
     jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {

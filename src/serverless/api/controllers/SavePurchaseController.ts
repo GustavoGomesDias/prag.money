@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
 import { validationField } from '../../../utils/validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
@@ -29,7 +31,7 @@ export default class SavePurchaseController {
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
     try {
       const {
-        description, purchase_date, value, user_id, paymentId,
+        description, purchase_date, value, user_id, payments,
       } = infos;
 
       if (validationField(description)) {
@@ -44,8 +46,13 @@ export default class SavePurchaseController {
         return notFound('Usuário não existe.');
       }
 
-      if (!(await this.paymentDAO.checkIfPaymentExists(paymentId))) {
-        return notFound('Forma de pagamento não existe.');
+      // eslint-disable-next-line consistent-return
+      for (const payment of payments) {
+        const ifExists = await this.paymentDAO.checkIfPaymentExists(payment.paymentId);
+
+        if (!ifExists) {
+          return notFound('Forma de pagamento não existe.');
+        }
       }
 
       const result = await this.purchaseDAO.add({
@@ -55,10 +62,12 @@ export default class SavePurchaseController {
         value,
       }) as PurchaseModel;
 
-      await this.payWithDAO.add({
-        payment_id: paymentId,
-        purchase_id: result.id as number,
-        value,
+      payments.forEach(async (payment) => {
+        await this.payWithDAO.add({
+          payment_id: payment.paymentId,
+          purchase_id: result.id as number,
+          value: payment.value,
+        });
       });
 
       return created('Compra cadastrada com sucesso!');
