@@ -10,7 +10,6 @@ import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
-import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -24,7 +23,7 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-describe('Save Purchase controller tests', () => {
+describe('Add acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
     const infos: AddPurchase = {
       description: '',
