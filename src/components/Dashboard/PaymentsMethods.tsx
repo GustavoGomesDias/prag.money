@@ -1,11 +1,13 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useContext } from 'react';
 import { Flex, Select } from '@chakra-ui/react';
 import GetForeignInfos from '../../serverless/data/usecases/GetForeignInfos';
+import PurchaseContext from '../../context/purchases/PurchaseContext';
 
 const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.Element => {
   const [balance, setBalance] = useState<number>(0);
+  const purchseCtx = useContext(PurchaseContext);
 
-  const handleOnSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+  const handleOnSelect = async (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
 
     if (Number(e.target.value) === 0) {
@@ -18,6 +20,8 @@ const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.
     const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
 
     setBalance(Number(payments[selectedPaymentIndex].default_value));
+    await purchseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
+    console.log(purchseCtx.purchases);
   };
 
   return (
