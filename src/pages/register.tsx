@@ -13,7 +13,7 @@ import Form from '../components/Form/Form';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
 import SEO from '../components/SEO';
-import ModalLoader from '../components/Loader/ModalLoader';
+import ModalLoader from '../components/UI/Loader/ModalLoader';
 import api from '../services/fetchAPI/init';
 import FormHeader from '../components/Form/FormHeader';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button, Flex } from '@chakra-ui/react';
 import { FaLongArrowAltLeft } from 'react-icons/fa';
-import Logo from '../Logo/Logo';
+import Logo from '../UI/Logo/Logo';
 
 const FormHeader = (): JSX.Element => (
   <Flex

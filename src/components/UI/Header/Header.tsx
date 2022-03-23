@@ -5,8 +5,8 @@ import {
 } from '@chakra-ui/react';
 
 import Logo from '../Logo/Logo';
-import { AuthContext } from '../../context/AuthContext';
-import CustomButton from '../UI/Button';
+import { AuthContext } from '../../../context/AuthContext';
+import CustomButton from '../CustomButton';
 
 export interface HeaderProps {
   logo: string

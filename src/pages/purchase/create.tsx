@@ -7,7 +7,7 @@ import {
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
-import Header from '../../components/Header/Header';
+import Header from '../../components/UI/Header/Header';
 import Form from '../../components/Form/Form';
 import SEO from '../../components/SEO';
 import BasicInput from '../../components/Login/BasicInput';
@@ -17,7 +17,7 @@ import SearchBarDropdown from '../../components/Form/SearchBarDropdown';
 import InfoOfSelecteds from '../../components/Form/InfoSelected';
 import { validationField } from '../../utils/validations';
 import toastConfig from '../../utils/config/tostConfig';
-import ModalLoader from '../../components/Loader/ModalLoader';
+import ModalLoader from '../../components/UI/Loader/ModalLoader';
 import PurchaseModel from '../../serverless/data/models/PurchaseModel';
 import { AuthContext } from '../../context/AuthContext';
 import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
