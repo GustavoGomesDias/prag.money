@@ -3,23 +3,41 @@ import { ButtonGroup, Flex } from '@chakra-ui/react';
 import classes from './PurchaseDescription.module.css';
 import ActionButton from './ActionButton';
 
-const PurchaseDescription = (): JSX.Element => (
+export interface PurchaseDescriptionProps {
+  description: string
+  value: string
+  purchaseDate: string
+}
+
+const PurchaseDescription = ({ description, value, purchaseDate }: PurchaseDescriptionProps): JSX.Element => (
   <Flex
     flexDir="column"
     bg="#00E091"
     height="300px"
     width="100%"
     border="none"
-    p="1em"
+    p="1em 1em 0 1em"
     borderRadius="5px"
     boxShadow="0 0 1em rgba(0, 0, 0, 0.2)"
   >
     <Flex
       flexDir="column"
     >
-      <span className={classes.property}>Descrição: Almoço nas bahama com sei lá quem e mais texto</span>
-      <span className={classes.property}>Preço: R$ 00,00</span>
-      <span className={classes.property}>Data: 23/03/2022</span>
+      <span className={classes.property}>
+        Descrição:
+        {' '}
+        {description}
+      </span>
+      <span className={classes.property}>
+        Preço: R$
+        {' '}
+        {value}
+      </span>
+      <span className={classes.property}>
+        Data:
+        {' '}
+        {purchaseDate}
+      </span>
     </Flex>
 
     <ButtonGroup
@@ -28,6 +46,7 @@ const PurchaseDescription = (): JSX.Element => (
       display="flex"
       justifyContent="center"
       gap={2}
+      py={2}
     >
       <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
       <ActionButton action="Excluir" handleOnClick={(): void => { console.log('t'); }} />

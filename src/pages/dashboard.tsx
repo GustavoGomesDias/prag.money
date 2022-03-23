@@ -1,67 +1,106 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import {
-  Flex, Grid,
+  Flex, Grid, useToast,
 } from '@chakra-ui/react';
 
 import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-import PurchaseDescription from '../components/Dashboard/PurchaseDescription/PurchaseDescription';
-// import { AuthContext } from '../context/AuthContext';
+// import PurchaseDescription from '../components/Dashboard/PurchaseDescription/PurchaseDescription';
+import api from '../services/fetchAPI/init';
+import PaymentModel from '../serverless/data/models/PaymentModel';
+import toastConfig from '../utils/config/tostConfig';
 
-// const { user } = useContext(AuthContext);
-const Dashboard = (): JSX.Element => (
-  <>
-    <SEO title="p.$ | Dashboard" description="Dashboard page" />
-    <Header logo="Dash" />
-    <Flex
-      w="100%"
-      h="100%"
-      justifyContent="flex-end"
-      flexDir="column"
-    >
-      <PaymentsMethods />
+export interface DashboardProps {
+  payments?: PaymentModel[]
+  error?: {
+    statusCode: number
+    error: string
+  }
+}
+
+const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
+  const toast = useToast();
+
+  useEffect(() => {
+    const handlePayment = () => {
+      if (error) {
+        if (error.statusCode === 400) {
+          toast({
+            title: '📣',
+            description: error.error,
+            status: 'info',
+            ...toastConfig,
+          });
+        } else {
+          toast({
+            title: '😔',
+            description: error.error,
+            status: 'error',
+            ...toastConfig,
+          });
+        }
+      }
+    };
+
+    handlePayment();
+  });
+
+  return (
+    <>
+      <SEO title="p.$ | Dashboard" description="Dashboard page" />
+      <Header logo="Dash" />
       <Flex
-        width="100%"
-        mb="15px"
-        alignItems="center"
-        justifyContent="center"
-        overflowX="hidden"
+        w="100%"
+        h="100%"
+        justifyContent="flex-end"
+        flexDir="column"
       >
-        <Grid
-          templateRows="repeat(1, 1fr)"
-          templateColumns="10% 85%"
-          w="100%"
-          h="100%"
-          gap={4}
-          justifyContent="center"
+        {payments !== undefined && <PaymentsMethods payments={payments} />}
 
+        <Flex
+          width="100%"
+          mb="15px"
+          alignItems="center"
+          justifyContent="center"
+          overflowX="hidden"
         >
-          <Actions />
-          <Grid templateRows="repeat(1, 1fr)" gap={4}>
-            <Grid
-              bg="#fff"
-              border="2px solid #00735C"
-              borderRadius="5px"
-              padding="1em"
-              templateColumns="repeat(5, 1fr)"
-              gap={2}
-            >
-              <PurchaseDescription />
+          <Grid
+            templateRows="repeat(1, 1fr)"
+            templateColumns="10% 85%"
+            w="100%"
+            h="100%"
+            gap={4}
+            justifyContent="center"
+          >
+            <Actions />
+            <Grid templateRows="repeat(1, 1fr)" gap={4}>
+              <Grid
+                bg="#fff"
+                border="2px solid #00735C"
+                borderRadius="5px"
+                padding="1em"
+                templateColumns="repeat(5, 1fr)"
+                gap={2}
+              >
+                {/* <PurchaseDescription /> */}
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </Flex>
       </Flex>
-    </Flex>
-  </>
-);
+    </>
+  );
+};
 export default Dashboard;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { authToken } = parseCookies(ctx);
+  const { authToken, userId } = parseCookies(ctx);
+
+  const response = await api.get(`/user/payment/${userId}`);
 
   if (!authToken || authToken === undefined || authToken === null) {
     return {
@@ -72,7 +111,29 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
+  if (response.statusCode !== 400 && response.statusCode !== 200) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  if (response.statusCode === 400) {
+    return {
+      props: {
+        error: {
+          statusCode: response.statusCode,
+          error: response.data.error,
+        },
+      },
+    };
+  }
+
   return {
-    props: {},
+    props: {
+      payments: (response.data.content as ({ [key: string]: PaymentModel[] })).payments,
+    },
   };
 };

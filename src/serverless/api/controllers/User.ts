@@ -93,6 +93,8 @@ export default class UserController {
         return badRequest('Id de usuário inválido.');
       }
 
+      // TODO: Colocar uma validação para ver se o usuário existe.
+
       const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 
       if (infos === undefined) {

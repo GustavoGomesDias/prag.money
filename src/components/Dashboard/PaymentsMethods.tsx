@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { Flex, Select } from '@chakra-ui/react';
+import GetForeignInfos from '../../serverless/data/usecases/GetForeignInfos';
 
-const PaymentsMethods = (): JSX.Element => {
-  console.log('nada não');
+const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.Element => {
+  const [balance, setBalance] = useState<number>(0);
+
+  const handleOnSelect = (e: ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault();
+
+    if (Number(e.target.value) === 0) {
+      setBalance(0);
+      return;
+    }
+
+    const paymentsIds = payments.map((payment) => payment.id);
+
+    const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
+
+    setBalance(Number(payments[selectedPaymentIndex].default_value));
+  };
+
   return (
     <Flex
       width="100%"
@@ -20,7 +37,6 @@ const PaymentsMethods = (): JSX.Element => {
       >
         <Select
           variant="outline"
-          placeholder="Select option"
           width="50%"
           height="2.5em"
           mr="15px"
@@ -28,12 +44,16 @@ const PaymentsMethods = (): JSX.Element => {
           borderRadius="5px"
           border="2px solid #00735C"
           borderColor="initial"
+          onChange={(e) => handleOnSelect(e)}
         >
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
+          <option value={0}>Selecione uma forma de pagamento</option>
+          {payments !== undefined && payments.map((payment) => (
+            <option key={payment.id} value={payment.id}>{payment.nickname}</option>
+          ))}
         </Select>
-        Saldo: R$ 0000,00
+        Saldo: R$
+        {' '}
+        {balance.toFixed(2).replace('.', ',')}
       </Flex>
     </Flex>
   );
