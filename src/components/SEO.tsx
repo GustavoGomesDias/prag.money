@@ -8,6 +8,7 @@ export interface SEOProps {
 
 const SEO = ({ title, description }: SEOProps): JSX.Element => (
   <Head>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
   </Head>
