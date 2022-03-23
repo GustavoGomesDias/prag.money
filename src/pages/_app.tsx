@@ -1,8 +1,8 @@
 import React from 'react';
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { ChakraProvider } from '@chakra-ui/react';
 
+import '../styles/globals.css';
 import { theme } from '../styles/theme';
 import AuthProvider from '../context/AuthContext';
 import HistoryProvider from '../context/history/HistoryProvider';
