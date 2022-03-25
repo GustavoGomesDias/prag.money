@@ -9,7 +9,7 @@ import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-import PurchaseDescription from '../components/Dashboard/PurchaseDescription/PurchaseDescription';
+import PurchaseCard from '../components/Dashboard/PurchaseDescription/PurchaseCard';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
@@ -90,7 +90,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
                 gap={2}
               >
                 {purchaseCtx.purchases.length > 0 && purchaseCtx.purchases.map((purchase) => (
-                  <PurchaseDescription key={purchase.id} description={purchase.description} value={purchase.value} purchaseDate={formatDate(new Date(purchase.purchase_date))} />
+                  <PurchaseCard key={purchase.id} description={purchase.description} value={purchase.value} purchaseDate={formatDate(new Date(purchase.purchase_date))} />
                 ))}
               </Grid>
             </Grid>

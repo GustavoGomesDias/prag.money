@@ -9,7 +9,7 @@ export interface PurchaseDescriptionProps {
   purchaseDate: string
 }
 
-const PurchaseDescription = ({ description, value, purchaseDate }: PurchaseDescriptionProps): JSX.Element => (
+const PurchaseCard = ({ description, value, purchaseDate }: PurchaseDescriptionProps): JSX.Element => (
   <Flex
     flexDir="column"
     bg="#00E091"
@@ -54,4 +54,4 @@ const PurchaseDescription = ({ description, value, purchaseDate }: PurchaseDescr
   </Flex>
 );
 
-export default PurchaseDescription;
+export default PurchaseCard;
