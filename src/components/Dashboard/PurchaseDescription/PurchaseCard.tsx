@@ -4,13 +4,17 @@ import classes from './PurchaseDescription.module.css';
 import ActionButton from './ActionButton';
 
 export interface PurchaseDescriptionProps {
+  id: number
   description: string
   value: number
   purchaseDate: string
 }
 
-const PurchaseCard = ({ description, value, purchaseDate }: PurchaseDescriptionProps): JSX.Element => (
+const PurchaseCard = ({
+  description, value, purchaseDate, id,
+}: PurchaseDescriptionProps): JSX.Element => (
   <Flex
+    key={id}
     flexDir="column"
     bg="#00E091"
     height="300px"

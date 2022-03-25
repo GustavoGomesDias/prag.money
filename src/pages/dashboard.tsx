@@ -90,7 +90,13 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
                 gap={2}
               >
                 {purchaseCtx.purchases.length > 0 && purchaseCtx.purchases.map((purchase) => (
-                  <PurchaseCard key={purchase.id} description={purchase.description} value={purchase.value} purchaseDate={formatDate(new Date(purchase.purchase_date))} />
+                  <PurchaseCard
+                    key={purchase.id}
+                    id={Number(purchase.id)}
+                    description={purchase.description}
+                    value={purchase.value}
+                    purchaseDate={formatDate(new Date(purchase.purchase_date))}
+                  />
                 ))}
               </Grid>
             </Grid>
