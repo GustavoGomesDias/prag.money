@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import {
@@ -9,10 +9,12 @@ import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-// import PurchaseDescription from '../components/Dashboard/PurchaseDescription/PurchaseDescription';
+import PurchaseDescription from '../components/Dashboard/PurchaseDescription/PurchaseDescription';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
+import PurchaseContext from '../context/purchases/PurchaseContext';
+import formatDate from '../utils/formatDate';
 
 export interface DashboardProps {
   payments?: PaymentModel[]
@@ -24,6 +26,11 @@ export interface DashboardProps {
 
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const toast = useToast();
+  const purchaseCtx = useContext(PurchaseContext);
+
+  useEffect(() => {
+    console.log(purchaseCtx.purchases);
+  }, [purchaseCtx.purchases]);
 
   useEffect(() => {
     const handlePayment = () => {
@@ -86,7 +93,9 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
                 templateColumns="repeat(5, 1fr)"
                 gap={2}
               >
-                {/* <PurchaseDescription /> */}
+                {purchaseCtx.purchases.length > 0 && purchaseCtx.purchases.map((purchase) => (
+                  <PurchaseDescription key={purchase.id} description={purchase.description} value={purchase.value} purchaseDate={formatDate(new Date(purchase.purchase_date))} />
+                ))}
               </Grid>
             </Grid>
           </Grid>

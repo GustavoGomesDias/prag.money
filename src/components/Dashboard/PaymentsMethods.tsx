@@ -5,13 +5,26 @@ import PurchaseContext from '../../context/purchases/PurchaseContext';
 
 const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.Element => {
   const [balance, setBalance] = useState<number>(0);
-  const purchseCtx = useContext(PurchaseContext);
+  const [paymentId, setPaymentId] = useState<number>(0);
+  const pruchaseCtx = useContext(PurchaseContext);
 
   const handleOnSelect = async (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
 
     if (Number(e.target.value) === 0) {
       setBalance(0);
+      pruchaseCtx.handleClearPurchaseList();
+      return;
+    }
+
+    if (paymentId === 0 || paymentId === Number(e.target.value)) {
+      const paymentsIds = payments.map((payment) => payment.id);
+
+      const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
+
+      setBalance(Number(payments[selectedPaymentIndex].default_value));
+      await pruchaseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
+      setPaymentId(Number(e.target.value));
       return;
     }
 
@@ -20,8 +33,9 @@ const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.
     const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
 
     setBalance(Number(payments[selectedPaymentIndex].default_value));
-    await purchseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
-    console.log(purchseCtx.purchases);
+    pruchaseCtx.handleClearPurchaseList();
+    await pruchaseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
+    setPaymentId(Number(e.target.value));
   };
 
   return (

@@ -5,7 +5,7 @@ import ActionButton from './ActionButton';
 
 export interface PurchaseDescriptionProps {
   description: string
-  value: string
+  value: number
   purchaseDate: string
 }
 

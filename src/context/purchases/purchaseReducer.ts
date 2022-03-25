@@ -5,12 +5,12 @@ export interface PurchaseState {
 }
 
 export interface PurchaseActions {
-  type: 'UPDATE_PURCHASELIST'
+  type: 'POPULATE_PURCHASELIST' | 'CLEAR_PURCHASELIST'
   purchases: PurchaseModel[] | PurchaseModel
 }
 
 const purchaseReducer = (state: PurchaseState, actions: PurchaseActions): PurchaseState => {
-  if (actions.type === 'UPDATE_PURCHASELIST') {
+  if (actions.type === 'POPULATE_PURCHASELIST') {
     if (Array.isArray(actions.purchases)) {
       const newPurchaseState = [...state.purchases, ...actions.purchases];
       return {

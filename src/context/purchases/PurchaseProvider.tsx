@@ -16,16 +16,23 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
   const handleGetPurchasesByPaymentId = async (paymentId: number) => {
     const response = await api.get(`/payment/${paymentId}`);
     const content = response.data.content as Omit<GetForeignInfos, 'payments'>;
-    console.log(content.purchases);
     dispatchPurchasesActions({
-      type: 'UPDATE_PURCHASELIST',
+      type: 'POPULATE_PURCHASELIST',
       purchases: content.purchases,
+    });
+  };
+
+  const handleClearPurchaseList = () => {
+    dispatchPurchasesActions({
+      type: 'CLEAR_PURCHASELIST',
+      purchases: [],
     });
   };
 
   const context = useMemo(() => ({
     purchases: purchasesState.purchases,
     handleGetPurchasesByPaymentId,
+    handleClearPurchaseList,
   }), [purchasesState]);
 
   return (
