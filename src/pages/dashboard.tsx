@@ -29,10 +29,6 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const purchaseCtx = useContext(PurchaseContext);
 
   useEffect(() => {
-    console.log(purchaseCtx.purchases);
-  }, [purchaseCtx.purchases]);
-
-  useEffect(() => {
     const handlePayment = () => {
       if (error) {
         if (error.statusCode === 400) {
