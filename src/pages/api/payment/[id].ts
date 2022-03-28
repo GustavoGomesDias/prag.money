@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
+import withProtect from '../../../serverless/api/middlewares/withProtect';
 import makeAcquisition from '../../../serverless/factories/purchase/PurchaseFactory';
 
 async function handleGetAcquisitonsById(
@@ -22,4 +23,4 @@ async function handleGetAcquisitonsById(
   return res.status(response.statusCode).json({ content });
 }
 
-export default handleGetAcquisitonsById;
+export default withProtect(handleGetAcquisitonsById);
