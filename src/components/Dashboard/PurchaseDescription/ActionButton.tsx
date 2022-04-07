@@ -12,12 +12,12 @@ const ActionButton = ({ action, handleOnClick }: ActionButtonProps): JSX.Element
     colorScheme="teal"
     w="100%"
     size="lg"
-    variant="unstyled"
+    variant="link"
     fontWeight="bold"
     borderColor="initial"
-    margin="0px !important"
-    color="#fff"
-    bg={action === 'Editar' ? '#00735C' : '#FF0000'}
+    // margin="0px !important"
+    // color="#fff"
+    color={action === 'Editar' ? '#00735C' : '#FF0000'}
     _hover={{
       opacity: '0.8',
     }}

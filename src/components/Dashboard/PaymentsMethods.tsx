@@ -45,7 +45,7 @@ const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.
       padding="1em"
     >
       <Flex
-        width="30%"
+        width={{ base: '100%', md: '60%', xl: '30%' }}
         padding="0.8em"
         alignItems="center"
         justifyContent="center"

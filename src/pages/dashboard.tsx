@@ -7,14 +7,16 @@ import {
 
 import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
-import Actions from '../components/Dashboard/Actions';
+import Actions from '../components/Dashboard/Actions/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-import PurchaseCard from '../components/Dashboard/PurchaseDescription/PurchaseCard';
+// import PurchaseCard from '../components/Dashboard/PurchaseDescription/PurchaseCard';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
 import PurchaseContext from '../context/purchases/PurchaseContext';
-import formatDate from '../utils/formatDate';
+import SideActions from '../components/Dashboard/Actions/SideActions';
+import PurchaseTable from '../components/Dashboard/Table/PurchaseTable';
+import MobileDisplayTable from '../components/Dashboard/Table/MobileDispalyTable';
 
 export interface DashboardProps {
   payments?: PaymentModel[]
@@ -73,14 +75,31 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
         >
           <Grid
             templateRows="repeat(1, 1fr)"
-            templateColumns="10% 85%"
+            templateColumns={{ base: '90%', xl: '10% 85%' }}
             w="100%"
             h="100%"
             gap={4}
             justifyContent="center"
+            alignItems="center"
+            flexDir={{ base: 'column', md: 'row' }}
+            display={{ base: 'flex', md: 'grid' }}
           >
-            <Actions />
-            <Grid templateRows="repeat(1, 1fr)" gap={4}>
+            <Flex
+              w="full"
+            >
+              <Actions />
+              <SideActions />
+            </Flex>
+            <Flex
+              w={{ base: '90%', md: 'full', xl: 'full' }}
+              bg="#fff"
+              border="2px solid #00735C"
+              borderRadius="5px"
+            >
+              <PurchaseTable purchases={purchaseCtx.purchases} />
+              <MobileDisplayTable purchases={purchaseCtx.purchases} />
+            </Flex>
+            {/* <Grid templateRows="repeat(1, 1fr)" gap={4}>
               <Grid
                 bg="#fff"
                 border="2px solid #00735C"
@@ -99,7 +118,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
                   />
                 ))}
               </Grid>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Flex>
       </Flex>
@@ -111,8 +130,6 @@ export default Dashboard;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { authToken, userId } = parseCookies(ctx);
 
-  const response = await api.get(`/user/payment/${userId}`);
-
   if (!authToken || authToken === undefined || authToken === null) {
     return {
       redirect: {
@@ -122,16 +139,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  if (response.statusCode !== 400 && response.statusCode !== 200) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
+  api.setAuthHeader(`Bearer ${authToken}`);
+  const response = await api.get(`/user/payment/${userId}`);
 
-  if (response.statusCode === 400) {
+  if (response.statusCode !== 200) {
     return {
       props: {
         error: {
@@ -144,7 +155,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      payments: (response.data.content as ({ [key: string]: PaymentModel[] })).payments,
+      payments: response.data.content !== undefined ? (response.data.content as ({ [key: string]: PaymentModel[] })).payments : [],
     },
   };
 };

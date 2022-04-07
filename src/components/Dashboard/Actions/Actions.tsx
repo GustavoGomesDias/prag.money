@@ -1,6 +1,6 @@
 import { ButtonGroup, chakra, Flex } from '@chakra-ui/react';
 import React from 'react';
-import CustomButton from '../UI/CustomButton';
+import CustomButton from '../../UI/CustomButton';
 
 const Actions = (): JSX.Element => (
   <Flex
@@ -10,6 +10,8 @@ const Actions = (): JSX.Element => (
     flexDir="column"
     alignItems="center"
     height="100%"
+    display={{ base: 'none', xl: 'flex' }}
+    px="1em"
   >
     <chakra.h1
       width="100%"
@@ -29,9 +31,8 @@ const Actions = (): JSX.Element => (
       marginBottom="15px"
     >
       <CustomButton action="Add Compra" textSize="16px" />
-      <CustomButton action="Add forma de pagamento" textSize="16px" />
-      <CustomButton action="Ver formas de pagamentos" textSize="16px" />
-      <CustomButton action="Ver relatório do mês" textSize="16px" />
+      <CustomButton action="Add conta" textSize="16px" />
+      <CustomButton action="Ver relatório" textSize="16px" />
     </ButtonGroup>
   </Flex>
 );
