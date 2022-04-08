@@ -68,4 +68,4 @@ Por fim, adicione a Issue a um projeto
 
 
 ### Exemplo de Issue
-![Issue exaple image](https://github.com/GustavoGomesDias/prag.money/blob/doc/issues/docs/images/issue.png)
+![Issue exaple image](https://github.com/GustavoGomesDias/prag.money/blob/main/docs/images/issue.png)
