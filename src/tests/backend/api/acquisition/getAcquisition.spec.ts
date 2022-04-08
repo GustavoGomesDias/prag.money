@@ -48,9 +48,25 @@ describe('Get acquisitions tests', () => {
 
   test('Should return 400 if no exists purchases', async () => {
     const paymentId = 1;
+    const date = new Date();
 
     jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve(true);
+      return result;
+    });
+
+    jest.spyOn(PaymentDAOImp.prototype, 'findByPaymentId').mockImplementationOnce(async (infos) => {
+      const result: ReturnsAcquisitions = await Promise.resolve({
+        acquisitions: [{
+          payment_id: 1,
+          purchase_id: 1,
+          value: 1,
+        }],
+        default_value: 800,
+        nickname: 'nickname',
+        reset_day: 1,
+        user_id: 1,
+      });
       return result;
     });
 
@@ -68,7 +84,7 @@ describe('Get acquisitions tests', () => {
     const paymentId = 1;
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(PaymentDAOImp.prototype, 'findByPaymentId').mockImplementationOnce(async (infos) => {
+    jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
       throw new Error('Error');
     });
 
@@ -80,6 +96,7 @@ describe('Get acquisitions tests', () => {
   test('Should return 200 and acquisitions informations', async () => {
     const paymentId = 1;
     const date = new Date();
+
     jest.spyOn(PaymentDAOImp.prototype, 'findByPaymentId').mockImplementationOnce(async (infos) => {
       const result: ReturnsAcquisitions = await Promise.resolve({
         acquisitions: [{
