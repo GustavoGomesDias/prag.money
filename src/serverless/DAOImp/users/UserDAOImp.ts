@@ -6,6 +6,7 @@ import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
+import { checkIfExists } from '../../api/helpers/Validations';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -89,17 +90,13 @@ export default class UserDAOImp extends GenericDAOImp<
     };
   }
 
-  async checkIfUserExists(userId: number): Promise<boolean> {
+  async checkIfUserExists(userId: number): Promise<void> {
     const user = await this.findUnique({
       where: {
         id: userId,
       },
     }) as unknown as Omit<UserModel, 'password'> | undefined | null;
 
-    if (!user || user === undefined || user === null) {
-      return false;
-    }
-
-    return true;
+    checkIfExists(user, 'Usuário não existe.');
   }
 }

@@ -1,5 +1,10 @@
 import UserModel from '../../data/models/UserModel';
 import RegisterUser from '../../data/usecases/RegisterUser';
+import {
+  BadRequestError, InternalServerError, NotFoundError, UnauthorizedError,
+} from '../../error/HttpError';
+
+jest.spyOn(console, 'log').mockImplementation(jest.fn());
 
 export interface HttpResponse {
   message?: string
@@ -17,16 +22,6 @@ export interface HttpRequest {
     user?: RegisterUser
   }
 }
-
-export const badRequest = (error: string): HttpResponse => ({
-  statusCode: 400,
-  error,
-});
-
-export const serverError = (error?: string): HttpResponse => ({
-  statusCode: 500,
-  error,
-});
 
 export const ok = (message: string): HttpResponse => ({
   statusCode: 200,
@@ -51,7 +46,22 @@ export const created = (message: string): HttpResponse => ({
   message,
 });
 
-export const notFound = (error: string): HttpResponse => ({
+export const badRequest = (error: BadRequestError): HttpResponse => ({
+  statusCode: 400,
+  error: error.message,
+});
+
+export const unauthorized = (error: UnauthorizedError): HttpResponse => ({
+  statusCode: 401,
+  error: error.message,
+});
+
+export const notFound = (error: NotFoundError): HttpResponse => ({
   statusCode: 404,
-  error,
+  error: error.message,
+});
+
+export const serverError = (error: InternalServerError): HttpResponse => ({
+  statusCode: 500,
+  error: error.message,
 });

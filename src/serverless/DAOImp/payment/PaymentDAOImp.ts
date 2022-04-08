@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { checkIfExists } from '../../api/helpers/Validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import prisma from '../../data/prisma/config';
 import GetAcquisitions, { ReturnsAcquisitions } from '../../data/usecases/GetAcquisitions';
@@ -41,17 +42,12 @@ Prisma.PaymentDeleteArgs
     };
   }
 
-  async checkIfPaymentExists(paymentId: number): Promise<boolean> {
+  async checkIfPaymentExists(paymentId: number): Promise<void> {
     const payment = await this.findUnique({
       where: {
         id: paymentId,
       },
     }) as unknown as PaymentModel | undefined | null;
-
-    if (!payment || payment === undefined || payment === null) {
-      return false;
-    }
-
-    return true;
+    checkIfExists(payment, 'Forma de pagamento não cadastrada');
   }
 }
