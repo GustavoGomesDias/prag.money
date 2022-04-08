@@ -67,7 +67,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Id de usuário inválido.')));
+    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
   test('Should return 400 if unique field (nickname) already existis', async () => {

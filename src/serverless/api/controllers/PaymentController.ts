@@ -1,12 +1,13 @@
 /* eslint-disable camelcase */
-import { Prisma } from '@prisma/client';
-import { validationDay, validationField } from '../../../utils/validations';
+import { validationDay } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
-import uniqueError from '../../error/uniqueError';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
-  badRequest, HttpResponse, ok, serverError,
+  HttpResponse, ok, serverError,
 } from '../helpers/http';
+import { validationFieldRequest, validationId } from '../helpers/Validations';
+import { BadRequestError, InternalServerError } from '../../error/HttpError';
+import handleErrors from '../../error/handleErrors';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -15,39 +16,34 @@ export default class PaymentController {
     this.paymentDAOImp = paymentDAOImp;
   }
 
+  validatieAllRequestFields(paymentInfos: PaymentModel): void {
+    const {
+      default_value, nickname, reset_day, user_id,
+    } = paymentInfos;
+
+    validationFieldRequest(nickname, 'É preciso dar um apelido para a forma de pagamento.');
+    validationFieldRequest(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
+    validationId(user_id);
+
+    if (!validationDay(reset_day)) {
+      throw new BadRequestError('Por favor, forneça um dia que seja valido.');
+    }
+  }
+
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
     try {
-      const {
-        default_value, nickname, reset_day, user_id,
-      } = paymentInfos;
-
-      if (validationField(nickname)) {
-        return badRequest('É preciso dar um apelido para a forma de pagamento.');
-      }
-
-      if (!default_value) {
-        return badRequest('É preciso dar um valor padrão para a forma de pagamento.');
-      }
-
-      if (!validationDay(reset_day)) {
-        return badRequest('Por favor, forneça um dia que seja valido.');
-      }
-
-      if (!user_id) {
-        return badRequest('Id de usuário inválido.');
-      }
+      this.validatieAllRequestFields(paymentInfos);
 
       await this.paymentDAOImp.add(paymentInfos);
 
       return ok('Forma de pagamento criado com sucesso!');
     } catch (err) {
       console.log(err);
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);
-        }
+      const error = handleErrors(err as Error);
+      if (error !== undefined) {
+        return error;
       }
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
     }
   }
 }

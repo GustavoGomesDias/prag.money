@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
-import { validationExpenseValue, validationField, validationId } from '../helpers/Validations';
+import { validationExpenseValue, validationFieldRequest, validationId } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
@@ -38,7 +38,7 @@ export default class AcquisitionController {
       const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
       const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
-      validationField(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+      validationFieldRequest(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
 
       return okWithContent({
         ...paymentInfo,
@@ -76,7 +76,7 @@ export default class AcquisitionController {
         description, purchase_date, value, user_id, payments,
       } = infos;
 
-      validationField(description, 'Descrição de compra inválida.');
+      validationFieldRequest(description, 'Descrição de compra inválida.');
       validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
       await this.userDAO.checkIfUserExists(user_id);
       await this.checkAllPaymentsExists(payments);
@@ -88,7 +88,7 @@ export default class AcquisitionController {
         value,
       }) as PurchaseModel;
 
-      validationField(result, 'Não foi possível encontrar os gastos.');
+      validationFieldRequest(result, 'Não foi possível encontrar os gastos.');
 
       await this.handleAddPayWithRelations(payments, result);
 

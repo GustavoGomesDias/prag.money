@@ -6,7 +6,7 @@ export const validationId = (id: number) => {
   }
 };
 
-export const validationField = (info: unknown, message: string) => {
+export const validationFieldRequest = (info: unknown, message: string) => {
   if (!info || info === undefined || info === null || info === '' || info === ' ') {
     throw new BadRequestError(message);
   }
