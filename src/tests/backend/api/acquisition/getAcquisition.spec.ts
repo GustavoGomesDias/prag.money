@@ -49,6 +49,11 @@ describe('Get acquisitions tests', () => {
   test('Should return 400 if no exists purchases', async () => {
     const paymentId = 1;
 
+    jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(true);
+      return result;
+    });
+
     jest.spyOn(PurchaseDAOImp.prototype, 'returnsPurchaseByAcquisitionsList').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve(undefined);
       return result;
@@ -59,12 +64,12 @@ describe('Get acquisitions tests', () => {
     expect(httpResponse).toEqual(badRequest('Não a compras relacionadas a essa forma de pagamento.'));
   });
 
-  test('Should return 400 if no exists purchases', async () => {
+  test('Should return 500 if any error occurs', async () => {
     const paymentId = 1;
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
     jest.spyOn(PaymentDAOImp.prototype, 'findByPaymentId').mockImplementationOnce(async (infos) => {
-      throw Error('Error');
+      throw new Error('Error');
     });
 
     const acquisitionController = makeSut();
