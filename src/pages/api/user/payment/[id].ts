@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../../serverless/api/helpers/http';
+import withProtect from '../../../../serverless/api/middlewares/withProtect';
 import makeUserController from '../../../../serverless/factories/users/UserFacotory';
 
 async function handleGetUserById(
@@ -22,4 +23,4 @@ async function handleGetUserById(
   return res.status(response.statusCode).json({ content });
 }
 
-export default handleGetUserById;
+export default withProtect(handleGetUserById);

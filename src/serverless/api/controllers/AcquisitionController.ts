@@ -9,10 +9,10 @@ import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase from '../../data/usecases/AddPurchase';
 import {
-  badRequest, created, HttpResponse, notFound, serverError,
+  badRequest, created, HttpResponse, notFound, okWithContent, serverError,
 } from '../helpers/http';
 
-export default class SavePurchaseController {
+export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
 
   private readonly purchaseDAO: PurchaseDAOImp;
@@ -26,6 +26,34 @@ export default class SavePurchaseController {
     this.purchaseDAO = purchaseDAO;
     this.payWithDAO = payWithDAO;
     this.userDAO = user;
+  }
+
+  async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+    try {
+      if (Number.isNaN(paymentId) || paymentId < 0) {
+        return badRequest('ID inválido.');
+      }
+
+      if (!(await this.paymentDAO.checkIfPaymentExists(paymentId))) {
+        return badRequest('Usuário não existe.');
+      }
+
+      const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
+
+      const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+
+      if (purchases === undefined) {
+        return badRequest('Não a compras relacionadas a essa forma de pagamento.');
+      }
+
+      return okWithContent({
+        ...paymentInfo,
+        purchases,
+      });
+    } catch (err) {
+      console.log(err);
+      return serverError('Erro no servidor, tente novamente mais tarde.');
+    }
   }
 
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {

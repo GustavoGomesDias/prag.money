@@ -1,7 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import SavePurchaseController from '../../../../serverless/api/controllers/SavePurchaseController';
+import AcquisitionController from '../../../../serverless/api/controllers/AcquisitionController';
 import {
   badRequest, created, HttpResponse, notFound, serverError,
 } from '../../../../serverless/api/helpers/http';
@@ -10,21 +10,20 @@ import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
-import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
 
-const makeSut = (): SavePurchaseController => {
+const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
   const purchaseDAOStub = new PurchaseDAOImp();
 
-  const savePurchaseControllerStub = new SavePurchaseController(mockPaymentDAOImp, purchaseDAOStub, payWithtDAOStub, mockUserDAOImp);
+  const acquisitionControlerStub = new AcquisitionController(mockPaymentDAOImp, purchaseDAOStub, payWithtDAOStub, mockUserDAOImp);
 
-  return savePurchaseControllerStub;
+  return acquisitionControlerStub;
 };
 
-describe('Save Purchase controller tests', () => {
+describe('Add acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
     const infos: AddPurchase = {
       description: '',
@@ -36,9 +35,9 @@ describe('Save Purchase controller tests', () => {
         value: 1,
       }],
     };
-    const savePurchaseController = makeSut();
+    const acquisitionControler = makeSut();
 
-    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(badRequest('Descrição de compra inválidas.'));
   });
@@ -54,9 +53,9 @@ describe('Save Purchase controller tests', () => {
         value: 1,
       }],
     };
-    const savePurchaseController = makeSut();
+    const acquisitionControler = makeSut();
 
-    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(badRequest('Valor da compra inválido.'));
   });
@@ -77,9 +76,9 @@ describe('Save Purchase controller tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const savePurchaseController = makeSut();
+    const acquisitionControler = makeSut();
 
-    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Usuário não existe.'));
   });
@@ -100,9 +99,9 @@ describe('Save Purchase controller tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const savePurchaseController = makeSut();
+    const acquisitionControler = makeSut();
 
-    const httpResponse: HttpResponse = await savePurchaseController.handleAddPurchase(infos);
+    const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
     expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
   });
@@ -123,14 +122,14 @@ describe('Save Purchase controller tests', () => {
     jest.spyOn(PurchaseDAOImp.prototype, 'add').mockImplementationOnce(async () => {
       throw new Error('Server Error');
     });
-    const savePurchaseController = makeSut();
+    const acquisitionControler = makeSut();
 
-    const response = await savePurchaseController.handleAddPurchase(infos);
+    const response = await acquisitionControler.handleAddPurchase(infos);
 
     expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
   });
 
-  test('Should return 200 if purchase is created', async () => {
+  test('Should return 201 if purchase is created', async () => {
     const infos: AddPurchase = {
       description: 'descripion',
       purchase_date: new Date('2021-1-1'),

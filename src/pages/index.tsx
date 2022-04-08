@@ -2,7 +2,7 @@ import React from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 
 import { parseCookies } from 'nookies';
-import Header from '../components/Header/Header';
+import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Home from '../components/Home/Home';
 

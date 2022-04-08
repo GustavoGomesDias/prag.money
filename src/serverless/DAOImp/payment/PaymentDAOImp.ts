@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import PaymentModel from '../../data/models/PaymentModel';
 import prisma from '../../data/prisma/config';
+import GetAcquisitions, { ReturnsAcquisitions } from '../../data/usecases/GetAcquisitions';
 import GenericDAOImp from '../../infra/DAO/GenericDAOImp';
 import PaymentDAO from './PaymentDAO';
 
@@ -17,6 +18,27 @@ Prisma.PaymentDeleteArgs
 > {
   constructor() {
     super(prisma.payment);
+  }
+
+  async findByPaymentId(paymentId: number): Promise<ReturnsAcquisitions> {
+    const getAcquisitionsInfos = await this.findUnique({
+      where: {
+        id: Number(paymentId),
+      },
+      select: {
+        PayWith: true,
+        default_value: true,
+        nickname: true,
+        reset_day: true,
+        user_id: true,
+      },
+    }) as GetAcquisitions;
+
+    const { PayWith, ...paymentInfos } = getAcquisitionsInfos;
+    return {
+      acquisitions: PayWith,
+      ...paymentInfos,
+    };
   }
 
   async checkIfPaymentExists(paymentId: number): Promise<boolean> {

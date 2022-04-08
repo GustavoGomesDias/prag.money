@@ -2,21 +2,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
-import AddPurchase from '../../../serverless/data/usecases/AddPurchase';
 import makeAcquisition from '../../../serverless/factories/purchase/PurchaseFactory';
 
-async function handleRegisterPurchase(
+async function handleGetAcquisitonsById(
   req: NextApiRequest,
   res: NextApiResponse<Partial<HttpResponse>>,
 ) {
-  const {
-    description, purchase_date, user_id, value, payments,
-  } = req.body as AddPurchase;
+  const id = req.query.id as unknown as number;
   const acquisitionController = makeAcquisition();
 
-  const response = await acquisitionController.handleAddPurchase({
-    description, purchase_date, user_id, value, payments,
-  });
+  const response = await acquisitionController.handleGetAcquisitionsByPaymentId(Number(id));
 
   if (response.error) {
     const { error } = response;
@@ -24,8 +19,8 @@ async function handleRegisterPurchase(
     return res.status(response.statusCode).json({ error });
   }
 
-  const { message } = response;
-  return res.status(response.statusCode).json({ message });
+  const { content } = response;
+  return res.status(response.statusCode).json({ content });
 }
 
-export default withProtect(handleRegisterPurchase);
+export default withProtect(handleGetAcquisitonsById);

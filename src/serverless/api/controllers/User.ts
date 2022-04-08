@@ -24,34 +24,47 @@ export default class UserController {
     this.userDAO = userDAO;
   }
 
+  handleValidateUserFields(userInfos: RegisterUser): HttpResponse | undefined {
+    const {
+      email, password, passwordConfirmation,
+    } = userInfos;
+
+    const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
+
+    for (const field of lst) {
+      let response = '';
+      if (field === 'name') response = 'Nome';
+      if (field === 'email') response = 'E-mail';
+      if (field == 'password') response = 'Senha';
+      if (field == 'passwordConfirmation') response = 'Confirmação de senha';
+
+      if (!userInfos[field as keyof RegisterUser]) {
+        return badRequest(`${response} requerido (a).`);
+      }
+    }
+
+    if (!this.emailValidator.isEmail(email)) {
+      return badRequest('E-mail inválido.');
+    }
+
+    if (password !== passwordConfirmation) {
+      return badRequest('Senha diferente de confirmar senha.');
+    }
+
+    return undefined;
+  }
+
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
     try {
       const {
-        email, name, password, passwordConfirmation,
+        email, password, name,
       } = req.body.user as RegisterUser;
 
-      const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
+      const validateUserFields = this.handleValidateUserFields(req.body.user as RegisterUser);
 
-      for (const field of lst) {
-        let response = '';
-        if (field === 'name') response = 'Nome';
-        if (field === 'email') response = 'E-mail';
-        if (field == 'password') response = 'Senha';
-        if (field == 'passwordConfirmation') response = 'Confirmação de senha';
-
-        if (!req.body.user?.[field as keyof RegisterUser]) {
-          return badRequest(`${response} requerido (a).`);
-        }
+      if (validateUserFields !== undefined) {
+        return validateUserFields;
       }
-
-      if (!this.emailValidator.isEmail(email)) {
-        return badRequest('E-mail inválido.');
-      }
-
-      if (password !== passwordConfirmation) {
-        return badRequest('Senha diferente de confirmar senha.');
-      }
-
       await this.userDAO.addUser({
         email, name, password,
       });
@@ -92,6 +105,8 @@ export default class UserController {
       if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
         return badRequest('Id de usuário inválido.');
       }
+
+      // TODO: Colocar uma validação para ver se o usuário existe.
 
       const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 

@@ -13,7 +13,7 @@ import Form from '../components/Form/Form';
 import SEO from '../components/SEO';
 import { validateEmail, validationField } from '../utils/validations';
 import toastConfig from '../utils/config/tostConfig';
-import ModalLoader from '../components/Loader/ModalLoader';
+import ModalLoader from '../components/UI/Loader/ModalLoader';
 import { AuthContext } from '../context/AuthContext';
 import FormHeader from '../components/Form/FormHeader';
 

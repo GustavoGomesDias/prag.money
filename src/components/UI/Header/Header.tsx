@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 import {
-  Button, ButtonGroup, chakra, Flex,
+  ButtonGroup, chakra, Flex,
 } from '@chakra-ui/react';
 
-import Link from 'next/link';
 import Logo from '../Logo/Logo';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
+import CustomButton from '../CustomButton';
 
 export interface HeaderProps {
   logo: string
@@ -19,6 +19,10 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
   const logout = (): void => {
     signOut();
     push('/', '/');
+  };
+
+  const login = (): void => {
+    push('/login', '/login');
   };
 
   return (
@@ -35,22 +39,9 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
         <Logo fontSize="64px" logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
           {user?.userInfo !== undefined ? (
-            <Button onClick={() => logout()} colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
-              Sair
-            </Button>
+            <CustomButton action="Sair" handleOnClick={logout} />
           ) : (
-            <>
-              <Link href="/register" passHref>
-                <Button colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
-                  Cadastre-se
-                </Button>
-              </Link>
-              <Link href="/login" passHref>
-                <Button colorScheme="teal" size="lg" variant="outline" fontWeight="bold">
-                  Login
-                </Button>
-              </Link>
-            </>
+            <CustomButton action="Login" handleOnClick={login} />
           )}
 
         </ButtonGroup>
