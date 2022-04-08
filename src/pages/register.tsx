@@ -113,7 +113,7 @@ const Register = (): JSX.Element => {
       <Flex
         flexDir="column"
         alignItems="center"
-        py="2em"
+        pb="2em"
       >
         <FormHeader />
         <Form handleSubmit={handleSubmit}>
