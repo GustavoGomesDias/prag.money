@@ -82,6 +82,7 @@ const Login = (): JSX.Element => {
       <Flex
         flexDir="column"
         alignItems="center"
+        py="2em"
       >
         <FormHeader />
         <Form handleSubmit={handleSubmit}>
