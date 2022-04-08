@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
 import { badRequest, ok, serverError } from '../../../../serverless/api/helpers/http';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
+import { BadRequestError, InternalServerError } from '../../../../serverless/error/HttpError';
 import PaymentDAOMocked from '../../../mocks/mockPaymentDAOImp';
 
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -21,7 +22,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('É preciso dar um apelido para a forma de pagamento.'));
+    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um apelido para a forma de pagamento.')));
   });
 
   test('Should return 400 if no default value is provided ', async () => {
@@ -36,7 +37,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('É preciso dar um valor padrão para a forma de pagamento.'));
+    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um valor padrão para a forma de pagamento.')));
   });
 
   test('Should return 400 if incorrect reset day is provided', async () => {
@@ -51,7 +52,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('Por favor, forneça um dia que seja valido.'));
+    expect(response).toEqual(badRequest(new BadRequestError('Por favor, forneça um dia que seja valido.')));
   });
 
   test('Should return 400 if no user id is provided', async () => {
@@ -66,7 +67,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('Id de usuário inválido.'));
+    expect(response).toEqual(badRequest(new BadRequestError('Id de usuário inválido.')));
   });
 
   test('Should return 400 if unique field (nickname) already existis', async () => {
@@ -85,7 +86,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(badRequest('Nickname já existe, tente novamente.'));
+    expect(response).toEqual(badRequest(new BadRequestError('Nickname já existe, tente novamente.')));
   });
 
   test('Should return 500 if server returns a error', async () => {
@@ -104,7 +105,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos);
 
-    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
+    expect(response).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 200 if user is creted', async () => {
