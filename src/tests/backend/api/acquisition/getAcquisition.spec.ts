@@ -9,7 +9,6 @@ import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import { ReturnsAcquisitions } from '../../../../serverless/data/usecases/GetAcquisitions';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
-import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
