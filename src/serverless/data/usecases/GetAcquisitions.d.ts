@@ -8,5 +8,5 @@ export interface ReturnsAcquisitions extends PaymentModel {
 }
 
 export default interface GetAcquisitions extends PaymentModel {
-  PayWith: PayWithModel[]
+  PayWith: PayWithModel[] | PayWithModel
 }

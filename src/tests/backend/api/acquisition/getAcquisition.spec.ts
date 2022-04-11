@@ -42,12 +42,12 @@ describe('Get acquisitions tests', () => {
     const paymentId = 1;
 
     jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
-      await Promise.reject(new NotFoundError('Forma de pagamento não cadastrada'));
+      await Promise.reject(new NotFoundError('Forma de pagamento não cadastrada.'));
     });
 
     const acquisitionController = makeSut();
     const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
-    expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não cadastrada')));
+    expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não cadastrada.')));
   });
 
   test('Should return 400 if no exists purchases', async () => {

@@ -37,7 +37,7 @@ Prisma.PaymentDeleteArgs
 
     const { PayWith, ...paymentInfos } = getAcquisitionsInfos;
     return {
-      acquisitions: PayWith,
+      acquisitions: Array.isArray(PayWith) ? PayWith : [PayWith],
       ...paymentInfos,
     };
   }
@@ -48,6 +48,6 @@ Prisma.PaymentDeleteArgs
         id: paymentId,
       },
     }) as unknown as PaymentModel | undefined | null;
-    checkIfExists(payment, 'Forma de pagamento não cadastrada');
+    checkIfExists(payment, 'Forma de pagamento não cadastrada.');
   }
 }
