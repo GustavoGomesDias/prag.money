@@ -58,7 +58,7 @@ describe('Add acquisition tests', () => {
 
     const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(badRequest(new BadRequestError('Valor da compra inválido.')));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('Valor do gasto tem que ser maior que zero.')));
   });
 
   test('Should return 400 if user not exists', async () => {

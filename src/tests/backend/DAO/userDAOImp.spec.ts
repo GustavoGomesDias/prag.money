@@ -6,6 +6,7 @@ import UserDAOImp from '../../../serverless/DAOImp/users/UserDAOImp';
 import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
+import { NotFoundError } from '../../../serverless/error/HttpError';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
@@ -140,42 +141,34 @@ describe('User DAO Implementation test', () => {
     const req = 1;
     const userDAOImpStub = makeSut();
 
-    const spy = jest.spyOn(userDAOImpStub, 'checkIfUserExists');
+    const spy = jest.spyOn(UserDAOImp.prototype, 'checkIfUserExists').mockImplementationOnce(jest.fn());
     await userDAOImpStub.checkIfUserExists(req);
 
     expect(spy).toHaveBeenCalledWith(req);
   });
 
-  test('Should checkIfUserExistis returns false if user not exists', async () => {
-    const req = 1;
-    const userDAOImpStub = makeSut();
+  test('Should ensure that checkIfUserExistis throws an error if the user does not exist', async () => {
+    try {
+      const req = 1;
+      const userDAOImpStub = makeSut();
 
-    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve(undefined);
+      jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+        const result = await Promise.resolve(undefined);
 
-      return result;
-    });
-    const response = await userDAOImpStub.checkIfUserExists(req);
-
-    expect(response).toBeFalsy();
+        return result;
+      });
+      await userDAOImpStub.checkIfUserExists(req);
+    } catch (err) {
+      expect((err as Error).message).toBe('Usuário não existe.');
+    }
   });
 
-  test('Should checkIfUserExistis returns true if user exists', async () => {
-    const req = 1;
-    const userDAOImpStub = makeSut();
-
-    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve({
-        id: 1,
-        name: 'name',
-        email: 'email@email.com',
-      });
-
+  test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve(undefined);
       return result;
     });
-    const response = await userDAOImpStub.checkIfUserExists(req);
-
-    expect(response).toBeTruthy();
+    expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
   });
 
   test('Should getAllPaymentsByUserId returns undefined if user not exists', async () => {
