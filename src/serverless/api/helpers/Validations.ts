@@ -1,3 +1,4 @@
+import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import { BadRequestError, NotFoundError } from '../../error/HttpError';
 
 export const validationId = (id: number) => {
@@ -21,5 +22,17 @@ export const checkIfExists = (info: unknown, message: string) => {
 export const validationExpenseValue = (value: number, message: string) => {
   if (value < 0) {
     throw new BadRequestError(message);
+  }
+};
+
+export const checkPasswordIsTheCertainPassword = async (password: string, userPassword: string, encrypter: EncryptAdapter) => {
+  if (!(await encrypter.compare(password, userPassword))) {
+    throw new BadRequestError('E-mail ou senhas incorretos.');
+  }
+};
+
+export const validationEmailRequest = (isValid: boolean) => {
+  if (!isValid) {
+    throw new BadRequestError('E-mail inválido.');
   }
 };

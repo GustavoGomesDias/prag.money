@@ -9,6 +9,11 @@ import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import {
   badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../helpers/http';
+import {
+  checkIfExists, checkPasswordIsTheCertainPassword, validationEmailRequest, validationFieldRequest,
+} from '../helpers/Validations';
+import handleErrors from '../../error/handleErrors';
+import { InternalServerError } from '../../error/HttpError';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -31,28 +36,24 @@ export default class TokenController {
     this.encrypter = encrypter;
   }
 
+  validationLoginInfos(infos: LoginProps): void {
+    const { email, password } = infos;
+
+    validationFieldRequest(email, 'E-mail requerido.');
+    validationFieldRequest(password, 'Senha requerida.');
+  }
+
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
     try {
       const { email, password } = infos;
-      if (validationField(email)) {
-        return badRequest('E-mail requerido (a).');
-      }
-      if (validationField(password)) {
-        return badRequest('Senha requerido (a).');
-      }
+      this.validationLoginInfos(infos);
 
       const user = await this.userDAOImp.findByEmail(email);
-      if (!user || user === undefined) {
-        return notFound('Usuário não existente, considere criar uma conta.');
-      }
 
-      if (!(await this.encrypter.compare(password, user.password))) {
-        return badRequest('Senha incorreta.');
-      }
+      await checkPasswordIsTheCertainPassword(password, user.password, this.encrypter);
 
-      if (!this.emailValidator.isEmail(email)) {
-        return badRequest('E-mail inválido.');
-      }
+      const validationEmail = this.emailValidator.isEmail(email);
+      validationEmailRequest(validationEmail);
 
       const payload = this.webToken.sign({
         id: user.id,
@@ -69,7 +70,11 @@ export default class TokenController {
       return okWithPayload(payload, userInfo);
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      const error = handleErrors(err as Error);
+      if (error !== undefined) {
+        return error;
+      }
+      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
     }
   }
 

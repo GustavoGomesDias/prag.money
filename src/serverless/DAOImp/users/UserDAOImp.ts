@@ -56,16 +56,14 @@ export default class UserDAOImp extends GenericDAOImp<
     };
   }
 
-  async findByEmail(info: string): Promise<UserModel | undefined> {
+  async findByEmail(info: string): Promise<UserModel> {
     const user = await this.findUnique({
       where: {
         email: info,
       },
     });
 
-    if (!user || user === null) {
-      return undefined;
-    }
+    checkIfExists(user, 'Usuário não existente, considere criar uma conta.');
 
     const {
       id, email, name, password,
