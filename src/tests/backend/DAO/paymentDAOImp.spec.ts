@@ -32,7 +32,7 @@ describe('Payment DAO Implementation tests', () => {
     const req = 1;
     const paymentDAOImpStub = makeSut();
 
-    const spy = jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
         PayWith: {
           payment_id: 1,

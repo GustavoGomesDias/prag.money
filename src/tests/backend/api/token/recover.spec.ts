@@ -9,6 +9,7 @@ import {
   badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
@@ -68,7 +69,7 @@ describe('Handle Recovering User Infos', () => {
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
-    expect(response).toEqual(badRequest('Não foi encontrado nenhum Token.'));
+    expect(response).toEqual(badRequest(new BadRequestError('Não foi encontrado nenhum Token.')));
   });
 
   test('Should return 400 if token is expired', async () => {
@@ -86,7 +87,7 @@ describe('Handle Recovering User Infos', () => {
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
-    expect(response).toEqual(badRequest('Token expirado.'));
+    expect(response).toEqual(badRequest(new BadRequestError('Token expirado.')));
   });
 
   test('Should return 404 if token id no return a user', async () => {
@@ -99,7 +100,7 @@ describe('Handle Recovering User Infos', () => {
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
-    expect(response).toEqual(notFound('Usuário não existe.'));
+    expect(response).toEqual(notFound(new NotFoundError('Usuário não existe.')));
   });
 
   test('Should return 500 if server error ocurred ', async () => {
@@ -113,7 +114,7 @@ describe('Handle Recovering User Infos', () => {
     const tokenController = makeSut();
     const httpResponse: HttpResponse = await tokenController.handleRecoverUserInfos(token);
 
-    expect(httpResponse).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
+    expect(httpResponse).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde')));
   });
 
   test('Should return 200 and user infos if success recovering user infos', async () => {
