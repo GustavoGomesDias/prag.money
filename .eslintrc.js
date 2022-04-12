@@ -39,5 +39,6 @@ module.exports = {
     'class-methods-use-this': 'off',
     'max-classes-per-file': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    '@typescript-eslint/no-namespace': 'off',
   },
 };

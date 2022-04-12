@@ -12,7 +12,7 @@ import {
 import {
   checkIfExists, checkPasswordIsTheCertainPassword, validationEmailRequest, validationFieldRequest,
 } from '../helpers/Validations';
-import handleErrors from '../../error/handleErrors';
+import handleErrors from '../../error/helpers/handleErrors';
 import { InternalServerError } from '../../error/HttpError';
 
 export default class TokenController {
@@ -80,9 +80,7 @@ export default class TokenController {
 
   async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
     try {
-      if (validationField(token)) {
-        return badRequest('Não foi encontrado nenhum Token.');
-      }
+      validationFieldRequest(token, 'Não foi encontrado nenhum Token.');
 
       const result = this.webToken.verify(token);
 
@@ -92,9 +90,7 @@ export default class TokenController {
         },
       }) as UserModel;
 
-      if (!user || user === undefined || user === null) {
-        return notFound('Usuário não existe.');
-      }
+      validationFieldRequest(user, 'Usuário não existe.');
 
       const newToken = this.webToken.sign({
         id: user.id,
@@ -108,11 +104,15 @@ export default class TokenController {
         name: user.name as string,
       });
     } catch (err: unknown | Error | TokenExpiredError) {
+      console.log(err);
       if (err instanceof TokenExpiredError) {
         return badRequest('Token expirado.');
       }
-      console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      const error = handleErrors(err as Error);
+      if (error !== undefined) {
+        return error;
+      }
+      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
     }
   }
 }

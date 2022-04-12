@@ -7,7 +7,7 @@ import {
 } from '../helpers/http';
 import { validationFieldRequest, validationId } from '../helpers/Validations';
 import { BadRequestError, InternalServerError } from '../../error/HttpError';
-import handleErrors from '../../error/handleErrors';
+import handleErrors from '../../error/helpers/handleErrors';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;

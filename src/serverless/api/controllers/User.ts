@@ -3,7 +3,7 @@
 import { Prisma } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
-import uniqueError from '../../error/uniqueError';
+import uniqueError from '../../error/helpers/uniqueError';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {

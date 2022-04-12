@@ -8,7 +8,7 @@ import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
-import handleErrors from '../../error/handleErrors';
+import handleErrors from '../../error/helpers/handleErrors';
 import { InternalServerError } from '../../error/HttpError';
 import {
   created, okWithContent, serverError, HttpResponse,
