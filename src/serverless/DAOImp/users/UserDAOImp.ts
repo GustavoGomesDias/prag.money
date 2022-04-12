@@ -6,7 +6,7 @@ import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
-import { checkIfExists } from '../../api/helpers/Validations';
+import { checkIfExists404code } from '../../api/helpers/Validations';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -63,7 +63,7 @@ export default class UserDAOImp extends GenericDAOImp<
       },
     });
 
-    checkIfExists(user, 'Usuário não existente, considere criar uma conta.');
+    checkIfExists404code(user, 'Usuário não existente, considere criar uma conta.');
 
     const {
       id, email, name, password,
@@ -95,6 +95,6 @@ export default class UserDAOImp extends GenericDAOImp<
       },
     }) as unknown as Omit<UserModel, 'password'> | undefined | null;
 
-    checkIfExists(user, 'Usuário não existe.');
+    checkIfExists404code(user, 'Usuário não existe.');
   }
 }

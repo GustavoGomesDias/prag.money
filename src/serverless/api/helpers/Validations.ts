@@ -7,13 +7,13 @@ export const validationId = (id: number) => {
   }
 };
 
-export const validationFieldRequest = (info: unknown, message: string) => {
+export const validationField400code = (info: unknown, message: string) => {
   if (!info || info === undefined || info === null || info === '' || info === ' ') {
     throw new BadRequestError(message);
   }
 };
 
-export const checkIfExists = (info: unknown, message: string) => {
+export const checkIfExists404code = (info: unknown, message: string) => {
   if (!info || info === undefined || info === null || info === '' || info === ' ') {
     throw new NotFoundError(message);
   }

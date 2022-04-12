@@ -1,5 +1,3 @@
-import { TokenExpiredError } from 'jsonwebtoken';
-import { validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
@@ -7,10 +5,11 @@ import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import {
-  badRequest, HttpResponse, notFound, okWithPayload, serverError,
+  HttpResponse, okWithPayload, serverError,
 } from '../helpers/http';
 import {
-  checkIfExists, checkPasswordIsTheCertainPassword, validationEmailRequest, validationFieldRequest,
+  checkIfExists404code,
+  checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
 } from '../helpers/Validations';
 import handleErrors from '../../error/helpers/handleErrors';
 import { InternalServerError } from '../../error/HttpError';
@@ -39,8 +38,8 @@ export default class TokenController {
   validationLoginInfos(infos: LoginProps): void {
     const { email, password } = infos;
 
-    validationFieldRequest(email, 'E-mail requerido.');
-    validationFieldRequest(password, 'Senha requerida.');
+    validationField400code(email, 'E-mail requerido.');
+    validationField400code(password, 'Senha requerida.');
   }
 
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
@@ -80,7 +79,7 @@ export default class TokenController {
 
   async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
     try {
-      validationFieldRequest(token, 'Não foi encontrado nenhum Token.');
+      validationField400code(token, 'Não foi encontrado nenhum Token.');
 
       const result = this.webToken.verify(token);
 
@@ -90,7 +89,7 @@ export default class TokenController {
         },
       }) as UserModel;
 
-      validationFieldRequest(user, 'Usuário não existe.');
+      checkIfExists404code(user, 'Usuário não existe.');
 
       const newToken = this.webToken.sign({
         id: user.id,
@@ -103,11 +102,8 @@ export default class TokenController {
         email: user.email as string,
         name: user.name as string,
       });
-    } catch (err: unknown | Error | TokenExpiredError) {
+    } catch (err) {
       console.log(err);
-      if (err instanceof TokenExpiredError) {
-        return badRequest('Token expirado.');
-      }
       const error = handleErrors(err as Error);
       if (error !== undefined) {
         return error;

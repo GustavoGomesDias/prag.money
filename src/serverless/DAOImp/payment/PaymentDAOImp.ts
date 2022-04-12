@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { checkIfExists } from '../../api/helpers/Validations';
+import { checkIfExists404code } from '../../api/helpers/Validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import prisma from '../../data/prisma/config';
 import GetAcquisitions, { ReturnsAcquisitions } from '../../data/usecases/GetAcquisitions';
@@ -48,6 +48,6 @@ Prisma.PaymentDeleteArgs
         id: paymentId,
       },
     }) as unknown as PaymentModel | undefined | null;
-    checkIfExists(payment, 'Forma de pagamento não cadastrada.');
+    checkIfExists404code(payment, 'Forma de pagamento não cadastrada.');
   }
 }
