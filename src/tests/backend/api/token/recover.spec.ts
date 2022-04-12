@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
@@ -10,6 +10,7 @@ import {
 } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
+import JWTService from '../../../../serverless/services/JWTService';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
@@ -74,9 +75,9 @@ describe('Handle Recovering User Infos', () => {
 
   test('Should return 400 if token is expired', async () => {
     const token = 'token';
-    const webTokenStub = makeWebToken();
+    const webTokenStub = new JWTService();
 
-    jest.spyOn(webTokenStub, 'verify').mockImplementationOnce(() => {
+    jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
       throw new TokenExpiredError('jwt expired', new Date());
     });
 
@@ -114,7 +115,7 @@ describe('Handle Recovering User Infos', () => {
     const tokenController = makeSut();
     const httpResponse: HttpResponse = await tokenController.handleRecoverUserInfos(token);
 
-    expect(httpResponse).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde')));
+    expect(httpResponse).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 200 and user infos if success recovering user infos', async () => {
