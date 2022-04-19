@@ -1,17 +1,19 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable eqeqeq */
-import { Prisma } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
-import uniqueError from '../../error/helpers/uniqueError';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  badRequest, serverError, HttpRequest, HttpResponse, created, okWithContent,
+  HttpRequest, HttpResponse, created, okWithContent,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
-import { checkIsEquals, validationEmailRequest, validationField400code } from '../helpers/Validations';
+import {
+  checkIfExists404code,
+  checkIsEquals, validationEmailRequest, validationField400code, validationId,
+} from '../helpers/Validations';
 import handleErrors from '../../error/helpers/handleErrors';
+import GetForeignInfos from '../../data/usecases/GetForeignInfos';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -62,47 +64,41 @@ export default class UserController {
 
   async handleGetUserById(userId: number): Promise<HttpResponse> {
     try {
-      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
-        return badRequest('Id de usuário inválido.');
-      }
+      validationId(userId);
 
-      const { id, email, name } = await this.userDAO.findUnique({
+      const user = await this.userDAO.findUnique({
         where: {
           id: Number(userId),
         },
       }) as Omit<UserModel, 'password'>;
 
+      checkIfExists404code(user, 'Usuário não existe.');
+
+      const { id, email, name } = user;
+
       return okWithContent({ id, email, name });
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
   }
 
   async handleGetPaymentsByUserId(userId: number): Promise<HttpResponse> {
     try {
-      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
-        return badRequest('Id de usuário inválido.');
-      }
-
-      // TODO: Colocar uma validação para ver se o usuário existe.
+      validationId(userId);
 
       const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 
-      if (infos === undefined) {
-        return badRequest('Não a formas de pagamento cadastradas.');
-      }
+      checkIfExists404code(infos, 'Não a formas de pagamento cadastradas.');
 
-      const { payments } = infos;
+      const { payments } = infos as GetForeignInfos;
 
-      if (payments.length === 0 || payments[0] === undefined) {
-        return badRequest('Não a formas de pagamento cadastradas.');
-      }
+      checkIfExists404code(payments[0], 'Não a formas de pagamento cadastradas.');
 
       return okWithContent({ payments });
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
   }
 }
