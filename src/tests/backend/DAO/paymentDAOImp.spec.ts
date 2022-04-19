@@ -22,7 +22,7 @@ describe('Payment DAO Implementation tests', () => {
     const req = 1;
     const paymentDAOImpStub = makeSut();
 
-    const spy = jest.spyOn(paymentDAOImpStub, 'findByPaymentId');
+    const spy = jest.spyOn(paymentDAOImpStub, 'findByPaymentId').mockImplementationOnce(jest.fn());
     await paymentDAOImpStub.findByPaymentId(req);
 
     expect(spy).toHaveBeenCalledWith(req);
@@ -56,7 +56,7 @@ describe('Payment DAO Implementation tests', () => {
     const req = 1;
     const paymentDAOImpStub = makeSut();
 
-    const spy = jest.spyOn(paymentDAOImpStub, 'checkIfPaymentExists');
+    const spy = jest.spyOn(paymentDAOImpStub, 'checkIfPaymentExists').mockImplementationOnce(jest.fn());
     await paymentDAOImpStub.checkIfPaymentExists(req);
 
     expect(spy).toHaveBeenCalledWith(req);
