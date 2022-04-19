@@ -2,8 +2,11 @@
 /* eslint-disable no-unused-vars */
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest, okWithContent, serverError } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, notFound, okWithContent, serverError,
+} from '../../../../serverless/api/helpers/http';
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import makePaymentController, {} from '../../../../serverless/factories/users/UserFacotory';
 import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
@@ -46,7 +49,7 @@ describe('Handle Get Payments Function', () => {
     }));
   });
 
-  test('Should return 400 if payments infos is undefined', async () => {
+  test('Should return 404 if payments infos is undefined', async () => {
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
       Payment: undefined,
     }));
@@ -55,7 +58,7 @@ describe('Handle Get Payments Function', () => {
 
     const response = await userController.handleGetPaymentsByUserId(1);
 
-    expect(response).toEqual(badRequest('Não a formas de pagamento cadastradas.'));
+    expect(response).toEqual(notFound(new NotFoundError('Não a formas de pagamento cadastradas.')));
   });
 
   test('Should return 500 if server returns a error', async () => {
@@ -69,7 +72,7 @@ describe('Handle Get Payments Function', () => {
 
     const response = await userController.handleGetPaymentsByUserId(1);
 
-    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
+    expect(response).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 400 if invalid user id is provided', async () => {
@@ -97,16 +100,16 @@ describe('Handle Get Payments Function', () => {
 
     const response = await userController.handleGetPaymentsByUserId(-1);
 
-    expect(response).toEqual(badRequest('Id de usuário inválido.'));
+    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
-  test('Should return 400 if invalid user not exists', async () => {
+  test('Should return 404 if invalid user not exists', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve(null));
 
     const userController = makeSut();
 
     const response = await userController.handleGetPaymentsByUserId(1);
 
-    expect(response).toEqual(badRequest('Não a formas de pagamento cadastradas.'));
+    expect(response).toEqual(notFound(new NotFoundError('Não a formas de pagamento cadastradas.')));
   });
 });

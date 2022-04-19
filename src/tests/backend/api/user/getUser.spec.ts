@@ -7,6 +7,7 @@ import {
 } from '../../../../serverless/api/helpers/http';
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
+import { BadRequestError, InternalServerError } from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
@@ -40,7 +41,7 @@ describe('Handle Get User By Id function', () => {
 
     const response = await userController.handleGetUserById(1);
 
-    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
+    expect(response).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 400 if invalid user id is provided', async () => {
@@ -66,7 +67,7 @@ describe('Handle Get User By Id function', () => {
 
     const response = await userController.handleGetUserById(-1);
 
-    expect(response).toEqual(badRequest('Id de usuário inválido.'));
+    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
   test('Should return 200 if user is returned', async () => {
