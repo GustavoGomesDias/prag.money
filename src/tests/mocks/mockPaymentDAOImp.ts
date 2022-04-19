@@ -15,10 +15,4 @@ mockPaymentDAOImp.add = jest.fn(async (infos) => {
   return result;
 });
 
-mockPaymentDAOImp.checkIfPaymentExists = jest.fn(async (infos) => {
-  const result = await Promise.resolve(true);
-
-  return result;
-});
-
 export default mockPaymentDAOImp;

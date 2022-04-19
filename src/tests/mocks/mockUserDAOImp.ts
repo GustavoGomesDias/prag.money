@@ -32,10 +32,6 @@ mockUserDAOImp.findByEmail = jest.fn(async (info: string) => {
   return result;
 });
 
-mockUserDAOImp.checkIfUserExists = jest.fn(async (infos) => {
-  const result = await Promise.resolve(true);
-
-  return result;
-});
+mockUserDAOImp.checkIfUserExists = jest.fn();
 
 export default mockUserDAOImp;
