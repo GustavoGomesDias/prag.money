@@ -10,6 +10,8 @@ import {
   badRequest, serverError, HttpRequest, HttpResponse, created, okWithContent,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
+import { checkIsEquals, validationEmailRequest, validationField400code } from '../helpers/Validations';
+import handleErrors from '../../error/helpers/handleErrors';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -24,34 +26,20 @@ export default class UserController {
     this.userDAO = userDAO;
   }
 
-  handleValidateUserFields(userInfos: RegisterUser): HttpResponse | undefined {
+  handleValidateUserFields(userInfos: RegisterUser): void {
     const {
-      email, password, passwordConfirmation,
+      name, email, password, passwordConfirmation,
     } = userInfos;
 
-    const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
+    validationField400code(name, 'Nome de usuário requerido.');
+    validationField400code(email, 'E-mail requerido.');
+    validationField400code(password, 'Senha requerida.');
+    validationField400code(passwordConfirmation, 'Confirmação de senha requerida.');
 
-    for (const field of lst) {
-      let response = '';
-      if (field === 'name') response = 'Nome';
-      if (field === 'email') response = 'E-mail';
-      if (field == 'password') response = 'Senha';
-      if (field == 'passwordConfirmation') response = 'Confirmação de senha';
+    const validationEmail = this.emailValidator.isEmail(email);
+    validationEmailRequest(validationEmail);
 
-      if (!userInfos[field as keyof RegisterUser]) {
-        return badRequest(`${response} requerido (a).`);
-      }
-    }
-
-    if (!this.emailValidator.isEmail(email)) {
-      return badRequest('E-mail inválido.');
-    }
-
-    if (password !== passwordConfirmation) {
-      return badRequest('Senha diferente de confirmar senha.');
-    }
-
-    return undefined;
+    checkIsEquals(password, passwordConfirmation, 'Senha diferente de confirmar senha.');
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -60,11 +48,7 @@ export default class UserController {
         email, password, name,
       } = req.body.user as RegisterUser;
 
-      const validateUserFields = this.handleValidateUserFields(req.body.user as RegisterUser);
-
-      if (validateUserFields !== undefined) {
-        return validateUserFields;
-      }
+      this.handleValidateUserFields(req.body.user as RegisterUser);
       await this.userDAO.addUser({
         email, name, password,
       });
@@ -72,12 +56,7 @@ export default class UserController {
       return created('Usuário criado com sucesso!');
     } catch (err) {
       console.log(err);
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);
-        }
-      }
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      return handleErrors(err as Error);
     }
   }
 

@@ -36,3 +36,9 @@ export const validationEmailRequest = (isValid: boolean) => {
     throw new BadRequestError('E-mail inválido.');
   }
 };
+
+export const checkIsEquals = (firstTestValue: unknown, secondTestValue: unknown, errorMessage: string) => {
+  if (firstTestValue !== secondTestValue) {
+    throw new BadRequestError(errorMessage);
+  }
+};
