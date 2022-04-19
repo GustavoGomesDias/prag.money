@@ -1,12 +1,14 @@
 import { Prisma } from '@prisma/client';
 import {
-  badRequest, HttpResponse, notFound, unauthorized,
+  badRequest, HttpResponse, notFound, serverError, unauthorized,
 } from '../../api/helpers/http';
-import { BadRequestError, NotFoundError, UnauthorizedError } from '../HttpError';
+import {
+  BadRequestError, InternalServerError, NotFoundError, UnauthorizedError,
+} from '../HttpError';
 import { PMoneyErrors } from '../PMoneyErrors';
 import uniqueError from './uniqueError';
 
-const handleErrors = (error: Error): HttpResponse | undefined => {
+const handleErrors = (error: Error): HttpResponse => {
   if (error instanceof NotFoundError) {
     return notFound(error);
   }
@@ -27,7 +29,7 @@ const handleErrors = (error: Error): HttpResponse | undefined => {
     return badRequest(new BadRequestError(error.message));
   }
 
-  return undefined;
+  return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
 };
 
 export default handleErrors;

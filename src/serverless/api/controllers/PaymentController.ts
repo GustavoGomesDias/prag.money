@@ -3,10 +3,10 @@ import { validationDay } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
-  HttpResponse, ok, serverError,
+  HttpResponse, ok,
 } from '../helpers/http';
 import { validationField400code, validationId } from '../helpers/Validations';
-import { BadRequestError, InternalServerError } from '../../error/HttpError';
+import { BadRequestError } from '../../error/HttpError';
 import handleErrors from '../../error/helpers/handleErrors';
 
 export default class PaymentController {
@@ -39,11 +39,7 @@ export default class PaymentController {
       return ok('Forma de pagamento criado com sucesso!');
     } catch (err) {
       console.log(err);
-      const error = handleErrors(err as Error);
-      if (error !== undefined) {
-        return error;
-      }
-      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
+      return handleErrors(err as Error);
     }
   }
 }

@@ -9,9 +9,8 @@ import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
 import handleErrors from '../../error/helpers/handleErrors';
-import { InternalServerError } from '../../error/HttpError';
 import {
-  created, okWithContent, serverError, HttpResponse,
+  created, okWithContent, HttpResponse,
 } from '../helpers/http';
 
 export default class AcquisitionController {
@@ -46,11 +45,7 @@ export default class AcquisitionController {
       });
     } catch (err) {
       console.log(err);
-      const error = handleErrors(err as Error);
-      if (error !== undefined) {
-        return error;
-      }
-      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
+      return handleErrors(err as Error);
     }
   }
 
@@ -95,11 +90,7 @@ export default class AcquisitionController {
       return created('Compra cadastrada com sucesso!');
     } catch (err) {
       console.log(err);
-      const error = handleErrors(err as Error);
-      if (error !== undefined) {
-        return error;
-      }
-      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
+      return handleErrors(err as Error);
     }
   }
 }
