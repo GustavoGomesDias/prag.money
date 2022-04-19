@@ -1,15 +1,19 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable eqeqeq */
-import { Prisma } from '@prisma/client';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import RegisterUser from '../../data/usecases/RegisterUser';
-import uniqueError from '../../error/uniqueError';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  badRequest, serverError, HttpRequest, HttpResponse, created, okWithContent,
+  HttpRequest, HttpResponse, created, okWithContent,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
+import {
+  checkIfExists404code,
+  checkIsEquals, validationEmailRequest, validationField400code, validationId,
+} from '../helpers/Validations';
+import handleErrors from '../../error/helpers/handleErrors';
+import GetForeignInfos from '../../data/usecases/GetForeignInfos';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -24,34 +28,20 @@ export default class UserController {
     this.userDAO = userDAO;
   }
 
-  handleValidateUserFields(userInfos: RegisterUser): HttpResponse | undefined {
+  handleValidateUserFields(userInfos: RegisterUser): void {
     const {
-      email, password, passwordConfirmation,
+      name, email, password, passwordConfirmation,
     } = userInfos;
 
-    const lst: string[] = ['name', 'email', 'password', 'passwordConfirmation'];
+    validationField400code(name, 'Nome de usuário requerido.');
+    validationField400code(email, 'E-mail requerido.');
+    validationField400code(password, 'Senha requerida.');
+    validationField400code(passwordConfirmation, 'Confirmação de senha requerida.');
 
-    for (const field of lst) {
-      let response = '';
-      if (field === 'name') response = 'Nome';
-      if (field === 'email') response = 'E-mail';
-      if (field == 'password') response = 'Senha';
-      if (field == 'passwordConfirmation') response = 'Confirmação de senha';
+    const validationEmail = this.emailValidator.isEmail(email);
+    validationEmailRequest(validationEmail);
 
-      if (!userInfos[field as keyof RegisterUser]) {
-        return badRequest(`${response} requerido (a).`);
-      }
-    }
-
-    if (!this.emailValidator.isEmail(email)) {
-      return badRequest('E-mail inválido.');
-    }
-
-    if (password !== passwordConfirmation) {
-      return badRequest('Senha diferente de confirmar senha.');
-    }
-
-    return undefined;
+    checkIsEquals(password, passwordConfirmation, 'Senha diferente de confirmar senha.');
   }
 
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
@@ -60,11 +50,7 @@ export default class UserController {
         email, password, name,
       } = req.body.user as RegisterUser;
 
-      const validateUserFields = this.handleValidateUserFields(req.body.user as RegisterUser);
-
-      if (validateUserFields !== undefined) {
-        return validateUserFields;
-      }
+      this.handleValidateUserFields(req.body.user as RegisterUser);
       await this.userDAO.addUser({
         email, name, password,
       });
@@ -72,58 +58,47 @@ export default class UserController {
       return created('Usuário criado com sucesso!');
     } catch (err) {
       console.log(err);
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
-          return badRequest(`${uniqueError(err)} já existe, tente novamente.`);
-        }
-      }
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      return handleErrors(err as Error);
     }
   }
 
   async handleGetUserById(userId: number): Promise<HttpResponse> {
     try {
-      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
-        return badRequest('Id de usuário inválido.');
-      }
+      validationId(userId);
 
-      const { id, email, name } = await this.userDAO.findUnique({
+      const user = await this.userDAO.findUnique({
         where: {
           id: Number(userId),
         },
       }) as Omit<UserModel, 'password'>;
 
+      checkIfExists404code(user, 'Usuário não existe.');
+
+      const { id, email, name } = user;
+
       return okWithContent({ id, email, name });
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
   }
 
   async handleGetPaymentsByUserId(userId: number): Promise<HttpResponse> {
     try {
-      if (Number.isNaN(userId) || userId === undefined || userId === null || userId < 0) {
-        return badRequest('Id de usuário inválido.');
-      }
-
-      // TODO: Colocar uma validação para ver se o usuário existe.
+      validationId(userId);
 
       const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 
-      if (infos === undefined) {
-        return badRequest('Não a formas de pagamento cadastradas.');
-      }
+      checkIfExists404code(infos, 'Não a formas de pagamento cadastradas.');
 
-      const { payments } = infos;
+      const { payments } = infos as GetForeignInfos;
 
-      if (payments.length === 0 || payments[0] === undefined) {
-        return badRequest('Não a formas de pagamento cadastradas.');
-      }
+      checkIfExists404code(payments[0], 'Não a formas de pagamento cadastradas.');
 
       return okWithContent({ payments });
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
   }
 }

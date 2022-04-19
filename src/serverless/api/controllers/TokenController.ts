@@ -1,5 +1,3 @@
-import { TokenExpiredError } from 'jsonwebtoken';
-import { validationField } from '../../../utils/validations';
 import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
@@ -7,8 +5,13 @@ import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import {
-  badRequest, HttpResponse, notFound, okWithPayload, serverError,
+  HttpResponse, okWithPayload,
 } from '../helpers/http';
+import {
+  checkIfExists404code,
+  checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
+} from '../helpers/Validations';
+import handleErrors from '../../error/helpers/handleErrors';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -31,28 +34,24 @@ export default class TokenController {
     this.encrypter = encrypter;
   }
 
+  validationLoginInfos(infos: LoginProps): void {
+    const { email, password } = infos;
+
+    validationField400code(email, 'E-mail requerido.');
+    validationField400code(password, 'Senha requerida.');
+  }
+
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
     try {
       const { email, password } = infos;
-      if (validationField(email)) {
-        return badRequest('E-mail requerido (a).');
-      }
-      if (validationField(password)) {
-        return badRequest('Senha requerido (a).');
-      }
+      this.validationLoginInfos(infos);
 
       const user = await this.userDAOImp.findByEmail(email);
-      if (!user || user === undefined) {
-        return notFound('Usuário não existente, considere criar uma conta.');
-      }
 
-      if (!(await this.encrypter.compare(password, user.password))) {
-        return badRequest('Senha incorreta.');
-      }
+      await checkPasswordIsTheCertainPassword(password, user.password, this.encrypter);
 
-      if (!this.emailValidator.isEmail(email)) {
-        return badRequest('E-mail inválido.');
-      }
+      const validationEmail = this.emailValidator.isEmail(email);
+      validationEmailRequest(validationEmail);
 
       const payload = this.webToken.sign({
         id: user.id,
@@ -69,15 +68,13 @@ export default class TokenController {
       return okWithPayload(payload, userInfo);
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      return handleErrors(err as Error);
     }
   }
 
   async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
     try {
-      if (validationField(token)) {
-        return badRequest('Não foi encontrado nenhum Token.');
-      }
+      validationField400code(token, 'Não foi encontrado nenhum Token.');
 
       const result = this.webToken.verify(token);
 
@@ -87,9 +84,7 @@ export default class TokenController {
         },
       }) as UserModel;
 
-      if (!user || user === undefined || user === null) {
-        return notFound('Usuário não existe.');
-      }
+      checkIfExists404code(user, 'Usuário não existe.');
 
       const newToken = this.webToken.sign({
         id: user.id,
@@ -102,12 +97,9 @@ export default class TokenController {
         email: user.email as string,
         name: user.name as string,
       });
-    } catch (err: unknown | Error | TokenExpiredError) {
-      if (err instanceof TokenExpiredError) {
-        return badRequest('Token expirado.');
-      }
+    } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde');
+      return handleErrors(err as Error);
     }
   }
 }

@@ -7,7 +7,11 @@ import TokenController from '../../../../serverless/api/controllers/TokenControl
 import {
   badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../../../../serverless/api/helpers/http';
+import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
+import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
+import EmailValidator from '../../../../serverless/services/EmailValidator';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
@@ -65,10 +69,9 @@ describe('Handle User Login Tests', () => {
       password: 'password',
     };
     const tokenController = makeSut();
-
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(badRequest('E-mail requerido (a).'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('E-mail requerido.')));
   });
 
   test('Should return 400 if no password is provided', async () => {
@@ -78,9 +81,10 @@ describe('Handle User Login Tests', () => {
     };
     const tokenController = makeSut();
 
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(badRequest('Senha requerido (a).'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('Senha requerida.')));
   });
 
   test('Should return 404 if user not exists', async () => {
@@ -88,11 +92,15 @@ describe('Handle User Login Tests', () => {
       email: 'email@email.com',
       password: 'password',
     };
-    jest.spyOn(mockUserDAOImp, 'findByEmail').mockReturnValueOnce(Promise.resolve(undefined));
-    const tokenController = makeSut();
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    const emailValidatorStub = makeEmailValidator();
+    const encrypterStub = makeEncrypter();
+    const webTokenStub = makeWebToken();
+    const tokenController = new TokenController(emailValidatorStub, new UserDAOImp(encrypterStub), webTokenStub, encrypterStub);
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve(undefined));
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(notFound('Usuário não existente, considere criar uma conta.'));
+    expect(httpResponse).toEqual(notFound(new NotFoundError('Usuário não existente, considere criar uma conta.')));
   });
 
   test('Should return 400 if email is not valid', async () => {
@@ -105,11 +113,12 @@ describe('Handle User Login Tests', () => {
     const webTokenStub = makeWebToken();
     const encrypterStub = makeEncrypter();
 
-    jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValueOnce(false);
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValue(false);
     const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(badRequest('E-mail inválido.'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('E-mail inválido.')));
   });
 
   test('Should return 400 if password is incorrect', async () => {
@@ -121,6 +130,7 @@ describe('Handle User Login Tests', () => {
     const webTokenStub = makeWebToken();
     const encrypterStub = makeEncrypter();
 
+    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
     jest.spyOn(encrypterStub, 'compare').mockImplementationOnce(async (): Promise<boolean> => {
       const result = await Promise.resolve(false);
       return result;
@@ -128,7 +138,7 @@ describe('Handle User Login Tests', () => {
     const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(badRequest('Senha incorreta.'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('E-mail ou senhas incorretos.')));
   });
 
   test('Should return 500 if server error ocurred ', async () => {
@@ -145,7 +155,7 @@ describe('Handle User Login Tests', () => {
     const tokenController = makeSut();
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
-    expect(httpResponse).toEqual(serverError('Erro no servidor, tente novamente mais tarde'));
+    expect(httpResponse).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 200 and user infos if success login', async () => {

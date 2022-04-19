@@ -1,15 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
-import { validationField } from '../../../utils/validations';
+import { validationExpenseValue, validationField400code, validationId } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
-import AddPurchase from '../../data/usecases/AddPurchase';
+import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
+import handleErrors from '../../error/helpers/handleErrors';
 import {
-  badRequest, created, HttpResponse, notFound, okWithContent, serverError,
+  created, okWithContent, HttpResponse,
 } from '../helpers/http';
 
 export default class AcquisitionController {
@@ -30,21 +31,13 @@ export default class AcquisitionController {
 
   async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
     try {
-      if (Number.isNaN(paymentId) || paymentId < 0) {
-        return badRequest('ID inválido.');
-      }
-
-      if (!(await this.paymentDAO.checkIfPaymentExists(paymentId))) {
-        return badRequest('Usuário não existe.');
-      }
+      validationId(paymentId);
+      await this.paymentDAO.checkIfPaymentExists(paymentId);
 
       const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
-
       const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
-      if (purchases === undefined) {
-        return badRequest('Não a compras relacionadas a essa forma de pagamento.');
-      }
+      validationField400code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
 
       return okWithContent({
         ...paymentInfo,
@@ -52,8 +45,24 @@ export default class AcquisitionController {
       });
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
+  }
+
+  async checkAllPaymentsExists(payments: AddPayment[]): Promise<void> {
+    for (const payment of payments) {
+      await this.paymentDAO.checkIfPaymentExists(payment.paymentId);
+    }
+  }
+
+  async handleAddPayWithRelations(payments: AddPayment[], purchase: PurchaseModel): Promise<void> {
+    payments.forEach(async (payment) => {
+      await this.payWithDAO.add({
+        payment_id: payment.paymentId,
+        purchase_id: purchase.id as number,
+        value: payment.value,
+      });
+    });
   }
 
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
@@ -62,26 +71,10 @@ export default class AcquisitionController {
         description, purchase_date, value, user_id, payments,
       } = infos;
 
-      if (validationField(description)) {
-        return badRequest('Descrição de compra inválidas.');
-      }
-
-      if (value < 0) {
-        return badRequest('Valor da compra inválido.');
-      }
-
-      if (!(await this.userDAO.checkIfUserExists(user_id))) {
-        return notFound('Usuário não existe.');
-      }
-
-      // eslint-disable-next-line consistent-return
-      for (const payment of payments) {
-        const ifExists = await this.paymentDAO.checkIfPaymentExists(payment.paymentId);
-
-        if (!ifExists) {
-          return notFound('Forma de pagamento não existe.');
-        }
-      }
+      validationField400code(description, 'Descrição de compra inválida.');
+      validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+      await this.userDAO.checkIfUserExists(user_id);
+      await this.checkAllPaymentsExists(payments);
 
       const result = await this.purchaseDAO.add({
         description,
@@ -90,18 +83,14 @@ export default class AcquisitionController {
         value,
       }) as PurchaseModel;
 
-      payments.forEach(async (payment) => {
-        await this.payWithDAO.add({
-          payment_id: payment.paymentId,
-          purchase_id: result.id as number,
-          value: payment.value,
-        });
-      });
+      validationField400code(result, 'Não foi possível encontrar os gastos.');
+
+      await this.handleAddPayWithRelations(payments, result);
 
       return created('Compra cadastrada com sucesso!');
     } catch (err) {
       console.log(err);
-      return serverError('Erro no servidor, tente novamente mais tarde.');
+      return handleErrors(err as Error);
     }
   }
 }

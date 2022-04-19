@@ -9,7 +9,8 @@ import AddPurchase from '../../../../serverless/data/usecases/AddPurchase';
 import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
-import mockPaymentDAOImp from '../../../mocks/mockPaymentDAOImp';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -17,11 +18,16 @@ jest.mock('../../../mocks/mockPaymentDAOImp');
 const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
   const purchaseDAOStub = new PurchaseDAOImp();
+  const paymentDAO = new PaymentDAOImp();
 
-  const acquisitionControlerStub = new AcquisitionController(mockPaymentDAOImp, purchaseDAOStub, payWithtDAOStub, mockUserDAOImp);
+  const acquisitionControlerStub = new AcquisitionController(paymentDAO, purchaseDAOStub, payWithtDAOStub, mockUserDAOImp);
 
   return acquisitionControlerStub;
 };
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('Add acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
@@ -39,7 +45,7 @@ describe('Add acquisition tests', () => {
 
     const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(badRequest('Descrição de compra inválidas.'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('Descrição de compra inválida.')));
   });
 
   test('Should return 400 if value is invalid', async () => {
@@ -57,7 +63,7 @@ describe('Add acquisition tests', () => {
 
     const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(badRequest('Valor da compra inválido.'));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('Valor do gasto tem que ser maior que zero.')));
   });
 
   test('Should return 400 if user not exists', async () => {
@@ -73,14 +79,13 @@ describe('Add acquisition tests', () => {
     };
 
     jest.spyOn(mockUserDAOImp, 'checkIfUserExists').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve(false);
-      return result;
+      await Promise.reject(new NotFoundError('Usuário não existe.'));
     });
     const acquisitionControler = makeSut();
 
     const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(notFound('Usuário não existe.'));
+    expect(httpResponse).toEqual(notFound(new NotFoundError('Usuário não existe.')));
   });
 
   test('Should return 400 if payment not exists', async () => {
@@ -95,15 +100,14 @@ describe('Add acquisition tests', () => {
       }],
     };
 
-    jest.spyOn(mockPaymentDAOImp, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve(false);
-      return result;
+    jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(async (infos) => {
+      await Promise.reject(new NotFoundError('Forma de pagamento não existe.'));
     });
     const acquisitionControler = makeSut();
 
     const httpResponse: HttpResponse = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(httpResponse).toEqual(notFound('Forma de pagamento não existe.'));
+    expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não existe.')));
   });
 
   test('Should return 500 if server returns a error', async () => {
@@ -119,6 +123,7 @@ describe('Add acquisition tests', () => {
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
+    jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(jest.fn());
     jest.spyOn(PurchaseDAOImp.prototype, 'add').mockImplementationOnce(async () => {
       throw new Error('Server Error');
     });
@@ -126,7 +131,7 @@ describe('Add acquisition tests', () => {
 
     const response = await acquisitionControler.handleAddPurchase(infos);
 
-    expect(response).toEqual(serverError('Erro no servidor, tente novamente mais tarde.'));
+    expect(response).toEqual(serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')));
   });
 
   test('Should return 201 if purchase is created', async () => {
@@ -140,6 +145,7 @@ describe('Add acquisition tests', () => {
         value: 1,
       }],
     };
+    jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(jest.fn());
 
     jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
