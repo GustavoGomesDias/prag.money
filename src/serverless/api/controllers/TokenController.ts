@@ -5,14 +5,13 @@ import UserModel from '../../data/models/UserModel';
 import LoginProps from '../../data/usecases/Login';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import {
-  HttpResponse, okWithPayload, serverError,
+  HttpResponse, okWithPayload,
 } from '../helpers/http';
 import {
   checkIfExists404code,
   checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
 } from '../helpers/Validations';
 import handleErrors from '../../error/helpers/handleErrors';
-import { InternalServerError } from '../../error/HttpError';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -69,11 +68,7 @@ export default class TokenController {
       return okWithPayload(payload, userInfo);
     } catch (err) {
       console.log(err);
-      const error = handleErrors(err as Error);
-      if (error !== undefined) {
-        return error;
-      }
-      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
+      return handleErrors(err as Error);
     }
   }
 
@@ -104,11 +99,7 @@ export default class TokenController {
       });
     } catch (err) {
       console.log(err);
-      const error = handleErrors(err as Error);
-      if (error !== undefined) {
-        return error;
-      }
-      return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));
+      return handleErrors(err as Error);
     }
   }
 }
