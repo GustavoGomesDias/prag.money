@@ -107,6 +107,8 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           flexDir="column"
         >
           <PaymentsMethods payments={payments} />
+          {/* <PurchaseTable purchases={purchaseCtx.purchases} />
+          <MobileDisplayTable purchases={purchaseCtx.purchases} /> */}
           <PurchaseTable purchases={fakePurchases} />
           <MobileDisplayTable purchases={fakePurchases} />
         </Flex>

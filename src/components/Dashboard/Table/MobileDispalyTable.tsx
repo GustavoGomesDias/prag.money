@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  Box, Text, Tooltip, useToast,
+  Box, Flex, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { PurchaseTableProps } from './PurchaseTable';
 import formatDate from '../../../utils/formatDate';
 import toastConfig from '../../../utils/config/tostConfig';
+import ActionButton from '../PurchaseDescription/ActionButton';
 
 const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
   const toast = useToast();
@@ -58,8 +59,10 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
           </Text>
           <Text>{purchase.value}</Text>
           <Text>{formatDate(new Date(purchase.purchase_date))}</Text>
-
-          {/* ActionButtons aqui */}
+          <Flex pt="1em" gap={4}>
+            <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
+            <ActionButton action="Excluir" handleOnClick={(): void => { console.log('t'); }} />
+          </Flex>
         </Box>
       ))}
     </Box>
