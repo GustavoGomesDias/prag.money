@@ -57,7 +57,7 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
             </Tooltip>
 
           </Text>
-          <Text>{purchase.value}</Text>
+          <Text>{(purchase.value.toFixed(2)).replace('.', ',')}</Text>
           <Text>{formatDate(new Date(purchase.purchase_date))}</Text>
           <Flex pt="1em" gap={4}>
             <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
