@@ -6,7 +6,7 @@ import {
 
 import Logo from '../Logo/Logo';
 import { AuthContext } from '../../../context/AuthContext';
-import CustomButton from '../CustomButton';
+import HeaderButton from '../Buttons/HeaderButton';
 
 export interface HeaderProps {
   logo: string
@@ -15,6 +15,7 @@ export interface HeaderProps {
 const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
   const { user, signOut } = useContext(AuthContext);
+  console.log(user);
 
   const logout = (): void => {
     signOut();
@@ -39,9 +40,9 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
         <Logo fontSize="64px" logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
           {user?.userInfo !== undefined ? (
-            <CustomButton action="Sair" handleOnClick={logout} />
+            <HeaderButton action="Sair" handleOnClick={logout} />
           ) : (
-            <CustomButton action="Login" handleOnClick={login} />
+            <HeaderButton action="Login" handleOnClick={login} />
           )}
 
         </ButtonGroup>

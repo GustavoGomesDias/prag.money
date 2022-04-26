@@ -1,6 +1,6 @@
 import { ButtonGroup } from '@chakra-ui/react';
 import React from 'react';
-import CustomButton from '../../UI/CustomButton';
+import CustomButton from '../../UI/Buttons/CustomButton';
 
 export interface SideContentProps {
   onClose: () => void

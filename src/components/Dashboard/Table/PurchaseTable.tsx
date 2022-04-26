@@ -16,13 +16,13 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => (
     display={{ base: 'none', md: 'block' }}
     fontWeight="bold"
   >
-    <Table variant="striped">
+    <Table>
       <Thead>
         <Tr>
-          <Th>Descrição</Th>
-          <Th>Valor (R$)</Th>
-          <Th>Data de compra</Th>
-          <Th>Ações</Th>
+          <Th color="#00735C" fontSize="14px">Descrição</Th>
+          <Th color="#00735C" fontSize="14px">Valor (R$)</Th>
+          <Th color="#00735C" fontSize="14px">Data de compra</Th>
+          <Th color="#00735C" fontSize="14px">Ações</Th>
         </Tr>
       </Thead>
       <Tbody>

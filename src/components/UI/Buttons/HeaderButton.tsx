@@ -7,7 +7,7 @@ export interface CustomButtonProps {
   textSize?: string
 }
 
-const CustomButton = ({ action, handleOnClick, textSize }: CustomButtonProps): JSX.Element => (
+const HeaderButton = ({ action, handleOnClick, textSize }: CustomButtonProps): JSX.Element => (
   <Button
     onClick={handleOnClick && (() => handleOnClick())}
     colorScheme="teal"
@@ -28,4 +28,4 @@ const CustomButton = ({ action, handleOnClick, textSize }: CustomButtonProps): J
   </Button>
 );
 
-export default CustomButton;
+export default HeaderButton;

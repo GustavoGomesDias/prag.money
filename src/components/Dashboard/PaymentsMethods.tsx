@@ -1,15 +1,23 @@
 import React, { useState, ChangeEvent, useContext } from 'react';
 import { Flex, Select } from '@chakra-ui/react';
-import GetForeignInfos from '../../serverless/data/usecases/GetForeignInfos';
 import PurchaseContext from '../../context/purchases/PurchaseContext';
+import PaymentModel from '../../serverless/data/models/PaymentModel';
 
-const PaymentsMethods = ({ payments }: Omit<GetForeignInfos, 'purchases'>): JSX.Element => {
+export interface PaymentsMethodsProps {
+  payments: PaymentModel[] | undefined
+}
+
+const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
   const [balance, setBalance] = useState<number>(0);
   const [paymentId, setPaymentId] = useState<number>(0);
   const pruchaseCtx = useContext(PurchaseContext);
 
   const handleOnSelect = async (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
+
+    if (payments === undefined) {
+      return;
+    }
 
     if (Number(e.target.value) === 0) {
       setBalance(0);

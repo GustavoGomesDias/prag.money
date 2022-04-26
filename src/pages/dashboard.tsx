@@ -17,6 +17,7 @@ import PurchaseContext from '../context/purchases/PurchaseContext';
 import SideActions from '../components/Dashboard/Actions/SideActions';
 import PurchaseTable from '../components/Dashboard/Table/PurchaseTable';
 import MobileDisplayTable from '../components/Dashboard/Table/MobileDispalyTable';
+import PurchaseModel from '../serverless/data/models/PurchaseModel';
 
 export interface DashboardProps {
   payments?: PaymentModel[]
@@ -26,9 +27,34 @@ export interface DashboardProps {
   }
 }
 
+const fakePurchases: PurchaseModel[] = [
+  {
+    id: 51,
+    value: 25.7,
+    description: 'Almoço nas Bahamas',
+    purchase_date: new Date(),
+    user_id: 718,
+  },
+  {
+    id: 52,
+    value: 25.7,
+    description: 'Almoço nas Bahamas de novo',
+    purchase_date: new Date(),
+    user_id: 718,
+  },
+  {
+    id: 53,
+    value: 25.7,
+    description: 'Almoço nas Bahamas de novo',
+    purchase_date: new Date(),
+    user_id: 718,
+  },
+];
+
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
+  console.log(purchaseCtx);
 
   useEffect(() => {
     const handlePayment = () => {
@@ -58,70 +84,33 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     <>
       <SEO title="p.$ | Dashboard" description="Dashboard page" />
       <Header logo="Dash" />
-      <Flex
+      <Grid
+        templateRows="repeat(1, 1fr)"
+        templateColumns="8% 93%"
         w="100%"
-        h="100%"
-        justifyContent="flex-end"
-        flexDir="column"
+        justifyContent="center"
+        alignItems="center"
+        flexDir={{ base: 'column', md: 'row' }}
+        display={{ base: 'flex', md: 'grid' }}
+        overflowX="hidden"
       >
-        {payments !== undefined && <PaymentsMethods payments={payments} />}
-
         <Flex
-          width="100%"
-          mb="15px"
-          alignItems="center"
-          justifyContent="center"
-          overflowX="hidden"
+          w="full"
         >
-          <Grid
-            templateRows="repeat(1, 1fr)"
-            templateColumns={{ base: '90%', xl: '10% 85%' }}
-            w="100%"
-            h="100%"
-            gap={4}
-            justifyContent="center"
-            alignItems="center"
-            flexDir={{ base: 'column', md: 'row' }}
-            display={{ base: 'flex', md: 'grid' }}
-          >
-            <Flex
-              w="full"
-            >
-              <Actions />
-              <SideActions />
-            </Flex>
-            <Flex
-              w={{ base: '90%', md: 'full', xl: 'full' }}
-              bg="#fff"
-              border="2px solid #00735C"
-              borderRadius="5px"
-            >
-              <PurchaseTable purchases={purchaseCtx.purchases} />
-              <MobileDisplayTable purchases={purchaseCtx.purchases} />
-            </Flex>
-            {/* <Grid templateRows="repeat(1, 1fr)" gap={4}>
-              <Grid
-                bg="#fff"
-                border="2px solid #00735C"
-                borderRadius="5px"
-                padding="1em"
-                templateColumns="repeat(5, 1fr)"
-                gap={2}
-              >
-                {purchaseCtx.purchases.length > 0 && purchaseCtx.purchases.map((purchase) => (
-                  <PurchaseCard
-                    key={purchase.id}
-                    id={Number(purchase.id)}
-                    description={purchase.description}
-                    value={purchase.value}
-                    purchaseDate={formatDate(new Date(purchase.purchase_date))}
-                  />
-                ))}
-              </Grid>
-            </Grid> */}
-          </Grid>
+          <Actions />
+          <SideActions />
         </Flex>
-      </Flex>
+        <Flex
+          w={{ base: '90%', md: 'full', xl: 'full' }}
+          bg="#C1D9B7"
+          h="100vh"
+          flexDir="column"
+        >
+          <PaymentsMethods payments={payments} />
+          <PurchaseTable purchases={fakePurchases} />
+          <MobileDisplayTable purchases={fakePurchases} />
+        </Flex>
+      </Grid>
     </>
   );
 };

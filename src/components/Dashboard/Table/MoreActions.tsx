@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
-import CustomButton from '../../UI/CustomButton';
+import CustomButton from '../../UI/Buttons/CustomButton';
 import { ModalLoaderProps } from '../../UI/Loader/ModalLoader';
 
 export interface MoreInfosProps extends ModalLoaderProps {
