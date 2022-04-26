@@ -6,6 +6,7 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   /* background-color: #C1D9B7; */
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 a {
@@ -16,4 +17,6 @@ a {
 * {
   box-sizing: border-box;
   list-style: none;
+  padding: 0em;
+  margin: 0em;
 }

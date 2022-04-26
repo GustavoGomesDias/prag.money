@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Box, Text,
+  Box, Text, Tooltip,
 } from '@chakra-ui/react';
 import { PurchaseTableProps } from './PurchaseTable';
 import formatDate from '../../../utils/formatDate';
@@ -16,6 +16,14 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
   };
 
   const handleOnCloseActions = () => setRenderMoreActions(false);
+
+  const handleLongerDescription = (description: string): string => {
+    if (description.length > 50) {
+      return `${description.slice(0, 50)}...`;
+    }
+
+    return description;
+  };
 
   return (
     <>
@@ -40,7 +48,16 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
             }}
             onClick={() => handleDispatchAction(purchase.id as number)}
           >
-            <Text>{purchase.description}</Text>
+            <Text>
+              <Tooltip
+                hasArrow
+                label={purchase.description}
+                placement="bottom-start"
+              >
+                {handleLongerDescription(purchase.description)}
+              </Tooltip>
+
+            </Text>
             <Text>{purchase.value}</Text>
             <Text>{formatDate(new Date(purchase.purchase_date))}</Text>
           </Box>

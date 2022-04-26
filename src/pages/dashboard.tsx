@@ -45,7 +45,7 @@ const fakePurchases: PurchaseModel[] = [
   {
     id: 53,
     value: 25.7,
-    description: 'Almoço nas Bahamas de novo',
+    description: 'Compra de um carro chevrolet usado no de mil novecentos e noventa e nove',
     purchase_date: new Date(),
     user_id: 718,
   },
@@ -86,7 +86,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
       <Header logo="Dash" />
       <Grid
         templateRows="repeat(1, 1fr)"
-        templateColumns="8% 93%"
+        templateColumns={{ base: 'repeat(1, 1fr)', xl: '10% 90%' }}
         w="100%"
         justifyContent="center"
         alignItems="center"

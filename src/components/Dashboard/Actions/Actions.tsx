@@ -20,7 +20,7 @@ const Actions = (): JSX.Element => (
       marginBottom="15px"
       py="1em"
     >
-      <CustomButton action="Adicionar Compra" textSize="14px" />
+      <CustomButton action="Adicionar compra" textSize="14px" />
       <CustomButton action="Adicionar conta" textSize="14px" />
       <CustomButton action="Ver relatório" textSize="14px" />
     </ButtonGroup>

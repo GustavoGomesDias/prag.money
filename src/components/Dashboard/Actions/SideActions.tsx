@@ -43,6 +43,8 @@ const SideMenu = (): JSX.Element => {
         <DrawerOverlay />
         <DrawerContent
           p="1em"
+          bg="#00735C"
+          color="#fff"
         >
           <DrawerCloseButton />
           <SideContent onClose={onClose} />

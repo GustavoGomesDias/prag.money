@@ -50,7 +50,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
     <Flex
       width="100%"
       justifyContent="flex-end"
-      padding="1em"
+      padding="2em"
     >
       <Flex
         width={{ base: '100%', md: '60%', xl: '30%' }}

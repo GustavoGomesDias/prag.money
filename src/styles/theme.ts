@@ -8,6 +8,8 @@ export const theme = extendTheme({
         bg: '#C1D9B7',
         color: '#00735C',
         height: '100%',
+        padding: '0px !important',
+        margin: '0px !important',
       },
     },
   },
