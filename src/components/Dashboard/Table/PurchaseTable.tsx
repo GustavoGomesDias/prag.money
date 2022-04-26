@@ -1,8 +1,9 @@
 import {
-  Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr,
+  Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr, useToast,
 } from '@chakra-ui/react';
 import React from 'react';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
+import toastConfig from '../../../utils/config/tostConfig';
 import formatDate from '../../../utils/formatDate';
 import ActionButton from '../PurchaseDescription/ActionButton';
 
@@ -11,12 +12,24 @@ export interface PurchaseTableProps {
 }
 
 const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
+  const toast = useToast();
   const handleLongerDescription = (description: string): string => {
     if (description.length > 50) {
       return `${description.slice(0, 50)}...`;
     }
 
     return description;
+  };
+
+  const copyText = (entryText: string): void => {
+    navigator.clipboard.writeText(entryText);
+
+    toast({
+      title: '📣 Texto Copiado!',
+      description: 'A descrição foi copiada com sucesso!',
+      status: 'info',
+      ...toastConfig,
+    });
   };
 
   return (
@@ -28,10 +41,10 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
       <Table>
         <Thead>
           <Tr>
-            <Th color="#00735C" fontSize="14px">Descrição</Th>
-            <Th color="#00735C" fontSize="14px">Valor (R$)</Th>
-            <Th color="#00735C" fontSize="14px">Data de compra</Th>
-            <Th color="#00735C" fontSize="14px">Ações</Th>
+            <Th color="#00735C" fontSize="14px" textAlign="center">Descrição</Th>
+            <Th color="#00735C" fontSize="14px" textAlign="center">Valor (R$)</Th>
+            <Th color="#00735C" fontSize="14px" textAlign="center">Data de compra</Th>
+            <Th color="#00735C" fontSize="14px" textAlign="center">Ações</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -39,23 +52,24 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
             <Tr
               key={purchase.description + purchase.id}
             >
-              <Td wordBreak="keep-all" width="1em !important">
+              <Td width="25% !important" cursor="pointer" onClick={() => copyText(purchase.description)}>
                 <Tooltip
                   hasArrow
-                  label={purchase.description}
+                  label={`${purchase.description} (Clique para copiar a descrição)`}
                   placement="right-start"
                 >
                   {handleLongerDescription(purchase.description)}
                 </Tooltip>
               </Td>
-              <Td>
+              <Td width="25% !important" textAlign="center">
                 {purchase.value}
               </Td>
-              <Td>{formatDate(new Date(purchase.purchase_date))}</Td>
+              <Td width="25% !important" textAlign="center">{formatDate(new Date(purchase.purchase_date))}</Td>
               <Td
                 display="flex"
                 flexDir="column"
                 gap={4}
+                textAlign="center"
               >
                 <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
                 <ActionButton action="Excluir" handleOnClick={(): void => { console.log('t'); }} />
