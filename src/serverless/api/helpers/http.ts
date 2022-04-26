@@ -4,8 +4,6 @@ import {
   BadRequestError, InternalServerError, NotFoundError, UnauthorizedError,
 } from '../../error/HttpError';
 
-jest.spyOn(console, 'log').mockImplementation(jest.fn());
-
 export interface HttpResponse {
   message?: string
   error?: string
