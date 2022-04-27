@@ -47,7 +47,7 @@ const SideMenu = (): JSX.Element => {
           color="#fff"
         >
           <DrawerCloseButton />
-          <SideContent onClose={onClose} />
+          <SideContent />
         </DrawerContent>
       </Drawer>
     </Flex>
