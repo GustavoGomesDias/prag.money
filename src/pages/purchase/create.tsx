@@ -56,8 +56,6 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       return;
     }
 
-    console.log(data);
-
     setUserPayments((data.payments as PaymentModel[]).filter((payment) => payment.nickname.includes(e.target.value)));
   };
 

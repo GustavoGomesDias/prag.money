@@ -23,12 +23,8 @@ const Create = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useContext(AuthContext);
 
-  const { push } = useRouter();
+  const { back } = useRouter();
   const toast = useToast();
-
-  const handleRedirect = (path: string): void => {
-    push(path, path);
-  };
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
@@ -130,7 +126,7 @@ const Create = (): JSX.Element => {
                 Salvar
               </Button>
               <Button
-                onClick={() => handleRedirect('/dashboard')}
+                onClick={() => back()}
                 bg="#D3D31A"
                 fontSize="24px"
                 color="#fff"
