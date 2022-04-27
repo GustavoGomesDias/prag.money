@@ -1,7 +1,9 @@
+import { useToast } from '@chakra-ui/react';
 import React, { useMemo, useReducer, useState } from 'react';
 import ModalLoader from '../../components/UI/Loader/ModalLoader';
 import GetForeignInfos from '../../serverless/data/usecases/GetForeignInfos';
 import api from '../../services/fetchAPI/init';
+import toastConfig from '../../utils/config/tostConfig';
 import PurchaseContext from './PurchaseContext';
 import purchaseReducer from './purchaseReducer';
 
@@ -15,12 +17,20 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
     purchases: [],
   });
 
+  const toast = useToast();
+
   const handleGetPurchasesByPaymentId = async (paymentId: number) => {
     setIsLoading(true);
     const response = await api.get(`/payment/${paymentId}`);
 
     if (response.data.error) {
       setIsLoading(false);
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'info',
+        ...toastConfig,
+      });
       return;
     }
     const content = response.data.content as Omit<GetForeignInfos, 'payments'>;

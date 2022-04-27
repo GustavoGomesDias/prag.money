@@ -44,10 +44,10 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const { push, back } = useRouter();
 
   useEffect(() => {
-    if (data.payments.length === 0) {
+    if (Array.isArray(data) && data.length === 0) {
       setNotHasPayment(true);
     }
-  }, [data]);
+  }, []);
 
   const handleSearchDropboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -55,6 +55,8 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       setUserPayments([]);
       return;
     }
+
+    console.log(data);
 
     setUserPayments((data.payments as PaymentModel[]).filter((payment) => payment.nickname.includes(e.target.value)));
   };
@@ -285,24 +287,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-
+  api.setAuthHeader(`Bearer ${authToken}`);
   const response = await api.get(`/user/payment/${userId}`);
-
-  if (response.data.error) {
-    return {
-      props: {
-        data: {
-          payments: [],
-        },
-      },
-    };
-  }
 
   return {
     props: {
-      data: {
-        payments: response.data.content,
-      },
+      data: response.data.content === undefined ? [] : response.data.content,
     },
   };
 };
