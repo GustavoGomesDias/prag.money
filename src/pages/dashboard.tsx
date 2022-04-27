@@ -17,7 +17,6 @@ import PurchaseContext from '../context/purchases/PurchaseContext';
 import SideActions from '../components/Dashboard/Actions/SideActions';
 import PurchaseTable from '../components/Dashboard/Table/PurchaseTable';
 import MobileDisplayTable from '../components/Dashboard/Table/MobileDispalyTable';
-import PurchaseModel from '../serverless/data/models/PurchaseModel';
 
 export interface DashboardProps {
   payments?: PaymentModel[]
@@ -27,34 +26,9 @@ export interface DashboardProps {
   }
 }
 
-const fakePurchases: PurchaseModel[] = [
-  {
-    id: 51,
-    value: 25.7,
-    description: 'Almoço nas Bahamas',
-    purchase_date: new Date(),
-    user_id: 718,
-  },
-  {
-    id: 52,
-    value: 25.7,
-    description: 'Almoço nas Bahamas de novo',
-    purchase_date: new Date(),
-    user_id: 718,
-  },
-  {
-    id: 53,
-    value: 25.7,
-    description: 'Compra de um carro chevrolet usado no de mil novecentos e noventa e nove',
-    purchase_date: new Date(),
-    user_id: 718,
-  },
-];
-
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
-  console.log(purchaseCtx);
 
   useEffect(() => {
     const handlePayment = () => {
@@ -107,10 +81,8 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           flexDir="column"
         >
           <PaymentsMethods payments={payments} />
-          {/* <PurchaseTable purchases={purchaseCtx.purchases} />
-          <MobileDisplayTable purchases={purchaseCtx.purchases} /> */}
-          <PurchaseTable purchases={fakePurchases} />
-          <MobileDisplayTable purchases={fakePurchases} />
+          <PurchaseTable purchases={purchaseCtx.purchases} />
+          <MobileDisplayTable purchases={purchaseCtx.purchases} />
         </Flex>
       </Grid>
     </>

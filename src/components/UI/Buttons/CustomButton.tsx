@@ -3,13 +3,13 @@ import { Button } from '@chakra-ui/react';
 
 export interface CustomButtonProps {
   action: string
-  handleOnClick?: () => void
+  handleOnClick: () => void
   textSize?: string
 }
 
 const CustomButton = ({ action, handleOnClick, textSize }: CustomButtonProps): JSX.Element => (
   <Button
-    onClick={handleOnClick && (() => handleOnClick())}
+    onClick={() => handleOnClick()}
     color="#fff"
     w="100%"
     size="lg"
