@@ -18,6 +18,11 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
   const handleGetPurchasesByPaymentId = async (paymentId: number) => {
     setIsLoading(true);
     const response = await api.get(`/payment/${paymentId}`);
+
+    if (response.data.error) {
+      setIsLoading(false);
+      return;
+    }
     const content = response.data.content as Omit<GetForeignInfos, 'payments'>;
     dispatchPurchasesActions({
       type: 'POPULATE_PURCHASELIST',
