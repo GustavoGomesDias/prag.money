@@ -185,7 +185,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         padding="2em"
       >
         <Form handleSubmit={handleSubmit}>
-          <chakra.h1 w="full" textAlign="center" fontSize="48px">Adicionar Compra</chakra.h1>
+          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Adicionar Compra</chakra.h1>
           <Grid w="80%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
               payments={userPayments}

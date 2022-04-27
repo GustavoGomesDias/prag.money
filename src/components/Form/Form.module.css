@@ -6,7 +6,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%
+  width: 90%;
+  padding: 1em 1em;
 }
 
 @media (min-width: 768px) {
