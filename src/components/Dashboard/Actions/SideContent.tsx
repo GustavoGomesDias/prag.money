@@ -1,17 +1,16 @@
 import { ButtonGroup } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
 import CustomButton from '../../UI/Buttons/CustomButton';
 
-export interface SideContentProps {
-  onClose: () => void
-}
+// export interface SideContentProps {
+//   onClose: () => void
+// }
 
-const SideContent = ({ onClose }: SideContentProps): JSX.Element => {
-  const handleScroll = () => {
-    onClose();
-    // setTimeout(() => handleScrollToContent(), 300);
-    // clearTimeout();
-  };
+const SideContent = (): JSX.Element => {
+  const { push } = useRouter();
+  const handleRedirectToAddPurchase = () => push('/purchase/create');
+  const handleRedirectToAddPayment = () => push('/payment/create');
 
   return (
     <ButtonGroup
@@ -22,10 +21,8 @@ const SideContent = ({ onClose }: SideContentProps): JSX.Element => {
       gap={4}
       mt="3em"
     >
-      <CustomButton action="Add Compra" textSize="16px" handleOnClick={handleScroll} />
-      <CustomButton action="Add forma de pagamento" textSize="16px" handleOnClick={handleScroll} />
-      <CustomButton action="Ver formas de pagamentos" textSize="16px" handleOnClick={handleScroll} />
-      <CustomButton action="Ver relatório do mês" textSize="16px" handleOnClick={handleScroll} />
+      <CustomButton handleOnClick={handleRedirectToAddPurchase} action="Adicionar compra" textSize="16px" />
+      <CustomButton handleOnClick={handleRedirectToAddPayment} action="Adicionar conta" textSize="16px" />
     </ButtonGroup>
   );
 };

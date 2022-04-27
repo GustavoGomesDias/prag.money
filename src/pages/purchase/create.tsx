@@ -1,5 +1,5 @@
 import React, {
-  ChangeEvent, FormEvent, useContext, useState,
+  ChangeEvent, FormEvent, useContext, useEffect, useState,
 } from 'react';
 import {
   Button, ButtonGroup, chakra, Flex, Grid, useToast,
@@ -21,6 +21,8 @@ import ModalLoader from '../../components/UI/Loader/ModalLoader';
 import PurchaseModel from '../../serverless/data/models/PurchaseModel';
 import { AuthContext } from '../../context/AuthContext';
 import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
+import PragModal from '../../components/Layout/PragModal';
+import InfoConainer from '../../components/Layout/InfoContainer';
 
 export interface CreatePurchaseProps {
   data: {
@@ -35,10 +37,17 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const [paymentsSelecteds, setPaymentsSelecteds] = useState<PaymentModel[]>([]);
   const [payWith, setPayWith] = useState<AddPayment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [notHasPayment, setNotHasPayment] = useState<boolean>(false);
   const toast = useToast();
   const { user } = useContext(AuthContext);
 
-  const { push } = useRouter();
+  const { push, back } = useRouter();
+
+  useEffect(() => {
+    if (Array.isArray(data) && data.length === 0) {
+      setNotHasPayment(true);
+    }
+  }, []);
 
   const handleSearchDropboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -46,7 +55,8 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       setUserPayments([]);
       return;
     }
-    setUserPayments(data.payments.filter((payment) => payment.nickname.includes(e.target.value)));
+
+    setUserPayments((data.payments as PaymentModel[]).filter((payment) => payment.nickname.includes(e.target.value)));
   };
 
   const handleSavePayWith = (e: ChangeEvent<HTMLInputElement>, paymentId: number) => {
@@ -160,13 +170,22 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       <SEO title="p.$ | Adicionar compra" description="Create purchase page" />
       <Header logo="Buy" />
       {isLoading && <ModalLoader isOpen={isLoading} />}
+      {notHasPayment && (
+      <PragModal isOpen={notHasPayment}>
+        <InfoConainer
+          action="Cadastrar pagamento"
+          message="Por favor, cadastre uma forma de pagamento primeiro."
+          handleAction={() => push('/payment/create', '/payment/create')}
+        />
+      </PragModal>
+      )}
       <Flex
         flexDir="column"
         alignItems="center"
         padding="2em"
       >
         <Form handleSubmit={handleSubmit}>
-          <chakra.h1 w="full" textAlign="center" fontSize="48px">Adicionar Compra</chakra.h1>
+          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Adicionar Compra</chakra.h1>
           <Grid w="80%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
               payments={userPayments}
@@ -231,7 +250,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
                 Salvar
               </Button>
               <Button
-                onClick={() => push('/dashboard', '/dashboard')}
+                onClick={() => back()}
                 bg="#D3D31A"
                 fontSize="24px"
                 color="#fff"
@@ -266,12 +285,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-
-  const { data } = await api.get(`/user/payment/${userId}`);
+  api.setAuthHeader(`Bearer ${authToken}`);
+  const response = await api.get(`/user/payment/${userId}`);
 
   return {
     props: {
-      data: data.content,
+      data: response.data.content === undefined ? [] : response.data.content,
     },
   };
 };

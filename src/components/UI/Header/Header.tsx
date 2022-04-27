@@ -15,7 +15,6 @@ export interface HeaderProps {
 const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
   const { user, signOut } = useContext(AuthContext);
-  console.log(user);
 
   const logout = (): void => {
     signOut();
