@@ -20,7 +20,6 @@ async function handleRegisterPurchase(
 
   if (response.error) {
     const { error } = response;
-    console.log(error);
     return res.status(response.statusCode).json({ error });
   }
 
