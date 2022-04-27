@@ -62,14 +62,13 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
                 </Tooltip>
               </Td>
               <Td width="25% !important" textAlign="center">
-                {purchase.value}
+                {(purchase.value.toFixed(2)).replace('.', ',')}
               </Td>
               <Td width="25% !important" textAlign="center">{formatDate(new Date(purchase.purchase_date))}</Td>
               <Td
                 display="flex"
-                flexDir="column"
                 gap={4}
-                textAlign="center"
+                justifyContent="center"
               >
                 <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
                 <ActionButton action="Excluir" handleOnClick={(): void => { console.log('t'); }} />
