@@ -3,9 +3,8 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
 import {
-  badRequest, okWithContent, okWithPayload, serverError,
+  badRequest, okWithContent, serverError,
 } from '../../../../serverless/api/helpers/http';
-import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import { BadRequestError, InternalServerError } from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
