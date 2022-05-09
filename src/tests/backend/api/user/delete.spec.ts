@@ -3,10 +3,9 @@
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import UserController from '../../../../serverless/api/controllers/User';
-import { badRequest } from '../../../../serverless/api/helpers/http';
+import { badRequest, ok } from '../../../../serverless/api/helpers/http';
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import { BadRequestError } from '../../../../serverless/error/HttpError';
-import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 
@@ -40,7 +39,9 @@ const makeEncrypter = (): EncryptAdapter => {
 
 const makeSut = (): UserController => {
   const emailValidatorStub = makeEmailValidator();
-  return new UserController(emailValidatorStub, mockUserDAOImp);
+  const encrypt = makeEncrypter();
+  const userDAOImp = new UserDAOImp(encrypt);
+  return new UserController(emailValidatorStub, userDAOImp);
 };
 
 describe('Handle Delete User Function', () => {
@@ -53,5 +54,16 @@ describe('Handle Delete User Function', () => {
     const result = await userControllerStub.handleDelete(-1);
 
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 200 if user is deleted', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new UserDAOImp(makeEncrypter())['entity'];
+    jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const userControllerStub = makeSut();
+    const result = await userControllerStub.handleDelete(1);
+
+    expect(result).toEqual(ok('Deletado com sucesso!'));
   });
 });
