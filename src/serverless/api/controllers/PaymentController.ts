@@ -47,6 +47,12 @@ export default class PaymentController {
     try {
       validationId(paymentId);
 
+      await this.paymentDAOImp.delete({
+        where: {
+          id: paymentId,
+        },
+      });
+
       return ok('Deletado com sucesso!');
     } catch (err) {
       console.log(err);
