@@ -42,4 +42,15 @@ export default class PaymentController {
       return handleErrors(err as Error);
     }
   }
+
+  async handleDelete(paymentId: number): Promise<HttpResponse> {
+    try {
+      validationId(paymentId);
+
+      return ok('Deletado com sucesso!');
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
 }
