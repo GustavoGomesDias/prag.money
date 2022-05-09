@@ -105,6 +105,13 @@ export default class UserController {
   async handleDelete(userId: number): Promise<HttpResponse> {
     try {
       validationId(userId);
+
+      await this.userDAO.delete({
+        where: {
+          id: userId,
+        },
+      });
+
       return ok('Deletado com sucesso!');
     } catch (err) {
       console.log(err);
