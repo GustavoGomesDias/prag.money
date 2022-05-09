@@ -22,13 +22,12 @@ export default abstract class GenericDAOImp<C, R, U, D> implements GenericDAO<C,
 
   // eslint-disable-next-line class-methods-use-this
   async update(data: U): Promise<unknown> {
-    console.log(data);
-    throw new Error('Method not implemented.');
+    const result = await this.entity.update(data);
+    return result;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async delete(id: D): Promise<void> {
-    console.log(id);
-    throw new Error('Method not implemented.');
+  async delete(data: D): Promise<void> {
+    await this.entity.delete(data);
   }
 }
