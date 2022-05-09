@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
@@ -27,7 +28,9 @@ describe('Payment DAO Implementation tests', () => {
       user_id: 1,
     };
 
-    const spy = jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
       const result = await Promise.resolve({
         nickname: 'nickname',
         default_value: 800,
@@ -42,7 +45,9 @@ describe('Payment DAO Implementation tests', () => {
 
     await paymentStub.add(paymentRequest);
 
-    expect(spy).toHaveBeenCalledWith(paymentRequest);
+    expect(spy).toHaveBeenCalledWith({
+      data: paymentRequest,
+    });
   });
 
   test('Should call findByPaymentId if correct paymentId', async () => {

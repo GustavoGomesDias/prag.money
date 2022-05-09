@@ -1,8 +1,8 @@
+/* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
-import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 describe('Purchase DAO Implementation', () => {
   test('Should call constructor with prisma.payment', () => {
@@ -72,7 +72,9 @@ describe('Purchase DAO Implementation', () => {
       user_id: 1,
     };
 
-    const spy = jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
       const result = await Promise.resolve({
         value: 11,
         description: 'description',
@@ -87,6 +89,8 @@ describe('Purchase DAO Implementation', () => {
 
     await purchaseStub.add(purchaseRequest);
 
-    expect(spy).toHaveBeenCalledWith(purchaseRequest);
+    expect(spy).toHaveBeenCalledWith({
+      data: purchaseRequest,
+    });
   });
 });
