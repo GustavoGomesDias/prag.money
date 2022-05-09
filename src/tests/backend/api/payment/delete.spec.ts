@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
-import { badRequest } from '../../../../serverless/api/helpers/http';
+import { badRequest, ok } from '../../../../serverless/api/helpers/http';
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import { BadRequestError } from '../../../../serverless/error/HttpError';
 
@@ -20,5 +20,16 @@ describe('Handle Payment Delete', () => {
     const result = await controllerStub.handleDelete(-1);
 
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 200 if payment is deleted', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const controllerStub = makeSut();
+    const result = await controllerStub.handleDelete(1);
+
+    expect(result).toEqual(ok('Deletado com sucesso!'));
   });
 });
