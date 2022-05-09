@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
+import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
+import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 describe('Purchase DAO Implementation', () => {
   test('Should call constructor with prisma.payment', () => {
@@ -60,5 +62,31 @@ describe('Purchase DAO Implementation', () => {
       purchase_date: date,
       user_id: 1,
     }]);
+  });
+
+  test('Should call GenericDAOImp add function with correct value', async () => {
+    const purchaseRequest: PurchaseModel = {
+      value: 11,
+      description: 'description',
+      purchase_date: new Date(),
+      user_id: 1,
+    };
+
+    const spy = jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        value: 11,
+        description: 'description',
+        purchase_date: new Date(),
+        user_id: 1,
+      });
+
+      return result;
+    });
+
+    const purchaseStub = new PurchaseDAOImp();
+
+    await purchaseStub.add(purchaseRequest);
+
+    expect(spy).toHaveBeenCalledWith(purchaseRequest);
   });
 });

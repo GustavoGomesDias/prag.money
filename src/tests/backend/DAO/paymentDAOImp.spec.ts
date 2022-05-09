@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
+import PaymentModel from '../../../serverless/data/models/PaymentModel';
 import prisma from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import mockReturnsAcquisitionsUseCase from '../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
@@ -16,6 +17,32 @@ describe('Payment DAO Implementation tests', () => {
 
     // eslint-disable-next-line dot-notation
     expect(paymentDAOStub['entity']).toEqual(prisma.payment);
+  });
+
+  test('Should call GenericDAOImp add function with correct value', async () => {
+    const paymentRequest: PaymentModel = {
+      nickname: 'nickname',
+      default_value: 800,
+      reset_day: 1,
+      user_id: 1,
+    };
+
+    const spy = jest.spyOn(GenericDAOImp.prototype, 'add').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        nickname: 'nickname',
+        default_value: 800,
+        reset_day: 1,
+        user_id: 1,
+      });
+
+      return result;
+    });
+
+    const paymentStub = makeSut();
+
+    await paymentStub.add(paymentRequest);
+
+    expect(spy).toHaveBeenCalledWith(paymentRequest);
   });
 
   test('Should call findByPaymentId if correct paymentId', async () => {
