@@ -38,4 +38,60 @@ describe('Payment DAO Implementation tests', () => {
       data: acquisitionRequest,
     });
   });
+
+  test('Should call GenericDAOImp update function with correct value', async () => {
+    const acquisitionRequest: PayWithModel = {
+      payment_id: 1,
+      purchase_id: 1,
+      value: 800,
+    };
+
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PayWithDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        payment_id: 1,
+        purchase_id: 1,
+        value: 800,
+      });
+
+      return result;
+    });
+
+    const purchaseStub = new PayWithDAOImp();
+
+    await purchaseStub.update({
+      where: {
+        id: 1,
+      },
+      data: acquisitionRequest,
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      data: acquisitionRequest,
+      where: {
+        id: 1,
+      },
+    });
+  });
+
+  test('Should call GenericDAOImp delete function with correct value', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PayWithDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const purchaseStub = new PayWithDAOImp();
+
+    await purchaseStub.delete({
+      where: {
+        id: 1,
+      },
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
+  });
 });

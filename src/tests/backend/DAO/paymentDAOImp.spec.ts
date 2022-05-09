@@ -20,36 +20,6 @@ describe('Payment DAO Implementation tests', () => {
     expect(paymentDAOStub['entity']).toEqual(prisma.payment);
   });
 
-  test('Should call GenericDAOImp add function with correct value', async () => {
-    const paymentRequest: PaymentModel = {
-      nickname: 'nickname',
-      default_value: 800,
-      reset_day: 1,
-      user_id: 1,
-    };
-
-    // eslint-disable-next-line prefer-destructuring
-    const entity = new PaymentDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
-      const result = await Promise.resolve({
-        nickname: 'nickname',
-        default_value: 800,
-        reset_day: 1,
-        user_id: 1,
-      });
-
-      return result;
-    });
-
-    const paymentStub = makeSut();
-
-    await paymentStub.add(paymentRequest);
-
-    expect(spy).toHaveBeenCalledWith({
-      data: paymentRequest,
-    });
-  });
-
   test('Should call findByPaymentId if correct paymentId', async () => {
     const req = 1;
     const paymentDAOImpStub = makeSut();
@@ -108,5 +78,92 @@ describe('Payment DAO Implementation tests', () => {
     } catch (err) {
       expect((err as Error).message).toBe('Forma de pagamento não cadastrada.');
     }
+  });
+
+  test('Should call GenericDAOImp add function with correct value', async () => {
+    const paymentRequest: PaymentModel = {
+      nickname: 'nickname',
+      default_value: 800,
+      reset_day: 1,
+      user_id: 1,
+    };
+
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        nickname: 'nickname',
+        default_value: 800,
+        reset_day: 1,
+        user_id: 1,
+      });
+
+      return result;
+    });
+
+    const paymentStub = makeSut();
+
+    await paymentStub.add(paymentRequest);
+
+    expect(spy).toHaveBeenCalledWith({
+      data: paymentRequest,
+    });
+  });
+
+  test('Should call GenericDAOImp update function with correct value', async () => {
+    const paymentRequest: PaymentModel = {
+      nickname: 'nickname',
+      default_value: 800,
+      reset_day: 1,
+      user_id: 1,
+    };
+
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        payment_id: 1,
+        purchase_id: 1,
+        value: 800,
+      });
+
+      return result;
+    });
+
+    const purchaseStub = new PaymentDAOImp();
+
+    await purchaseStub.update({
+      where: {
+        id: 1,
+      },
+      data: paymentRequest,
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      data: paymentRequest,
+      where: {
+        id: 1,
+      },
+    });
+  });
+
+  test('Should call GenericDAOImp delete function with correct value', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const purchaseStub = new PaymentDAOImp();
+
+    await purchaseStub.delete({
+      where: {
+        id: 1,
+      },
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
   });
 });

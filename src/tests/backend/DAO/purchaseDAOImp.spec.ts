@@ -93,4 +93,62 @@ describe('Purchase DAO Implementation', () => {
       data: purchaseRequest,
     });
   });
+
+  test('Should call GenericDAOImp update function with correct value', async () => {
+    const purchaseRequest: PurchaseModel = {
+      value: 11,
+      description: 'description',
+      purchase_date: new Date(),
+      user_id: 1,
+    };
+
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+      const result = await Promise.resolve({
+        value: 11,
+        description: 'description',
+        purchase_date: new Date(),
+        user_id: 1,
+      });
+
+      return result;
+    });
+
+    const purchaseStub = new PurchaseDAOImp();
+
+    await purchaseStub.update({
+      where: {
+        id: 1,
+      },
+      data: purchaseRequest,
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      data: purchaseRequest,
+      where: {
+        id: 1,
+      },
+    });
+  });
+
+  test('Should call GenericDAOImp delete function with correct value', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    const spy = jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const purchaseStub = new PurchaseDAOImp();
+
+    await purchaseStub.delete({
+      where: {
+        id: 1,
+      },
+    });
+
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
+  });
 });
