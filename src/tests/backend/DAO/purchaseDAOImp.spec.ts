@@ -3,6 +3,7 @@
 import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
+import { NotFoundError } from '../../../serverless/error/HttpError';
 
 describe('Purchase DAO Implementation', () => {
   test('Should call constructor with prisma.payment', () => {
@@ -20,16 +21,18 @@ describe('Purchase DAO Implementation', () => {
     expect(response).toEqual(undefined);
   });
 
-  test('Should returns undefined if not exists matching purchases', async () => {
-    const purchaseDAOImpStub = new PurchaseDAOImp();
+  test('Should returns not found error if not exists matching purchases', async () => {
+    try {
+      const purchaseDAOImpStub = new PurchaseDAOImp();
 
-    const response = await purchaseDAOImpStub.returnsPurchaseByAcquisitionsList([{
-      payment_id: 1,
-      purchase_id: 1,
-      value: 1,
-    }]);
-
-    expect(response).toEqual(undefined);
+      await purchaseDAOImpStub.returnsPurchaseByAcquisitionsList([{
+        payment_id: 1,
+        purchase_id: 1,
+        value: 1,
+      }]);
+    } catch (err) {
+      expect(err as Error).toEqual(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
+    }
   });
 
   test('Should returns purchase list of acquisition list is not empty and has matching', async () => {
