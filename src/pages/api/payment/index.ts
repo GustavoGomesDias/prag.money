@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
-import makePaymentDAOImp from '../../../serverless/factories/payment/PaymentFactory';
+import makePaymentController from '../../../serverless/factories/payment/PaymentFactory';
 
 async function handleRegisterPayment(
   req: NextApiRequest,
@@ -12,9 +12,9 @@ async function handleRegisterPayment(
   const {
     nickname, default_value, reset_day, user_id,
   } = req.body as PaymentModel;
-  const paymentDAOImp = makePaymentDAOImp();
+  const controller = makePaymentController();
 
-  const response = await paymentDAOImp.handleAdd({
+  const response = await controller.handleAdd({
     nickname, default_value, reset_day, user_id,
   });
 
