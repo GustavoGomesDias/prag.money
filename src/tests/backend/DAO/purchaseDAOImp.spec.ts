@@ -1,5 +1,6 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { PayWith } from '@prisma/client';
 import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
@@ -153,5 +154,67 @@ describe('Purchase DAO Implementation', () => {
         id: 1,
       },
     });
+  });
+
+  test('Should call deletePurchasesByAcquisisitionList with correct values', async () => {
+    const acquisitionList: PayWith[] = [{
+      id: 1,
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }];
+
+    const spy = jest.spyOn(PurchaseDAOImp.prototype, 'deletePurchasesByAcquisisitionList').mockImplementationOnce(jest.fn());
+
+    const purchaseStub = new PurchaseDAOImp();
+    await purchaseStub.deletePurchasesByAcquisisitionList(acquisitionList);
+
+    expect(spy).toHaveBeenCalledWith(acquisitionList);
+  });
+
+  test('Should call deletePurchasesByAcquisisitionList/delete with correct values', async () => {
+    const acquisitionList: PayWith[] = [{
+      id: 1,
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }];
+
+    const spy = jest.spyOn(PurchaseDAOImp.prototype, 'delete').mockImplementationOnce(jest.fn());
+
+    const purchaseStub = new PurchaseDAOImp();
+    await purchaseStub.deletePurchasesByAcquisisitionList(acquisitionList);
+
+    expect(spy).toHaveBeenCalledWith({
+      where: {
+        id: 1,
+      },
+    });
+  });
+
+  test('Should call deletePurchasesByAcquisisitionList/delete by 3 times', async () => {
+    const acquisitionList: PayWith[] = [{
+      id: 1,
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }, {
+      id: 1,
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }, {
+      id: 1,
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }];
+
+    const spy = jest.spyOn(PurchaseDAOImp.prototype, 'delete').mockImplementation(jest.fn());
+
+    const purchaseStub = new PurchaseDAOImp();
+    await purchaseStub.deletePurchasesByAcquisisitionList(acquisitionList);
+
+    expect(spy).toHaveBeenCalledTimes(3);
   });
 });
