@@ -7,6 +7,7 @@ import {
 import Logo from '../Logo/Logo';
 import { AuthContext } from '../../../context/AuthContext';
 import HeaderButton from '../Buttons/HeaderButton';
+import PurchaseContext from '../../../context/purchases/PurchaseContext';
 
 export interface HeaderProps {
   logo: string
@@ -15,8 +16,10 @@ export interface HeaderProps {
 const Header = ({ logo }: HeaderProps): JSX.Element => {
   const { push } = useRouter();
   const { user, signOut } = useContext(AuthContext);
+  const purchaseCtx = useContext(PurchaseContext);
 
   const logout = (): void => {
+    purchaseCtx.handleClearPurchaseList();
     signOut();
     push('/', '/');
   };

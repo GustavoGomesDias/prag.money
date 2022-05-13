@@ -136,7 +136,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       ...purchase,
       payments: payWith,
     };
-    const response = await api.post('/purchase/register', addPurchase);
+    const response = await api.post('/purchase/', addPurchase);
 
     if (response.data.error) {
       toast({

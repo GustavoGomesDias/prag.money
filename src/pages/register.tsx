@@ -81,7 +81,7 @@ const Register = (): JSX.Element => {
       name, email, password, passwordConfirmation,
     };
 
-    const response = await api.post('/user/register', data);
+    const response = await api.post('/user/', data);
 
     if (response.data.message) {
       toast({

@@ -65,7 +65,7 @@ const Create = (): JSX.Element => {
     const data: PaymentModel = {
       nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
-    const response = await api.post('/payment/register', data);
+    const response = await api.post('/payment', data);
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',

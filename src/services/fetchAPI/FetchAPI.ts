@@ -45,6 +45,20 @@ export default class FetchAPI<T> {
     };
   }
 
+  async delete(complementUrl: string): Promise<FetchReturns<T>> {
+    const result = await fetch(`${this.apiURL}/${complementUrl}`, {
+      method: 'DELETE',
+      headers: { ...this.headers },
+    });
+
+    const data = await result.json() as T;
+
+    return {
+      statusCode: result.status,
+      data,
+    };
+  }
+
   setAuthHeader(content: string): void {
     this.headers = {
       ...this.headers,

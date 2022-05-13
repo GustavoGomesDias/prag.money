@@ -1,7 +1,7 @@
 import {
   Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr, useToast,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 import toastConfig from '../../../utils/config/tostConfig';
 import formatDate from '../../../utils/formatDate';
@@ -12,6 +12,7 @@ export interface PurchaseTableProps {
 }
 
 const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
+  const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const toast = useToast();
   const handleLongerDescription = (description: string): string => {
     if (description.length > 50) {
@@ -20,6 +21,10 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
 
     return description;
   };
+
+  useEffect(() => {
+    setPurchseList(purchases);
+  }, [purchases]);
 
   const copyText = (entryText: string): void => {
     navigator.clipboard.writeText(entryText);
@@ -48,7 +53,7 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
           </Tr>
         </Thead>
         <Tbody>
-          {purchases.length > 0 && purchases.map((purchase) => (
+          {purchaseList.length > 0 && purchaseList.map((purchase) => (
             <Tr
               key={purchase.description + purchase.id}
             >

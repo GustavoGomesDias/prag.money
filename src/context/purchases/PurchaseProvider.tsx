@@ -21,7 +21,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
 
   const handleGetPurchasesByPaymentId = async (paymentId: number) => {
     setIsLoading(true);
-    const response = await api.get(`/payment/${paymentId}`);
+    const response = await api.get(`/acquisition/${paymentId}`);
 
     if (response.data.error) {
       setIsLoading(false);
