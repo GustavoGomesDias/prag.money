@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 import { Prisma } from '@prisma/client';
 import PayWithModel from '../../data/models/PayWithModel';
 import PurchaseModel from '../../data/models/PurchaseModel';
@@ -36,5 +38,15 @@ export default class PurchaseDAOImp extends GenericDAOImp<
       return purchases;
     }
     return undefined;
+  }
+
+  async deletePurchasesByAcquisisitionList(acquisitions: PayWithModel[]) {
+    for (const ac of acquisitions) {
+      await this.delete({
+        where: {
+          id: ac.purchase_id,
+        },
+      });
+    }
   }
 }
