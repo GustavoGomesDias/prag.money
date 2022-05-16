@@ -48,6 +48,24 @@ export default class AcquisitionController {
     }
   }
 
+  async handleDeleteAcquisitionByPurchaseId(purchaseId: number): Promise<HttpResponse> {
+    try {
+      validationId(purchaseId);
+      await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
+
+      await this.purchaseDAO.delete({
+        where: {
+          id: purchaseId,
+        },
+      });
+
+      return ok('Gasto/Compra deleta com sucesso!');
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
+
   async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
     try {
       validationId(paymentId);
