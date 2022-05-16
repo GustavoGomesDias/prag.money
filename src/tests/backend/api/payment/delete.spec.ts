@@ -30,6 +30,6 @@ describe('Handle Payment Delete', () => {
     const controllerStub = makeSut();
     const result = await controllerStub.handleDelete(1);
 
-    expect(result).toEqual(ok('Deletado com sucesso!'));
+    expect(result).toEqual(ok('Forma de pagamento deletada com sucesso!'));
   });
 });
