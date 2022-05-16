@@ -53,7 +53,7 @@ export default class PaymentController {
         },
       });
 
-      return ok('Deletado com sucesso!');
+      return ok('Conta deletada com sucesso!');
     } catch (err) {
       console.log(err);
       return handleErrors(err as Error);

@@ -22,7 +22,7 @@ import PurchaseModel from '../../serverless/data/models/PurchaseModel';
 import { AuthContext } from '../../context/AuthContext';
 import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
 import PragModal from '../../components/Layout/PragModal';
-import InfoConainer from '../../components/Layout/InfoContainer';
+import InfoContainer from '../../components/Layout/InfoContainer';
 
 export interface CreatePurchaseProps {
   data: {
@@ -172,7 +172,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       {isLoading && <ModalLoader isOpen={isLoading} />}
       {notHasPayment && (
       <PragModal isOpen={notHasPayment}>
-        <InfoConainer
+        <InfoContainer
           action="Cadastrar pagamento"
           message="Por favor, cadastre uma forma de pagamento primeiro."
           handleAction={() => push('/payment/create', '/payment/create')}

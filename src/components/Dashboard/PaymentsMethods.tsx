@@ -6,10 +6,13 @@ import {
   Button, Flex, Select, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+
 import PurchaseContext from '../../context/purchases/PurchaseContext';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
 import api from '../../services/fetchAPI/init';
 import toastConfig from '../../utils/config/tostConfig';
+import PragModal from '../Layout/PragModal';
+import ManagerContainer from '../Layout/ManagerContainer';
 
 export interface PaymentsMethodsProps {
   payments: PaymentModel[] | undefined
@@ -19,6 +22,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
   const [balance, setBalance] = useState<number>(0);
   const [paymentId, setPaymentId] = useState<number>(0);
   const [paymentList, setPaymentList] = useState<PaymentModel[] | undefined>(payments);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const purchaseCtx = useContext(PurchaseContext);
 
   const toast = useToast();
@@ -71,8 +75,12 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
     setPaymentId(Number(e.target.value));
   };
 
-  const handleDeletePayment = async (e: MouseEvent<HTMLButtonElement>): Promise<void> => {
+  const handleDelete = (e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
+    setOpenModal(true);
+  };
+
+  const handleDeletePayment = async (): Promise<void> => {
     if (balance === 0) {
       toast({
         title: '😢',
@@ -89,10 +97,9 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
       setPaymentList(filterPayments);
     }
 
+    const response = await api.delete(`/payment/${paymentId}`);
     setBalance(0);
     setPaymentId(0);
-
-    const response = await api.delete(`/payment/${paymentId}`);
 
     if (response.data.message) {
       toast({
@@ -101,6 +108,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
         status: 'success',
         ...toastConfig,
       });
+      setOpenModal(false);
       return;
     }
     toast({
@@ -109,6 +117,30 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
       status: 'error',
       ...toastConfig,
     });
+
+    setOpenModal(false);
+  };
+
+  const handleDeleteAllPurchases = async (): Promise<void> => {
+    const response = await api.delete(`/acquisition/${paymentId}`);
+
+    if (response.data.message) {
+      toast({
+        title: '📣',
+        description: response.data.message,
+        status: 'success',
+        ...toastConfig,
+      });
+    } else {
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+    }
+
+    await handleDeletePayment();
   };
 
   return (
@@ -117,6 +149,16 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
       justifyContent="flex-end"
       padding="2em"
     >
+      <PragModal isOpen={openModal}>
+        <ManagerContainer
+          firstAction="Deletar apenas a conta"
+          secondAction="Deletar a conta e os gastos"
+          message="Deletar todas as compras/gastos pagas com esta forma de pagamento?"
+          handleFirstAction={handleDeletePayment}
+          handleSecondAction={handleDeleteAllPurchases}
+          handleCancel={() => setOpenModal(false)}
+        />
+      </PragModal>
       <Flex
         width={{ base: '100%', md: '60%', xl: '40%' }}
         padding="0.8em"
@@ -183,7 +225,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
               }}
               leftIcon={<FaTrashAlt />}
               w="100%"
-              onClick={(e) => handleDeletePayment(e)}
+              onClick={(e) => handleDelete(e)}
             />
           </Tooltip>
 

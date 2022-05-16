@@ -19,8 +19,8 @@ async function handleGetAcquisitonsById(
       return res.status(response.statusCode).json({ error });
     }
 
-    const { content } = response;
-    return res.status(response.statusCode).json({ content });
+    const { message } = response;
+    return res.status(response.statusCode).json({ message });
   }
 
   const response = await acquisitionController.handleGetAcquisitionsByPaymentId(Number(id));
