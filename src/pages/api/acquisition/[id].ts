@@ -11,6 +11,18 @@ async function handleGetAcquisitonsById(
   const id = req.query.id as unknown as number;
   const acquisitionController = makeAcquisition();
 
+  if (req.method === 'DELETE') {
+    const response = await acquisitionController.handleDeleteAcquisitionsByPaymentId(Number(id));
+
+    if (response.error) {
+      const { error } = response;
+      return res.status(response.statusCode).json({ error });
+    }
+
+    const { content } = response;
+    return res.status(response.statusCode).json({ content });
+  }
+
   const response = await acquisitionController.handleGetAcquisitionsByPaymentId(Number(id));
 
   if (response.error) {
