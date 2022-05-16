@@ -36,6 +36,7 @@ Prisma.PaymentDeleteArgs
     }) as GetAcquisitions;
 
     const { PayWith, ...paymentInfos } = getAcquisitionsInfos;
+
     return {
       acquisitions: Array.isArray(PayWith) ? PayWith : [PayWith],
       ...paymentInfos,

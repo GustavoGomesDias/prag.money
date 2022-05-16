@@ -1,7 +1,10 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable camelcase */
-import { validationExpenseValue, validationField400code, validationId } from '../helpers/Validations';
+import {
+  checkIfExists404code,
+  validationExpenseValue, validationField400code, validationId,
+} from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
@@ -10,7 +13,7 @@ import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
 import handleErrors from '../../error/helpers/handleErrors';
 import {
-  created, okWithContent, HttpResponse,
+  created, okWithContent, HttpResponse, ok,
 } from '../helpers/http';
 
 export default class AcquisitionController {
@@ -27,6 +30,22 @@ export default class AcquisitionController {
     this.purchaseDAO = purchaseDAO;
     this.payWithDAO = payWithDAO;
     this.userDAO = user;
+  }
+
+  async handleDeleteAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+    try {
+      validationId(paymentId);
+      await this.paymentDAO.checkIfPaymentExists(paymentId);
+
+      const { acquisitions } = await this.paymentDAO.findByPaymentId(paymentId);
+      checkIfExists404code(acquisitions, 'Não existe compras/gastos pagas com essa forma de pagamento.');
+      await this.purchaseDAO.deletePurchasesByAcquisisitionList(acquisitions);
+
+      return ok('Gastos/Compras deletas com sucesso!');
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
   }
 
   async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
