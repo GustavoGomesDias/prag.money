@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PayWith } from '@prisma/client';
@@ -5,6 +6,7 @@ import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 import { NotFoundError } from '../../../serverless/error/HttpError';
+import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 describe('Purchase DAO Implementation', () => {
   test('Should call constructor with prisma.payment', () => {
@@ -216,5 +218,31 @@ describe('Purchase DAO Implementation', () => {
     await purchaseStub.deletePurchasesByAcquisisitionList(acquisitionList);
 
     expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  test('Should call checkIfPurchaseExists if correct purchaseId', async () => {
+    const req = 1;
+    const purchaseStub = new PurchaseDAOImp();
+
+    const spy = jest.spyOn(purchaseStub, 'checkIfPurchaseExists').mockImplementationOnce(jest.fn());
+    await purchaseStub.checkIfPurchaseExists(req);
+
+    expect(spy).toHaveBeenCalledWith(req);
+  });
+
+  test('Should ensure that checkIfPurchaseExists throws an error if the purchase does not exist', async () => {
+    try {
+      const req = 1;
+      const purchaseStub = new PurchaseDAOImp();
+
+      jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+        const result = await Promise.resolve(undefined);
+
+        return result;
+      });
+      await purchaseStub.checkIfPurchaseExists(req);
+    } catch (err) {
+      expect((err as Error).message).toBe('Compra/gasto não encontrada.');
+    }
   });
 });
