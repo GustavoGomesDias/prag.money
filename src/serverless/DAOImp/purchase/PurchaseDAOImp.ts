@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Prisma } from '@prisma/client';
+import { checkIfExists404code } from '../../api/helpers/Validations';
 import PayWithModel from '../../data/models/PayWithModel';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import prisma from '../../data/prisma/config';
@@ -48,5 +49,14 @@ export default class PurchaseDAOImp extends GenericDAOImp<
         },
       });
     }
+  }
+
+  async checkIfPurchaseExists(purchaseId: number): Promise<void> {
+    const purchase = await this.findUnique({
+      where: {
+        id: purchaseId,
+      },
+    }) as unknown as PurchaseModel | undefined | null;
+    checkIfExists404code(purchase, 'Compra/gasto não encontrada.');
   }
 }
