@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import AcquisitionController from '../../../../serverless/api/controllers/AcquisitionController';
@@ -44,24 +45,6 @@ describe('Delete Acquisitions tests', () => {
     expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não cadastrada.')));
   });
 
-  // test('Should return 404 if acquisitions not exists', async () => {
-  //   const paymentId = 1;
-
-  //   jest.spyOn(PaymentDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
-  //     const { acquisitions, ...rest } = mockReturnsAcquisiton;
-  //     const result = await Promise.resolve({
-  //       PayWith: acquisitions,
-  //       ...rest,
-  //     });
-
-  //     return result;
-  //   });
-
-  //   const acquisitionController = makeSut();
-  //   const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
-  //   expect(httpResponse).toEqual(notFound(new NotFoundError('Não existe compras/gastos pagas com essa forma de pagamento.')));
-  // });
-
   test('Should return 500 if any error occurs', async () => {
     const paymentId = 1;
 
@@ -95,5 +78,28 @@ describe('Delete Acquisitions tests', () => {
     const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
 
     expect(httpResponse).toEqual(ok('Gastos/Compras deletas com sucesso!'));
+  });
+
+  test('Should return 400 if invalid user id is provided', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(-1);
+
+    expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 200 if payment is deleted', async () => {
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+    jest.spyOn(PurchaseDAOImp.prototype, 'checkIfPurchaseExists').mockImplementationOnce(jest.fn());
+
+    const controllerStub = makeSut();
+    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1);
+
+    expect(result).toEqual(ok('Gasto/Compra deleta com sucesso!'));
   });
 });
