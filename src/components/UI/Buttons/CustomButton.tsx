@@ -5,10 +5,11 @@ export interface CustomButtonProps {
   action: string
   handleOnClick: () => void
   hoverColor?: string
+  textSize?: string
 }
 
 const CustomButton = ({
-  action, handleOnClick, hoverColor,
+  action, handleOnClick, hoverColor, textSize,
 }: CustomButtonProps): JSX.Element => (
   <Button
     onClick={() => handleOnClick()}
@@ -19,7 +20,7 @@ const CustomButton = ({
     fontWeight="bold"
     margin="0px !important"
     outline="none"
-    fontSize={{ base: '16px', md: '18px' }}
+    fontSize={textSize || { base: '16px', md: '18px' }}
     transition="0.5s"
     _active={{
       transform: 'scale(.9)',
