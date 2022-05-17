@@ -25,7 +25,7 @@ describe('Handle Get By Payment Id', () => {
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
-  test('Should return 200 with content if payment is updated', async () => {
+  test('Should return 200 with content if get payment it happened successfully', async () => {
     const payment: PaymentModel = {
       nickname: 'nickname',
       default_value: 800,
