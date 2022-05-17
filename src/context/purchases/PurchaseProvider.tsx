@@ -48,10 +48,18 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
     });
   };
 
+  const handleDeletePurchaseById = (purchaseId: number): void => {
+    dispatchPurchasesActions({
+      type: 'DELETE_BY_PURCHASE_ID',
+      purchaseId,
+    });
+  };
+
   const context = useMemo(() => ({
     purchases: purchasesState.purchases,
     handleGetPurchasesByPaymentId,
     handleClearPurchaseList,
+    handleDeletePurchaseById,
   }), [purchasesState]);
 
   return (

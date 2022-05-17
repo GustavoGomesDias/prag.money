@@ -1,10 +1,14 @@
+/* eslint-disable no-return-await */
 import {
   Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr, useToast,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
+import api from '../../../services/fetchAPI/init';
 import toastConfig from '../../../utils/config/tostConfig';
 import formatDate from '../../../utils/formatDate';
+import ModalLoader from '../../UI/Loader/ModalLoader';
 import ActionButton from '../PurchaseDescription/ActionButton';
 
 export interface PurchaseTableProps {
@@ -13,6 +17,8 @@ export interface PurchaseTableProps {
 
 const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const purchaseCtx = useContext(PurchaseContext);
   const toast = useToast();
   const handleLongerDescription = (description: string): string => {
     if (description.length > 50) {
@@ -37,12 +43,47 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
     });
   };
 
+  const handleDeletePurchase = async (id: number): Promise<void> => {
+    setIsLoading(true);
+    if (id < 0) {
+      toast({
+        title: '😒',
+        description: 'Id inválido.',
+        status: 'error',
+        ...toastConfig,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const response = await api.delete(`purchase/${id}`);
+    purchaseCtx.handleDeletePurchaseById(id);
+
+    if (response.data.message) {
+      toast({
+        title: '📣',
+        description: response.data.message,
+        status: 'success',
+        ...toastConfig,
+      });
+    } else {
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+    }
+    setIsLoading(false);
+  };
+
   return (
     <TableContainer
       w="100%"
       display={{ base: 'none', md: 'block' }}
       fontWeight="bold"
     >
+      {isLoading && <ModalLoader isOpen={isLoading} />}
       <Table>
         <Thead>
           <Tr>
@@ -76,7 +117,7 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
                 justifyContent="center"
               >
                 <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
-                <ActionButton action="Excluir" handleOnClick={(): void => { console.log('t'); }} />
+                <ActionButton action="Excluir" handleOnClick={async (): Promise<void> => await handleDeletePurchase(purchase.id as number)} />
               </Td>
             </Tr>
           ))}
