@@ -1,16 +1,10 @@
-import AcquisitionController from '../../api/controllers/AcquisitionController';
-import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
-import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
+import PurchaseController from '../../api/controllers/PurchaseController';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
-import { makeUserDAO } from '../users/UserFacotory';
 
-const makeAcquisition = (): AcquisitionController => {
-  const paymentDAO = new PaymentDAOImp();
+const makePurchase = (): PurchaseController => {
   const purchaseDAO = new PurchaseDAOImp();
-  const payWithDAO = new PayWithDAOImp();
-  const userDAO = makeUserDAO();
-  const savePurchases = new AcquisitionController(paymentDAO, purchaseDAO, payWithDAO, userDAO);
+  const savePurchases = new PurchaseController(purchaseDAO);
   return savePurchases;
 };
 
-export default makeAcquisition;
+export default makePurchase;

@@ -26,8 +26,6 @@ export default class PaymentController {
         },
       });
 
-      console.log(payment);
-
       return okWithContent({ payment });
     } catch (err) {
       console.log(err);
