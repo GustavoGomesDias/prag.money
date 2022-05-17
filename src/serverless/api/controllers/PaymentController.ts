@@ -3,7 +3,7 @@ import { validationDay } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
-  HttpResponse, ok,
+  HttpResponse, ok, okWithContent,
 } from '../helpers/http';
 import { validationField400code, validationId } from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
@@ -14,6 +14,25 @@ export default class PaymentController {
 
   constructor(paymentDAOImp: PaymentDAOImp) {
     this.paymentDAOImp = paymentDAOImp;
+  }
+
+  async handleGetPaymentById(paymentId: number): Promise<HttpResponse> {
+    try {
+      validationId(paymentId);
+
+      const payment = await this.paymentDAOImp.findUnique({
+        where: {
+          id: paymentId,
+        },
+      });
+
+      console.log(payment);
+
+      return okWithContent({ payment });
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
   }
 
   validatieAllRequestFields(paymentInfos: PaymentModel): void {
