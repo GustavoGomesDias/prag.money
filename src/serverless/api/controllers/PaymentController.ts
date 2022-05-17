@@ -5,7 +5,7 @@ import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
   HttpResponse, ok, okWithContent,
 } from '../helpers/http';
-import { validationField400code, validationId } from '../helpers/Validations';
+import { checkIsEquals, validationField400code, validationId } from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
 import handleErrors from '../../error/helpers/handleErrors';
 
@@ -56,6 +56,25 @@ export default class PaymentController {
       await this.paymentDAOImp.add(paymentInfos);
 
       return ok('Forma de pagamento criado com sucesso!');
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
+
+  async handleEdit(paymentInfos: PaymentModel, userId: number): Promise<HttpResponse> {
+    try {
+      this.validatieAllRequestFields(paymentInfos);
+      checkIsEquals(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
+
+      await this.paymentDAOImp.update({
+        where: {
+          id: paymentInfos.id,
+        },
+        data: paymentInfos,
+      });
+
+      return ok('Forma de pagamento editada com sucesso!');
     } catch (err) {
       console.log(err);
       return handleErrors(err as Error);
