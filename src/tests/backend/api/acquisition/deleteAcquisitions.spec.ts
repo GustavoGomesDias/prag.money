@@ -13,6 +13,7 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../..
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
+import * as validations from '../../../../serverless/api/helpers/Validations';
 
 const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
@@ -86,19 +87,58 @@ describe('Delete Acquisitions tests', () => {
     const entity = new PurchaseDAOImp()['entity'];
     jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
 
-    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(-1);
+    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(-1, 1);
 
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 400 if user ids not equals', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+
+    jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+
+    jest.spyOn(PurchaseDAOImp.prototype, 'checkIfPurchaseExists').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve({
+        id: 2,
+        value: 12,
+        description: 'Almoção',
+        purchase_date: new Date('2022-05-09T00:00:00.000Z'),
+        created_at: new Date('2022-05-09T19:47:10.524Z'),
+        updated_at: new Date('2022-05-09T19:47:10.526Z'),
+        user_id: 2,
+      });
+
+      return result;
+    });
+
+    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1, 1);
+
+    expect(result).toEqual(badRequest(new BadRequestError('Você não tem permissão para excluir.')));
   });
 
   test('Should return 200 if payment is deleted', async () => {
     // eslint-disable-next-line prefer-destructuring
     const entity = new PurchaseDAOImp()['entity'];
     jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
-    jest.spyOn(PurchaseDAOImp.prototype, 'checkIfPurchaseExists').mockImplementationOnce(jest.fn());
+    jest.spyOn(PurchaseDAOImp.prototype, 'checkIfPurchaseExists').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve({
+        id: 2,
+        value: 12,
+        description: 'Almoção',
+        purchase_date: new Date('2022-05-09T00:00:00.000Z'),
+        created_at: new Date('2022-05-09T19:47:10.524Z'),
+        updated_at: new Date('2022-05-09T19:47:10.526Z'),
+        user_id: 1,
+      });
+
+      return result;
+    });
+    jest.spyOn(validations, 'checkIsEquals').mockImplementationOnce(jest.fn());
 
     const controllerStub = makeSut();
-    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1);
+    const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1, 1);
 
     expect(result).toEqual(ok('Gasto/Compra deleta com sucesso!'));
   });
