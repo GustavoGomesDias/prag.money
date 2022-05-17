@@ -59,6 +59,21 @@ export default class FetchAPI<T> {
     };
   }
 
+  async put(complementUrl: string, info: any): Promise<FetchReturns<T>> {
+    const result = await fetch(`${this.apiURL}/${complementUrl}`, {
+      method: 'PUT',
+      headers: { ...this.headers },
+      body: JSON.stringify(info),
+    });
+
+    const data = await result.json() as T;
+
+    return {
+      statusCode: result.status,
+      data,
+    };
+  }
+
   setAuthHeader(content: string): void {
     this.headers = {
       ...this.headers,

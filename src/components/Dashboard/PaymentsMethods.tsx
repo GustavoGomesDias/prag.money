@@ -6,6 +6,7 @@ import {
   Button, Flex, Select, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+import { useRouter } from 'next/router';
 
 import PurchaseContext from '../../context/purchases/PurchaseContext';
 import PaymentModel from '../../serverless/data/models/PaymentModel';
@@ -24,6 +25,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
   const [paymentList, setPaymentList] = useState<PaymentModel[] | undefined>(payments);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const purchaseCtx = useContext(PurchaseContext);
+  const { push } = useRouter();
 
   const toast = useToast();
 
@@ -78,6 +80,21 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
   const handleDelete = (e: MouseEvent<HTMLButtonElement>): void => {
     e.preventDefault();
     setOpenModal(true);
+  };
+
+  const handleEdit = (e: MouseEvent<HTMLButtonElement>): void => {
+    e.preventDefault();
+
+    if (paymentId === 0) {
+      toast({
+        title: '📣',
+        description: 'Eu sou eterno! Não há como me editar.',
+        status: 'info',
+        ...toastConfig,
+      });
+      return;
+    }
+    push('/payment/[id]', `/payment/${paymentId}`);
   };
 
   const handleDeletePayment = async (): Promise<void> => {
@@ -211,6 +228,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
               }}
               leftIcon={<FaRegEdit />}
               w="100%"
+              onClick={(e) => handleEdit(e)}
             />
           </Tooltip>
           <Tooltip
