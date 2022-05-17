@@ -12,7 +12,6 @@ import { ReturnsAcquisitions } from '../../../../serverless/data/usecases/GetAcq
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
-import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
 import * as validations from '../../../../serverless/api/helpers/Validations';
 
 const makeSut = (): AcquisitionController => {
