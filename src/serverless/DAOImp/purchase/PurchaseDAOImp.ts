@@ -51,12 +51,14 @@ export default class PurchaseDAOImp extends GenericDAOImp<
     }
   }
 
-  async checkIfPurchaseExists(purchaseId: number): Promise<void> {
+  async checkIfPurchaseExists(purchaseId: number): Promise<PurchaseModel> {
     const purchase = await this.findUnique({
       where: {
         id: purchaseId,
       },
     }) as unknown as PurchaseModel | undefined | null;
     checkIfExists404code(purchase, 'Compra/gasto não encontrada.');
+
+    return purchase as PurchaseModel;
   }
 }

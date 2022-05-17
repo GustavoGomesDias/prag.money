@@ -3,6 +3,7 @@
 /* eslint-disable camelcase */
 import {
   checkIfExists404code,
+  checkIsEquals,
   validationExpenseValue, validationField400code, validationId,
 } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
@@ -48,10 +49,11 @@ export default class AcquisitionController {
     }
   }
 
-  async handleDeleteAcquisitionByPurchaseId(purchaseId: number): Promise<HttpResponse> {
+  async handleDeleteAcquisitionByPurchaseId(purchaseId: number, userId: number): Promise<HttpResponse> {
     try {
       validationId(purchaseId);
-      await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
+      const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
+      checkIsEquals(userId, purchase.user_id, 'Você não tem permissão para excluir.');
 
       await this.purchaseDAO.delete({
         where: {
