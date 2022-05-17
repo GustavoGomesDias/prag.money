@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
-import makeAcquisition from '../../../serverless/factories/purchase/PurchaseFactory';
+import makeAcquisition from '../../../serverless/factories/purchase/AcquisitionFactory';
 
 async function handleGetAcquisitonsById(
   req: NextApiRequest,

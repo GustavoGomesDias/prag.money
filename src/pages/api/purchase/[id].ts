@@ -3,7 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
 import UserModel from '../../../serverless/data/models/UserModel';
-import makeAcquisition from '../../../serverless/factories/purchase/PurchaseFactory';
+import makeAcquisition from '../../../serverless/factories/purchase/AcquisitionFactory';
+import makePurchase from '../../../serverless/factories/purchase/PurchaseFactory';
 
 export interface NextApiUserRequest extends NextApiRequest {
   user: UserModel
@@ -16,16 +17,29 @@ async function handle(
   const id = req.query.id as unknown as number;
 
   const acquisitionController = makeAcquisition();
+  const purchaseController = makePurchase();
 
-  const response = await acquisitionController.handleDeleteAcquisitionByPurchaseId(Number(id), (req as NextApiUserRequest).user.id as number);
+  if (req.method === 'DELETE') {
+    const response = await acquisitionController.handleDeleteAcquisitionByPurchaseId(Number(id), (req as NextApiUserRequest).user.id as number);
+
+    if (response.error) {
+      const { error } = response;
+      return res.status(response.statusCode).json({ error });
+    }
+
+    const { message } = response;
+    return res.status(response.statusCode).json({ message });
+  }
+
+  const response = await purchaseController.handleGetPurchaseById(Number(id));
 
   if (response.error) {
     const { error } = response;
     return res.status(response.statusCode).json({ error });
   }
 
-  const { message } = response;
-  return res.status(response.statusCode).json({ message });
+  const { content } = response;
+  return res.status(response.statusCode).json({ content });
 }
 
 export default withProtect(handle);
