@@ -52,4 +52,6 @@ model PayWith {
   purchase_id Int
   payment     Payment  @relation(fields: [payment_id], references: [id], onDelete: Cascade)
   payment_id  Int
+
+  @@index([purchase_id, payment_id])
 }
