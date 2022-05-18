@@ -1,7 +1,9 @@
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
-import { badRequest, ok, serverError } from '../../../../serverless/api/helpers/http';
+import {
+  badRequest, forbidden, ok, serverError,
+} from '../../../../serverless/api/helpers/http';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
-import { BadRequestError, InternalServerError } from '../../../../serverless/error/HttpError';
+import { BadRequestError, ForbiddenError, InternalServerError } from '../../../../serverless/error/HttpError';
 import PaymentDAOMocked from '../../../mocks/mockPaymentDAOImp';
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
@@ -70,7 +72,7 @@ describe('Handler Create Payment', () => {
     expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
-  test('Should return 400 if user id is no equal to payment.user_id', async () => {
+  test('Should return 403 if user id is no equal to payment.user_id', async () => {
     const infos: PaymentModel = {
       nickname: 'nickname',
       default_value: 800,
@@ -82,7 +84,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Você não tem permissão para editar.')));
+    expect(response).toEqual(forbidden(new ForbiddenError('Você não tem permissão para editar.')));
   });
 
   test('Should return 500 if server returns a error', async () => {

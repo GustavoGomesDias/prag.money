@@ -3,12 +3,11 @@
 /* eslint-disable dot-notation */
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
 import PurchaseController from '../../../../serverless/api/controllers/PurchaseController';
-import { badRequest } from '../../../../serverless/api/helpers/http';
-import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
+import { badRequest, forbidden } from '../../../../serverless/api/helpers/http';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
-import PaymentModel from '../../../../serverless/data/models/PaymentModel';
 import PurchaseModel from '../../../../serverless/data/models/PurchaseModel';
-import { BadRequestError } from '../../../../serverless/error/HttpError';
+import { BadRequestError, ForbiddenError } from '../../../../serverless/error/HttpError';
+import handleErrors from '../../../../serverless/error/helpers/handleErrors';
 
 const makeSut = (): PurchaseController => {
   const daoIMP = new PurchaseDAOImp();
@@ -23,9 +22,31 @@ describe('Handle Get By Purchase Id', () => {
     const entity = new PurchaseDAOImp()['entity'];
     jest.spyOn(entity, 'findUnique').mockImplementationOnce(jest.fn());
 
-    const result = await controllerStub.handleGetPurchaseById(-1);
+    const result = await controllerStub.handleGetPurchaseById(-1, 1);
 
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 403 if purchase.user_id is is different from userId', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const date = new Date();
+
+    // eslint-disable-next-line prefer-destructuring
+    jest.spyOn(PurchaseDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve({
+        description: 'description',
+        purchase_date: date,
+        user_id: 1,
+        value: 12,
+      });
+
+      return result;
+    });
+
+    const result = await controllerStub.handleGetPurchaseById(1, 2);
+
+    expect(result).toEqual(forbidden(new ForbiddenError('Você não tem permissão para acessar este conteúdo.')));
   });
 
   test('Should return 200 with content if get purchase it happened successfully', async () => {
@@ -49,7 +70,7 @@ describe('Handle Get By Purchase Id', () => {
     });
 
     const controllerStub = makeSut();
-    const result = await controllerStub.handleGetPurchaseById(1);
+    const result = await controllerStub.handleGetPurchaseById(1, 1);
 
     expect(result.content).toEqual({ purchase });
 
