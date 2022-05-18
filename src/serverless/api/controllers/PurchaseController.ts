@@ -1,7 +1,8 @@
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
+import PurchaseModel from '../../data/models/PurchaseModel';
 import handleErrors from '../../error/helpers/handleErrors';
 import { HttpResponse, okWithContent } from '../helpers/http';
-import { validationId } from '../helpers/Validations';
+import { checkIsEquals403Error, validationId } from '../helpers/Validations';
 
 export default class PurchaseController {
   private readonly purchaseDAO: PurchaseDAOImp;
@@ -10,7 +11,7 @@ export default class PurchaseController {
     this.purchaseDAO = purchaseDAO;
   }
 
-  async handleGetPurchaseById(purchaseId: number): Promise<HttpResponse> {
+  async handleGetPurchaseById(purchaseId: number, userId: number): Promise<HttpResponse> {
     try {
       validationId(purchaseId);
 
@@ -23,14 +24,18 @@ export default class PurchaseController {
           PayWith: {
             select: {
               payment: true,
+              value: true,
             },
           },
           description: true,
           id: true,
           purchase_date: true,
           value: true,
+          user_id: true,
         },
-      });
+      }) as PurchaseModel;
+
+      checkIsEquals403Error(purchase.user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
       return okWithContent({ purchase });
     } catch (err) {

@@ -31,7 +31,7 @@ async function handle(
     return res.status(response.statusCode).json({ message });
   }
 
-  const response = await purchaseController.handleGetPurchaseById(Number(id));
+  const response = await purchaseController.handleGetPurchaseById(Number(id), (req as NextApiUserRequest).user.id as number);
 
   if (response.error) {
     const { error } = response;
@@ -43,3 +43,4 @@ async function handle(
 }
 
 export default withProtect(handle);
+// export default handle;

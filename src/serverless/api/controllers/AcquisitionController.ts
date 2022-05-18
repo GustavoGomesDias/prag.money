@@ -115,9 +115,15 @@ export default class AcquisitionController {
       await this.userDAO.checkIfUserExists(user_id);
       await this.checkAllPaymentsExists(payments);
 
+      const date = new Date(purchase_date).toISOString().split('T')[0];
+      const year = Number(date.split('-')[0]);
+      const month = Number(date.split('-')[1]);
+      const day = Number(date.split('-')[2]);
+      const setedDate = new Date(Date.UTC(year, month, day, 3, 0, 0));
+
       const result = await this.purchaseDAO.add({
         description,
-        purchase_date: new Date(purchase_date),
+        purchase_date: setedDate,
         user_id,
         value,
       }) as PurchaseModel;

@@ -5,7 +5,7 @@ import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
   HttpResponse, ok, okWithContent,
 } from '../helpers/http';
-import { checkIsEquals, validationField400code, validationId } from '../helpers/Validations';
+import { checkIsEquals403Error, validationField400code, validationId } from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
 import handleErrors from '../../error/helpers/handleErrors';
 
@@ -63,7 +63,7 @@ export default class PaymentController {
   async handleEdit(paymentInfos: PaymentModel, userId: number): Promise<HttpResponse> {
     try {
       this.validatieAllRequestFields(paymentInfos);
-      checkIsEquals(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
+      checkIsEquals403Error(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
 
       await this.paymentDAOImp.update({
         where: {

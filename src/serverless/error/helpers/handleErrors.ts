@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import {
-  badRequest, HttpResponse, notFound, serverError, unauthorized,
+  badRequest, forbidden, HttpResponse, notFound, serverError, unauthorized,
 } from '../../api/helpers/http';
 import {
-  BadRequestError, InternalServerError, NotFoundError, UnauthorizedError,
+  BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError,
 } from '../HttpError';
 import { PMoneyErrors } from '../PMoneyErrors';
 import uniqueError from './uniqueError';
@@ -27,6 +27,10 @@ const handleErrors = (error: Error): HttpResponse => {
 
   if (error instanceof PMoneyErrors.TokenExpired) {
     return badRequest(new BadRequestError(error.message));
+  }
+
+  if (error instanceof ForbiddenError) {
+    return forbidden(error);
   }
 
   return serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.'));

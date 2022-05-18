@@ -1,5 +1,5 @@
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
-import { BadRequestError, NotFoundError } from '../../error/HttpError';
+import { BadRequestError, ForbiddenError, NotFoundError } from '../../error/HttpError';
 
 export const validationId = (id: number) => {
   if (Number.isNaN(id) || id < 0) {
@@ -40,5 +40,11 @@ export const validationEmailRequest = (isValid: boolean) => {
 export const checkIsEquals = (firstTestValue: unknown, secondTestValue: unknown, errorMessage: string) => {
   if (firstTestValue !== secondTestValue) {
     throw new BadRequestError(errorMessage);
+  }
+};
+
+export const checkIsEquals403Error = (firstTestValue: unknown, secondTestValue: unknown, errorMessage: string) => {
+  if (firstTestValue !== secondTestValue) {
+    throw new ForbiddenError(errorMessage);
   }
 };
