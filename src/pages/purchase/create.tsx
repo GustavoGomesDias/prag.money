@@ -125,9 +125,15 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       return;
     }
 
+    const date = purchaseDate.split('T')[0];
+    const year = Number(date.split('-')[0]);
+    const month = Number(date.split('-')[1]);
+    const day = Number(date.split('-')[2]);
+    const setedDate = new Date(Date.UTC(year, month, day, 3, 0, 0));
+
     const purchase: PurchaseModel = {
       description,
-      purchase_date: new Date(purchaseDate),
+      purchase_date: setedDate,
       user_id: user?.userInfo.id as number,
       value,
     };
