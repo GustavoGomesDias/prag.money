@@ -89,11 +89,9 @@ export default class UserController {
 
       const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 
-      checkIfExists404code(infos, 'Não a formas de pagamento cadastradas.');
-
       const { payments } = infos as GetForeignInfos;
 
-      checkIfExists404code(payments[0], 'Não a formas de pagamento cadastradas.');
+      checkIfExists404code(payments[0], 'Não há formas de pagamento cadastradas.');
 
       return okWithContent({ payments });
     } catch (err) {

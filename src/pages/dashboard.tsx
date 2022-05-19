@@ -9,7 +9,6 @@ import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-// import PurchaseCard from '../components/Dashboard/PurchaseDescription/PurchaseCard';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
@@ -104,6 +103,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   api.setAuthHeader(`Bearer ${authToken}`);
   const response = await api.get(`/user/payment/${userId}`);
+
+  console.log(response.data.content);
 
   if (response.statusCode !== 200) {
     return {
