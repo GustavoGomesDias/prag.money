@@ -2,6 +2,7 @@
 import {
   Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr, useToast,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
@@ -19,6 +20,9 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const purchaseCtx = useContext(PurchaseContext);
+
+  const { push } = useRouter();
+
   const toast = useToast();
   const handleLongerDescription = (description: string): string => {
     if (description.length > 50) {
@@ -77,6 +81,10 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
     setIsLoading(false);
   };
 
+  const handleEdit = (id: number): void => {
+    push('/purchase/[id]', `/purchase/${id}`);
+  };
+
   return (
     <TableContainer
       w="100%"
@@ -116,7 +124,7 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
                 gap={4}
                 justifyContent="center"
               >
-                <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
+                <ActionButton action="Editar" handleOnClick={(): void => handleEdit(purchase.id as number)} />
                 <ActionButton action="Excluir" handleOnClick={async (): Promise<void> => await handleDeletePurchase(purchase.id as number)} />
               </Td>
             </Tr>
