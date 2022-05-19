@@ -25,6 +25,7 @@ export default class PurchaseController {
             select: {
               payment: true,
               value: true,
+              id: true,
             },
           },
           description: true,

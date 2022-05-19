@@ -4,6 +4,7 @@
 import {
   checkIfExists404code,
   checkIsEquals,
+  checkIsEquals403Error,
   validationExpenseValue, validationField400code, validationId,
 } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
@@ -16,6 +17,8 @@ import handleErrors from '../../error/helpers/handleErrors';
 import {
   created, okWithContent, HttpResponse, ok,
 } from '../helpers/http';
+import { handleDate } from '../helpers/formatData';
+import UpdatePurchase from '../../data/usecases/UpdatePurchase';
 
 export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
@@ -115,11 +118,7 @@ export default class AcquisitionController {
       await this.userDAO.checkIfUserExists(user_id);
       await this.checkAllPaymentsExists(payments);
 
-      const date = new Date(purchase_date).toISOString().split('T')[0];
-      const year = Number(date.split('-')[0]);
-      const month = Number(date.split('-')[1]);
-      const day = Number(date.split('-')[2]);
-      const setedDate = new Date(Date.UTC(year, month, day, 3, 0, 0));
+      const setedDate = handleDate(purchase_date);
 
       const result = await this.purchaseDAO.add({
         description,
@@ -133,6 +132,76 @@ export default class AcquisitionController {
       await this.handleAddPayWithRelations(payments, result);
 
       return created('Compra cadastrada com sucesso!');
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
+
+  async handleUpdatePayWithRelations(payments: AddPayment[], purchaseId: number): Promise<void> {
+    for (const payment of payments) {
+      if (payment.payWithId) {
+        await this.payWithDAO.update({
+          where: {
+            id: payment.payWithId,
+          },
+
+          data: {
+            value: payment.value,
+          },
+        });
+      } else {
+        await this.payWithDAO.add({
+          payment_id: payment.paymentId,
+          purchase_id: purchaseId,
+          value: payment.value,
+        });
+      }
+    }
+  }
+
+  async handleDeletePayWiths(deleteList: number[]): Promise<void> {
+    for (const item of deleteList) {
+      await this.payWithDAO.delete({
+        where: {
+          id: item,
+        },
+      });
+    }
+  }
+
+  async handleUpdatePurchase(infos: UpdatePurchase, userId: number): Promise<HttpResponse> {
+    try {
+      const {
+        id, description, purchase_date, value, user_id, payments, payWithDeleteds,
+      } = infos;
+      checkIsEquals403Error(user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
+
+      validationField400code(description, 'Descrição de compra inválida.');
+      validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+      await this.userDAO.checkIfUserExists(user_id);
+      await this.checkAllPaymentsExists(payments);
+
+      if (payWithDeleteds.length > 0) {
+        await this.handleDeletePayWiths(payWithDeleteds);
+      }
+
+      const setedDate = handleDate(purchase_date);
+
+      await this.purchaseDAO.update({
+        where: {
+          id: id as number,
+        },
+        data: {
+          description,
+          value,
+          purchase_date: setedDate,
+        },
+      }) as PurchaseModel;
+
+      await this.handleUpdatePayWithRelations(payments, id as number);
+
+      return ok('Compra atualizada com sucesso!');
     } catch (err) {
       console.log(err);
       return handleErrors(err as Error);

@@ -2,6 +2,7 @@
 import PurchaseModel from '../models/PurchaseModel';
 
 export type AddPayment = {
+  payWithId?: number
   paymentId: number
   value: number
 }
