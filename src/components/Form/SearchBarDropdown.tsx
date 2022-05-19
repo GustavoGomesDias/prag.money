@@ -14,10 +14,11 @@ export interface SearchBarDropdownProps {
   hanldeSearchPayment: (e: ChangeEvent<HTMLInputElement>) => void
   setPaymentsSelecteds: React.Dispatch<React.SetStateAction<PaymentModel[]>>
   paymentsSelecteds: PaymentModel[]
+  handleDeletePaymentInPayWith?: (index: number) => void
 }
 
 const SearchBarDropdown = ({
-  payments, hanldeSearchPayment, setPaymentsSelecteds, paymentsSelecteds,
+  payments, hanldeSearchPayment, setPaymentsSelecteds, paymentsSelecteds, handleDeletePaymentInPayWith,
 }: SearchBarDropdownProps): JSX.Element => {
   const basicInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
@@ -29,8 +30,12 @@ const SearchBarDropdown = ({
     const delPaymentIndex = nickList.indexOf(nickname);
 
     if (delPaymentIndex !== -1) {
+      if (handleDeletePaymentInPayWith) {
+        handleDeletePaymentInPayWith(paymentsSelecteds[delPaymentIndex].id as number);
+      }
       paymentsSelecteds.splice(delPaymentIndex, 1);
     }
+
     setPaymentsSelecteds([...paymentsSelecteds]);
   };
 

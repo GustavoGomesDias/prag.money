@@ -72,10 +72,10 @@ export default function AuthProvider({ children }: AuthProviderProps): JSX.Eleme
   };
 
   const signOut = useCallback((): void => {
-    destroyCookie({}, 'userId');
     destroyCookie({}, 'authToken', {
       path: '/',
     });
+    destroyCookie({}, 'userId');
     setUser(null);
   }, []);
 
