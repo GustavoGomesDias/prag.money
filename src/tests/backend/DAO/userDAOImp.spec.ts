@@ -173,11 +173,14 @@ describe('User DAO Implementation test', () => {
     expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
   });
 
-  test('Should getAllPaymentsByUserId returns undefined if user not exists', async () => {
-    const userDAOImpStub = makeSut();
-    const result = await userDAOImpStub.getAllForeignInfosByUserId(-1);
-
-    expect(result).toEqual(undefined);
+  test('Should getAllPaymentsByUserId throw NotFoundError if user not exists', async () => {
+    try {
+      const userDAOImpStub = makeSut();
+      await userDAOImpStub.getAllForeignInfosByUserId(-1);
+    } catch (err) {
+      expect((err as NotFoundError).statusCode).toEqual(404);
+      expect((err as NotFoundError).message).toEqual('Não há formas de pagamento cadastradas.');
+    }
   });
 
   test('Should getAllPaymentsByUserId returns foreign user infos', async () => {
@@ -190,6 +193,11 @@ describe('User DAO Implementation test', () => {
           default_value: 800,
           reset_day: 1,
           user_id: 1,
+          PayWith: {
+            payment_id: 1,
+            purchase_id: 1,
+            value: 1,
+          },
         }],
         purchases: [{
           id: 1,
@@ -211,6 +219,11 @@ describe('User DAO Implementation test', () => {
         default_value: 800,
         reset_day: 1,
         user_id: 1,
+        PayWith: {
+          payment_id: 1,
+          purchase_id: 1,
+          value: 1,
+        },
       }],
       purchases: [{
         id: 1,
@@ -230,6 +243,11 @@ describe('User DAO Implementation test', () => {
           default_value: 800,
           reset_day: 1,
           user_id: 1,
+          PayWith: [{
+            payment_id: 1,
+            purchase_id: 1,
+            value: 1,
+          }],
         }],
         Purchase: [{
           id: 1,
@@ -259,6 +277,11 @@ describe('User DAO Implementation test', () => {
           default_value: 800,
           reset_day: 1,
           user_id: 1,
+          PayWith: {
+            payment_id: 1,
+            purchase_id: 1,
+            value: 1,
+          },
         },
         Purchase: {
           id: 1,
