@@ -5,7 +5,7 @@ import RegisterUser from '../../data/usecases/RegisterUser';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  HttpRequest, HttpResponse, created, okWithContent,
+  HttpRequest, HttpResponse, created, okWithContent, ok,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
 import {
@@ -96,6 +96,23 @@ export default class UserController {
       checkIfExists404code(payments[0], 'Não a formas de pagamento cadastradas.');
 
       return okWithContent({ payments });
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
+
+  async handleDelete(userId: number): Promise<HttpResponse> {
+    try {
+      validationId(userId);
+
+      await this.userDAO.delete({
+        where: {
+          id: userId,
+        },
+      });
+
+      return ok('Deletado com sucesso!');
     } catch (err) {
       console.log(err);
       return handleErrors(err as Error);

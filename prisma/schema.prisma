@@ -28,7 +28,7 @@ model Payment {
   reset_day     Int
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
-  user          User      @relation(fields: [user_id], references: [id])
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id       Int
   PayWith       PayWith[]
 }
@@ -40,7 +40,7 @@ model Purchase {
   purchase_date DateTime
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
-  user          User      @relation(fields: [user_id], references: [id])
+  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id       Int
   PayWith       PayWith[]
 }
@@ -48,8 +48,10 @@ model Purchase {
 model PayWith {
   id          Int      @id @default(autoincrement())
   value       Float
-  purchase    Purchase @relation(fields: [purchase_id], references: [id])
+  purchase    Purchase @relation(fields: [purchase_id], references: [id], onDelete: Cascade)
   purchase_id Int
-  payment     Payment  @relation(fields: [payment_id], references: [id])
+  payment     Payment  @relation(fields: [payment_id], references: [id], onDelete: Cascade)
   payment_id  Int
+
+  @@index([purchase_id, payment_id])
 }

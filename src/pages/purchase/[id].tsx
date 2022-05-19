@@ -1,5 +1,8 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable consistent-return */
+/* eslint-disable no-restricted-syntax */
 import React, {
-  ChangeEvent, FormEvent, useContext, useEffect, useState,
+  ChangeEvent, FormEvent, useEffect, useState,
 } from 'react';
 import {
   Button, ButtonGroup, chakra, Flex, Grid, useToast,
@@ -19,27 +22,30 @@ import { validationField } from '../../utils/validations';
 import toastConfig from '../../utils/config/tostConfig';
 import ModalLoader from '../../components/UI/Loader/ModalLoader';
 import PurchaseModel from '../../serverless/data/models/PurchaseModel';
-import { AuthContext } from '../../context/AuthContext';
-import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
+import { AddPayment } from '../../serverless/data/usecases/AddPurchase';
 import PragModal from '../../components/Layout/PragModal';
 import InfoContainer from '../../components/Layout/InfoContainer';
+import GetPurchase from '../../serverless/data/usecases/GetPurchase';
+import UpdatePurchase from '../../serverless/data/usecases/UpdatePurchase';
 
 export interface CreatePurchaseProps {
   data: {
     payments: PaymentModel[]
   }
+
+  purchase: GetPurchase
 }
 
-const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
-  const [description, setDescription] = useState<string>('');
+const EditPurchase = ({ data, purchase }: CreatePurchaseProps): JSX.Element => {
+  const [description, setDescription] = useState<string>(purchase.description);
   const [purchaseDate, setPurchaseDate] = useState<string>('');
   const [userPayments, setUserPayments] = useState<PaymentModel[]>([]);
   const [paymentsSelecteds, setPaymentsSelecteds] = useState<PaymentModel[]>([]);
   const [payWith, setPayWith] = useState<AddPayment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [notHasPayment, setNotHasPayment] = useState<boolean>(false);
+  const [deletePayWiths, setDeletePayWiths] = useState<number[]>([]);
   const toast = useToast();
-  const { user } = useContext(AuthContext);
 
   const { push, back } = useRouter();
 
@@ -47,6 +53,20 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     if (Array.isArray(data) && data.length === 0) {
       setNotHasPayment(true);
     }
+  }, []);
+
+  useEffect(() => {
+    for (const items of purchase.PayWith) {
+      payWith.push({
+        paymentId: items.payment.id as number,
+        value: items.value,
+        payWithId: items.id,
+      });
+
+      paymentsSelecteds.push(items.payment);
+    }
+    setPaymentsSelecteds([...paymentsSelecteds]);
+    setPayWith([...payWith]);
   }, []);
 
   const handleSearchDropboxChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -57,6 +77,12 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     }
 
     setUserPayments((data.payments as PaymentModel[]).filter((payment) => payment.nickname.includes(e.target.value)));
+  };
+
+  const returnPayWithIndex = (id: number): number => {
+    const paids = payWith.map((pay) => pay.paymentId);
+
+    return paids.indexOf(id);
   };
 
   const handleSavePayWith = (e: ChangeEvent<HTMLInputElement>, paymentId: number) => {
@@ -88,7 +114,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   };
 
   const handleValidations = (): boolean => {
-    if (validationField(description) || validationField(purchaseDate)) {
+    if (validationField(description)) {
       toast({
         title: '🤨',
         description: 'Todos os campos devem ser preenchidos.',
@@ -113,6 +139,28 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     return true;
   };
 
+  const handlePurchaseDate = () => {
+    const curr = new Date(purchase.purchase_date);
+    curr.setDate(curr.getDate());
+    const date = curr.toISOString().substring(0, 10);
+    return date;
+  };
+
+  const handleDeletePaymentInPayWith = (index: number): void => {
+    const paidIds = payWith.map((pay) => pay.paymentId);
+    const paymentIndex = paidIds.indexOf(index);
+
+    if (payWith[paymentIndex].payWithId) {
+      deletePayWiths.push(payWith[paymentIndex].payWithId as number);
+      setDeletePayWiths([...deletePayWiths]);
+    }
+
+    if (paymentIndex !== -1) {
+      payWith.splice(paymentIndex, 1);
+    }
+    setPayWith([...payWith]);
+  };
+
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
@@ -130,19 +178,20 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     const month = Number(date.split('-')[1]);
     const day = Number(date.split('-')[2]);
     const setedDate = new Date(Date.UTC(year, month, day, 3, 0, 0));
-
-    const purchase: PurchaseModel = {
+    const purchaseEdit: PurchaseModel = {
       description,
-      purchase_date: setedDate,
-      user_id: user?.userInfo.id as number,
+      purchase_date: purchaseDate === '' ? purchase.purchase_date : setedDate,
+      user_id: purchase.user_id,
       value,
     };
 
-    const addPurchase: AddPurchase = {
-      ...purchase,
+    const addPurchase: UpdatePurchase = {
+      ...purchaseEdit,
+      id: purchase.id as number,
       payments: payWith,
+      payWithDeleteds: deletePayWiths,
     };
-    const response = await api.post('/purchase/', addPurchase);
+    const response = await api.put(`/purchase/${purchase.id as number}`, addPurchase);
 
     if (response.data.error) {
       toast({
@@ -161,29 +210,24 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         ...toastConfig,
       });
     }
-
-    setDescription('');
-    setPayWith([]);
-    setPaymentsSelecteds([]);
-    setPurchaseDate('');
-    setUserPayments([]);
-
     setIsLoading(false);
   };
 
+  const handleSelectPayments = () => paymentsSelecteds;
+
   return (
     <>
-      <SEO title="p.$ | Adicionar compra" description="Create purchase page" />
+      <SEO title="p.$ | Editar compra" description="Create purchase page" />
       <Header logo="Buy" />
       {isLoading && <ModalLoader isOpen={isLoading} />}
       {notHasPayment && (
-      <PragModal isOpen={notHasPayment}>
-        <InfoContainer
-          action="Cadastrar pagamento"
-          message="Por favor, cadastre uma forma de pagamento primeiro."
-          handleAction={() => push('/payment/create', '/payment/create')}
-        />
-      </PragModal>
+        <PragModal isOpen={notHasPayment}>
+          <InfoContainer
+            action="Cadastrar pagamento"
+            message="Por favor, cadastre uma forma de pagamento primeiro."
+            handleAction={() => push('/payment/create', '/payment/create')}
+          />
+        </PragModal>
       )}
       <Flex
         flexDir="column"
@@ -191,13 +235,14 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         padding="2em"
       >
         <Form handleSubmit={handleSubmit}>
-          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Adicionar Compra</chakra.h1>
+          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Editar Compra</chakra.h1>
           <Grid w="80%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
               payments={userPayments}
               hanldeSearchPayment={handleSearchDropboxChange}
-              paymentsSelecteds={paymentsSelecteds}
+              paymentsSelecteds={handleSelectPayments()}
               setPaymentsSelecteds={setPaymentsSelecteds}
+              handleDeletePaymentInPayWith={handleDeletePaymentInPayWith}
             />
             <BasicInput
               id="description"
@@ -212,8 +257,9 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
               type="date"
               onSetHandle={setPurchaseDate}
               placeholder=""
-              inputValue={purchaseDate}
+              defaultValue={handlePurchaseDate()}
             />
+
             {paymentsSelecteds.length > 0 && paymentsSelecteds.map((payment) => (
               <Flex
                 key={payment.nickname}
@@ -231,6 +277,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
                   placeholder="800,00"
                   type="number"
                   step="any"
+                  defaultValue={returnPayWithIndex(payment.id as number) !== -1 ? payWith[returnPayWithIndex(payment.id as number)].value : undefined}
                   paymentId={payment.id}
                   onChangeHandlePayWith={handleSavePayWith}
                 />
@@ -278,7 +325,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   );
 };
 
-export default CreatePurchase;
+export default EditPurchase;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { authToken, userId } = parseCookies(ctx);
@@ -291,12 +338,33 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
+  const id = ctx.query.id as unknown as number;
   api.setAuthHeader(`Bearer ${authToken}`);
-  const response = await api.get(`/user/payment/${userId}`);
+  const payments = await api.get(`/user/payment/${userId}`);
+  const response = await api.get(`/purchase/${id}`);
+
+  if (!authToken || userId === undefined || !userId) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  if (response.statusCode === 403) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    };
+  }
 
   return {
     props: {
-      data: response.data.content === undefined ? [] : response.data.content,
+      data: payments.data.content === undefined ? [] : payments.data.content,
+      purchase: (response.data.content as { [key: string]: GetPurchase }).purchase || [],
     },
   };
 };

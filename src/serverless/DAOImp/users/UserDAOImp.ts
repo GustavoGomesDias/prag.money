@@ -26,6 +26,16 @@ export default class UserDAOImp extends GenericDAOImp<
     this.encrypter = encrypter;
   }
 
+  async checkIfUserExists(userId: number): Promise<void> {
+    const user = await this.findUnique({
+      where: {
+        id: userId,
+      },
+    }) as unknown as Omit<UserModel, 'password'> | undefined | null;
+
+    checkIfExists404code(user, 'Usuário não existe.');
+  }
+
   async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos | undefined> {
     const foreignInfos = await this.findUnique({
       where: {
@@ -86,15 +96,5 @@ export default class UserDAOImp extends GenericDAOImp<
       email: result.email,
       name: result.name,
     };
-  }
-
-  async checkIfUserExists(userId: number): Promise<void> {
-    const user = await this.findUnique({
-      where: {
-        id: userId,
-      },
-    }) as unknown as Omit<UserModel, 'password'> | undefined | null;
-
-    checkIfExists404code(user, 'Usuário não existe.');
   }
 }

@@ -21,7 +21,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
 
   const handleGetPurchasesByPaymentId = async (paymentId: number) => {
     setIsLoading(true);
-    const response = await api.get(`/payment/${paymentId}`);
+    const response = await api.get(`/acquisition/${paymentId}`);
 
     if (response.data.error) {
       setIsLoading(false);
@@ -48,10 +48,18 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
     });
   };
 
+  const handleDeletePurchaseById = (purchaseId: number): void => {
+    dispatchPurchasesActions({
+      type: 'DELETE_BY_PURCHASE_ID',
+      purchaseId,
+    });
+  };
+
   const context = useMemo(() => ({
     purchases: purchasesState.purchases,
     handleGetPurchasesByPaymentId,
     handleClearPurchaseList,
+    handleDeletePurchaseById,
   }), [purchasesState]);
 
   return (

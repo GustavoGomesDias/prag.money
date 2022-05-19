@@ -16,10 +16,14 @@ import api from '../../services/fetchAPI/init';
 import toastConfig from '../../utils/config/tostConfig';
 import { validationDay, validationField } from '../../utils/validations';
 
-const Create = (): JSX.Element => {
-  const [nickname, setNickName] = useState<string>('');
-  const [defaultValue, setDefaultValue] = useState<number>(-1);
-  const [resetDay, setResetDay] = useState<string>('0');
+export interface EditProps {
+  payment: PaymentModel
+}
+
+const Edit = ({ payment }: EditProps): JSX.Element => {
+  const [nickname, setNickName] = useState<string>(payment.nickname);
+  const [defaultValue, setDefaultValue] = useState<number>(payment.default_value);
+  const [resetDay, setResetDay] = useState<string>(`${payment.reset_day}`);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useContext(AuthContext);
 
@@ -63,9 +67,9 @@ const Create = (): JSX.Element => {
     }
 
     const data: PaymentModel = {
-      nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
+      id: payment.id, nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
-    const response = await api.post('/payment', data);
+    const response = await api.put(`/payment/${payment.id}`, data);
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',
@@ -101,13 +105,14 @@ const Create = (): JSX.Element => {
         padding="2em"
       >
         <Form handleSubmit={handleSubmit}>
-          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Adicionar Forma de Pagamento</chakra.h1>
+          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Editar Forma de Pagamento</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
             <BasicInput
               id="nickname"
               label="Apelido"
               placeholder="bitcoin wallet"
               onSetHandle={setNickName}
+              inputValue={nickname}
             />
             <BasicInput
               id="defaultValue"
@@ -116,6 +121,7 @@ const Create = (): JSX.Element => {
               step="any"
               placeholder="800,00"
               onSetHandle={setDefaultValue}
+              inputValue={defaultValue}
             />
             <BasicInput
               id="resetDate"
@@ -125,6 +131,7 @@ const Create = (): JSX.Element => {
               max="31"
               onSetHandle={setResetDay}
               placeholder=""
+              inputValue={resetDay}
             />
             <ButtonGroup
               flexDir="column"
@@ -143,7 +150,7 @@ const Create = (): JSX.Element => {
                 }}
                 type="submit"
               >
-                Salvar
+                Editar
               </Button>
               <Button
                 onClick={() => back()}
@@ -168,10 +175,14 @@ const Create = (): JSX.Element => {
   );
 };
 
-export default Create;
+export default Edit;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { authToken } = parseCookies(ctx);
+
+  const id = ctx.query.id as unknown as number;
+  api.setAuthHeader(`Bearer ${authToken}`);
+  const response = await api.get(`/payment/${id}`);
 
   if (!authToken || authToken === undefined || authToken === null) {
     return {
@@ -183,6 +194,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: {},
+    props: {
+      payment: (response.data.content as {[key: string]: PaymentModel}).payment,
+    },
   };
 };

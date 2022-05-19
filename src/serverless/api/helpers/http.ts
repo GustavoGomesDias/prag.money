@@ -1,7 +1,7 @@
 import UserModel from '../../data/models/UserModel';
 import RegisterUser from '../../data/usecases/RegisterUser';
 import {
-  BadRequestError, InternalServerError, NotFoundError, UnauthorizedError,
+  BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError,
 } from '../../error/HttpError';
 
 export interface HttpResponse {
@@ -51,6 +51,11 @@ export const badRequest = (error: BadRequestError): HttpResponse => ({
 
 export const unauthorized = (error: UnauthorizedError): HttpResponse => ({
   statusCode: 401,
+  error: error.message,
+});
+
+export const forbidden = (error: ForbiddenError): HttpResponse => ({
+  statusCode: 403,
   error: error.message,
 });
 

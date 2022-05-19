@@ -6,10 +6,10 @@ import { FiAlertOctagon } from 'react-icons/fi';
 import Logo from '../UI/Logo/Logo';
 import CustomButton from '../UI/Buttons/CustomButton';
 
-export interface InfoConainerProps {
+export interface InfoContainerProps {
   message: string
   action: string
-  handleAction: () => void
+  handleAction: (() => void)
 }
 
 const animationFlexKeyFrames = keyframes`
@@ -29,7 +29,7 @@ const spin = keyframes`
 const animation = `${animationFlexKeyFrames} 0.5s ease-in-out`;
 const animationSpin = `${spin} 1s ease-in-out`;
 
-const InfoConainer = ({ action, handleAction, message }: InfoConainerProps): JSX.Element => (
+const InfoContainer = ({ action, handleAction, message }: InfoContainerProps): JSX.Element => (
   <>
     <Logo fontSize="2.5em" logo="Money" />
     <Flex
@@ -56,4 +56,4 @@ const InfoConainer = ({ action, handleAction, message }: InfoConainerProps): JSX
   </>
 );
 
-export default InfoConainer;
+export default InfoContainer;
