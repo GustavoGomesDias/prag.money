@@ -6,6 +6,7 @@ import { badRequest, ok, okWithContent } from '../../../../serverless/api/helper
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
 import { BadRequestError } from '../../../../serverless/error/HttpError';
+import * as validations from '../../../../serverless/api/helpers/Validations';
 
 const makeSut = (): PaymentController => {
   const daoIMP = new PaymentDAOImp();
@@ -19,8 +20,9 @@ describe('Handle Get By Payment Id', () => {
     // eslint-disable-next-line prefer-destructuring
     const entity = new PaymentDAOImp()['entity'];
     jest.spyOn(entity, 'findUnique').mockImplementationOnce(jest.fn());
+    jest.spyOn(validations, 'checkIsEquals403Error').mockImplementationOnce(jest.fn());
 
-    const result = await controllerStub.handleGetPaymentById(-1);
+    const result = await controllerStub.handleGetPaymentById(-1, 1);
 
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
@@ -45,7 +47,7 @@ describe('Handle Get By Payment Id', () => {
     });
 
     const controllerStub = makeSut();
-    const result = await controllerStub.handleGetPaymentById(1);
+    const result = await controllerStub.handleGetPaymentById(1, 1);
 
     expect(result.content).toEqual({ payment });
 
