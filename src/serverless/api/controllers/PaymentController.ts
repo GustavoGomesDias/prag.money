@@ -16,7 +16,7 @@ export default class PaymentController {
     this.paymentDAOImp = paymentDAOImp;
   }
 
-  async handleGetPaymentById(paymentId: number): Promise<HttpResponse> {
+  async handleGetPaymentById(paymentId: number, userId: number): Promise<HttpResponse> {
     try {
       validationId(paymentId);
 
@@ -24,7 +24,9 @@ export default class PaymentController {
         where: {
           id: paymentId,
         },
-      });
+      }) as PaymentModel;
+
+      checkIsEquals403Error(payment.user_id, userId, 'Você não tem permissão para acessar está informação.');
 
       return okWithContent({ payment });
     } catch (err) {

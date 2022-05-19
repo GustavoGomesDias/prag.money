@@ -7,15 +7,6 @@ export class BadRequestError extends Error {
   }
 }
 
-export class UnauthorizedError extends Error {
-  public readonly statusCode: number = 401;
-
-  constructor(message: string) {
-    super(message);
-    this.name = 'UnauthorizedError';
-  }
-}
-
 export class ForbiddenError extends Error {
   public readonly statusCode: number = 403;
 

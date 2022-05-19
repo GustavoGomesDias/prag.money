@@ -7,6 +7,12 @@ export const validationId = (id: number) => {
   }
 };
 
+export const validationPage = (page: number) => {
+  if (Number.isNaN(page) || page < 0) {
+    throw new BadRequestError('Página inválida.');
+  }
+};
+
 export const validationField400code = (info: unknown, message: string) => {
   if (!info || info === undefined || info === null || info === '' || info === ' ') {
     throw new BadRequestError(message);

@@ -5,7 +5,7 @@ import {
   checkIfExists404code,
   checkIsEquals,
   checkIsEquals403Error,
-  validationExpenseValue, validationField400code, validationId,
+  validationExpenseValue, validationField400code, validationId, validationPage,
 } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
@@ -77,6 +77,29 @@ export default class AcquisitionController {
       await this.paymentDAO.checkIfPaymentExists(paymentId);
 
       const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
+      const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+
+      validationField400code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+
+      return okWithContent({
+        ...paymentInfo,
+        purchases,
+      });
+    } catch (err) {
+      console.log(err);
+      return handleErrors(err as Error);
+    }
+  }
+
+  async handleGetAcquisitionsByPaymentIdWithPagination(paymentId: number, page: number, userId: number): Promise<HttpResponse> {
+    try {
+      validationId(paymentId);
+      validationPage(page);
+      await this.paymentDAO.checkIfPaymentExists(paymentId);
+
+      const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentIdWithPagination(paymentId, page);
+      checkIsEquals403Error(paymentInfo.user_id, userId, 'Você não tem permissão para acessar essa informação.');
+      validationField400code(acquisitions[0], 'Não há mais compras relacionadas a essa forma de pagamento.');
       const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
       validationField400code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
