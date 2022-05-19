@@ -1,5 +1,8 @@
 # Prag.Money
 
+### Badges
+[![codecov](https://codecov.io/gh/GustavoGomesDias/prag.money/branch/main/graph/badge.svg?token=4OBXZSMZ4K)](https://codecov.io/gh/GustavoGomesDias/prag.money)
+
 <div styles="width: 100%; display: flex; justify-content: center">
   <img src="https://github.com/GustavoGomesDias/prag.money/blob/main/docs/images/readme-logo.png" alt="Pragmatic Money Logo  ">
 </div>
