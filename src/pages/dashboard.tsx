@@ -80,8 +80,8 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           flexDir="column"
         >
           <PaymentsMethods payments={payments} />
-          <PurchaseTable purchases={purchaseCtx.purchases} />
-          <MobileDisplayTable purchases={purchaseCtx.purchases} />
+          <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
+          <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
         </Flex>
       </Grid>
     </>
@@ -103,8 +103,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   api.setAuthHeader(`Bearer ${authToken}`);
   const response = await api.get(`/user/payment/${userId}`);
-
-  console.log(response.data.content);
 
   if (response.statusCode !== 200) {
     return {

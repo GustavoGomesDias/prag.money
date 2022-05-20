@@ -1,9 +1,14 @@
 /* eslint-disable no-return-await */
+import React, {
+  useContext, useEffect, useState, MouseEvent,
+} from 'react';
 import {
+  Button,
+  ButtonGroup,
+  Flex,
   Table, TableContainer, Tbody, Td, Th, Thead, Tooltip, Tr, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect, useState } from 'react';
 import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 import api from '../../../services/fetchAPI/init';
@@ -14,11 +19,13 @@ import ActionButton from '../PurchaseDescription/ActionButton';
 
 export interface PurchaseTableProps {
   purchases: PurchaseModel[]
+  paymentId: number
 }
 
-const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
+const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Element => {
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
   const purchaseCtx = useContext(PurchaseContext);
 
   const { push } = useRouter();
@@ -85,6 +92,74 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
     push('/purchase/[id]', `/purchase/${id}`);
   };
 
+  const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const response = await api.getWithBody('/acquisition', {
+      page,
+      id: paymentId,
+    });
+
+    console.log(page);
+    console.log(`response: ${response}`);
+
+    if (response.data.error) {
+      if (response.statusCode === 404) {
+        if (response.data.error) {
+          toast({
+            title: '📣',
+            description: response.data.error,
+            status: 'info',
+            ...toastConfig,
+          });
+          return;
+        }
+      }
+
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+      return;
+    }
+
+    setPurchseList([...(response.data.content as {[key: string]: PurchaseModel[] }).purchases]);
+    const nextPage = page + 1;
+    setPage(nextPage);
+  };
+
+  const handleGetPrevPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (page > 1) {
+      const prevPage = page - 2;
+      const response = await api.getWithBody('/acquisition', {
+        page: prevPage > 0 ? prevPage : 0,
+        id: paymentId,
+      });
+
+      if (response.data.error) {
+        toast({
+          title: '📣',
+          description: response.data.error,
+          status: 'error',
+          ...toastConfig,
+        });
+        return;
+      }
+
+      setPurchseList([...(response.data.content as {[key: string]: PurchaseModel[] }).purchases]);
+      setPage(prevPage);
+    } else {
+      toast({
+        title: '📣',
+        description: 'Estamos na primeira página!',
+        status: 'info',
+        ...toastConfig,
+      });
+    }
+  };
+
   return (
     <TableContainer
       w="100%"
@@ -92,6 +167,41 @@ const PurchaseTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
       fontWeight="bold"
     >
       {isLoading && <ModalLoader isOpen={isLoading} />}
+      <Flex w="100%" justifyContent="flex-end" px="1em" borderBottom="3px solid #00735C">
+        <ButtonGroup bg="#00735C" p="0.1em">
+          <Button
+            variant="unstyled"
+            fontSize="18px"
+            color="#fff"
+            borderRight="1px solid #fff"
+            borderRadius="0 !important"
+            p="0.5em"
+            transition="300ms"
+            _hover={{
+              opacity: 0.5,
+            }}
+            onClick={async (e) => await handleGetPrevPurchases(e)}
+          >
+            prev
+
+          </Button>
+          <Button
+            variant="unstyled"
+            fontSize="18px"
+            color="#fff"
+            margin="0 !important"
+            p="0.5em"
+            transition="300ms"
+            _hover={{
+              opacity: 0.5,
+            }}
+            onClick={async (e) => await handleGetNextPurchases(e)}
+          >
+            next
+
+          </Button>
+        </ButtonGroup>
+      </Flex>
       <Table>
         <Thead>
           <Tr>

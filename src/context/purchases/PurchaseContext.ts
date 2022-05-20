@@ -3,6 +3,7 @@ import PurchaseModel from '../../serverless/data/models/PurchaseModel';
 
 export interface PurchaseContextType {
   purchases: PurchaseModel[]
+  paymentId: number
   handleGetPurchasesByPaymentId(paymentId: number): Promise<void>
   handleDeletePurchaseById(purchaseId: number): void
   handleClearPurchaseList(): void
@@ -10,6 +11,7 @@ export interface PurchaseContextType {
 
 const PurchaseContext = createContext<PurchaseContextType>({
   purchases: [],
+  paymentId: -1,
   handleGetPurchasesByPaymentId: async (paymentId: number) => {
     console.log(paymentId);
   },
