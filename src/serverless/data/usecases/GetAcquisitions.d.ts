@@ -7,6 +7,12 @@ export interface ReturnsAcquisitions extends PaymentModel {
   acquisitions: PayWithModel[]
 }
 
+export interface ExtendedPayWithModel extends PayWithModel{
+  purchase: {
+    created_at: string
+  }
+}
+
 export default interface GetAcquisitions extends PaymentModel {
-  PayWith: PayWithModel[] | PayWithModel
+  PayWith: ExtendedPayWithModel[] | ExtendedPayWithModel
 }

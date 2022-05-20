@@ -46,13 +46,26 @@ export default class UserDAOImp extends GenericDAOImp<
     let currentValue = 0;
     if (Array.isArray(acquisition.PayWith)) {
       for (const paids of acquisition.PayWith) {
-        currentValue += paids.value;
+        const createdAt = new Date(paids.purchase.created_at);
+        const day = createdAt.getDate();
+        const month = createdAt.getMonth() + 1;
+        const currentDate = new Date();
+        if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
+          currentValue += paids.value;
+        }
       }
-    } else {
-      currentValue = acquisition.PayWith.value;
-    }
 
-    acquisition.default_value -= currentValue;
+      acquisition.default_value -= currentValue;
+    } else {
+      const createdAt = new Date(acquisition.PayWith.purchase.created_at);
+      const day = createdAt.getDate();
+      const month = createdAt.getMonth() + 1;
+      const currentDate = new Date();
+
+      if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
+        acquisition.default_value -= acquisition.PayWith.value;
+      }
+    }
   }
 
   async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos | undefined> {
@@ -70,12 +83,25 @@ export default class UserDAOImp extends GenericDAOImp<
         updated_at: false,
         Payment: {
           select: {
-            PayWith: true,
+            PayWith: {
+              select: {
+                id: true,
+                payment_id: true,
+                purchase_id: true,
+                value: true,
+                purchase: {
+                  select: {
+                    created_at: true,
+                  },
+                },
+              },
+            },
             default_value: true,
             reset_day: true,
             nickname: true,
             user_id: true,
             id: true,
+
           },
         },
         Purchase: true,

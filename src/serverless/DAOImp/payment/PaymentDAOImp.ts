@@ -30,7 +30,13 @@ Prisma.PaymentFindManyArgs
         id: Number(paymentId),
       },
       select: {
-        PayWith: true,
+        PayWith: {
+          orderBy: {
+            purchase: {
+              created_at: 'desc',
+            },
+          },
+        },
         default_value: true,
         nickname: true,
         reset_day: true,
@@ -55,6 +61,11 @@ Prisma.PaymentFindManyArgs
         PayWith: {
           take: 6,
           skip: (6 * page),
+          orderBy: {
+            purchase: {
+              created_at: 'desc',
+            },
+          },
         },
         default_value: true,
         nickname: true,
