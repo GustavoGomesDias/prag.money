@@ -1,13 +1,13 @@
 /* eslint-disable semi */
-import PaymentModel from '../models/PaymentModel';
 import PurchaseModel from '../models/PurchaseModel';
+import GetAcquisitions from './GetAcquisitions';
 
 export interface ReturnForeignInfos {
   Purchase: PurchaseModel[] | PurchaseModel
-  Payment: PaymentModel[] | PaymentModel
+  Payment: GetAcquisitions[] | GetAcquisitions
 }
 
 export default interface GetForeignInfos {
   purchases: PurchaseModel[]
-  payments: PaymentModel[]
+  payments: GetAcquisitions[]
 }

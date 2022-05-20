@@ -25,6 +25,11 @@ describe('Handle Get Payments Function', () => {
         default_value: 800,
         reset_day: 1,
         user_id: 1,
+        PayWith: {
+          payment_id: 1,
+          purchase_id: 1,
+          value: 1,
+        },
       },
       Purchase: {
         id: 1,
@@ -42,9 +47,14 @@ describe('Handle Get Payments Function', () => {
     expect(response).toEqual(okWithContent({
       payments: [{
         nickname: 'nickname',
-        default_value: 800,
+        default_value: 799,
         reset_day: 1,
         user_id: 1,
+        PayWith: {
+          payment_id: 1,
+          purchase_id: 1,
+          value: 1,
+        },
       }],
     }));
   });
@@ -58,7 +68,7 @@ describe('Handle Get Payments Function', () => {
 
     const response = await userController.handleGetPaymentsByUserId(1);
 
-    expect(response).toEqual(notFound(new NotFoundError('Não a formas de pagamento cadastradas.')));
+    expect(response).toEqual(notFound(new NotFoundError('Não há formas de pagamento cadastradas.')));
   });
 
   test('Should return 500 if server returns a error', async () => {
@@ -110,6 +120,6 @@ describe('Handle Get Payments Function', () => {
 
     const response = await userController.handleGetPaymentsByUserId(1);
 
-    expect(response).toEqual(notFound(new NotFoundError('Não a formas de pagamento cadastradas.')));
+    expect(response).toEqual(notFound(new NotFoundError('Não há formas de pagamento cadastradas.')));
   });
 });

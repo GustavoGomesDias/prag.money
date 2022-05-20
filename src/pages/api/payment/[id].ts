@@ -42,7 +42,7 @@ async function handleDeletePayment(
     return res.status(response.statusCode).json({ message });
   }
 
-  const response = await paymentController.handleGetPaymentById(Number(paymentId));
+  const response = await paymentController.handleGetPaymentById(Number(paymentId), (req as NextApiUserRequest).user.id as number);
 
   if (response.error) {
     const { error } = response;

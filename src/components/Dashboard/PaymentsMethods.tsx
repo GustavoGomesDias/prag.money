@@ -70,7 +70,6 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
     const paymentsIds = payments.map((payment) => payment.id);
 
     const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
-
     setBalance(Number(payments[selectedPaymentIndex].default_value));
     purchaseCtx.handleClearPurchaseList();
     await purchaseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));

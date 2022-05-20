@@ -15,6 +15,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [purchasesState, dispatchPurchasesActions] = useReducer(purchaseReducer, {
     purchases: [],
+    paymentId: -1,
   });
 
   const toast = useToast();
@@ -37,6 +38,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
     dispatchPurchasesActions({
       type: 'POPULATE_PURCHASELIST',
       purchases: content.purchases,
+      paymentId,
     });
     setTimeout(() => setIsLoading(false), 500);
   };
@@ -45,6 +47,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
     dispatchPurchasesActions({
       type: 'CLEAR_PURCHASELIST',
       purchases: [],
+      paymentId: -1,
     });
   };
 
@@ -57,6 +60,7 @@ export default function PurchaseProvider({ children }: PurchaseProviderProps) {
 
   const context = useMemo(() => ({
     purchases: purchasesState.purchases,
+    paymentId: purchasesState.paymentId,
     handleGetPurchasesByPaymentId,
     handleClearPurchaseList,
     handleDeletePurchaseById,

@@ -9,7 +9,6 @@ import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions/Actions';
 import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
-// import PurchaseCard from '../components/Dashboard/PurchaseDescription/PurchaseCard';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
@@ -81,8 +80,8 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           flexDir="column"
         >
           <PaymentsMethods payments={payments} />
-          <PurchaseTable purchases={purchaseCtx.purchases} />
-          <MobileDisplayTable purchases={purchaseCtx.purchases} />
+          <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
+          <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
         </Flex>
       </Grid>
     </>

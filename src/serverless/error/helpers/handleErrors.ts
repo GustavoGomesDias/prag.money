@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import {
-  badRequest, forbidden, HttpResponse, notFound, serverError, unauthorized,
+  badRequest, forbidden, HttpResponse, notFound, serverError,
 } from '../../api/helpers/http';
 import {
-  BadRequestError, ForbiddenError, InternalServerError, NotFoundError, UnauthorizedError,
+  BadRequestError, ForbiddenError, InternalServerError, NotFoundError,
 } from '../HttpError';
 import { PMoneyErrors } from '../PMoneyErrors';
 import uniqueError from './uniqueError';
@@ -15,10 +15,6 @@ const handleErrors = (error: Error): HttpResponse => {
 
   if (error instanceof BadRequestError) {
     return badRequest(error);
-  }
-
-  if (error instanceof UnauthorizedError) {
-    return unauthorized(error);
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {

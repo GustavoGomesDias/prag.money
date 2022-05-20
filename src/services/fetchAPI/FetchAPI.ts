@@ -30,6 +30,21 @@ export default class FetchAPI<T> {
     };
   }
 
+  async getWithBody(complementUrl: string, info: unknown): Promise<FetchReturns<T>> {
+    const result = await fetch(`${this.apiURL}/${complementUrl}`, {
+      method: 'POST',
+      headers: { ...this.headers },
+      body: JSON.stringify(info),
+    });
+
+    const data = await result.json() as T;
+
+    return {
+      statusCode: result.status,
+      data,
+    };
+  }
+
   async post(complementUrl: string, info: any): Promise<FetchReturns<T>> {
     const result = await fetch(`${this.apiURL}/${complementUrl}`, {
       method: 'POST',
