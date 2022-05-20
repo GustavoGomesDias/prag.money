@@ -5,6 +5,7 @@ import React, {
 import {
   Box, Button, ButtonGroup, Flex, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { PurchaseTableProps } from './PurchaseTable';
 import formatDate from '../../../utils/formatDate';
 import toastConfig from '../../../utils/config/tostConfig';
@@ -20,6 +21,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
   const toast = useToast();
+  const { push } = useRouter();
 
   useEffect(() => {
     setPurchseList(purchases);
@@ -65,6 +67,10 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
       });
     }
     setIsLoading(false);
+  };
+
+  const handleEdit = (id: number): void => {
+    push('/purchase/[id]', `/purchase/${id}`);
   };
 
   const copyText = (entryText: string): void => {
@@ -217,7 +223,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
           <Text>{(purchase.value.toFixed(2)).replace('.', ',')}</Text>
           <Text>{formatDate(new Date(purchase.purchase_date))}</Text>
           <Flex pt="1em" gap={4}>
-            <ActionButton action="Editar" handleOnClick={(): void => { console.log('t'); }} />
+            <ActionButton action="Editar" handleOnClick={(): void => handleEdit(purchase.id as number)} />
             <ActionButton action="Excluir" handleOnClick={async (): Promise<void> => await handleDeletePurchase(purchase.id as number)} />
           </Flex>
         </Box>

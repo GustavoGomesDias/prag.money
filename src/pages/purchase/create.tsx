@@ -192,7 +192,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       >
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontWeight="bold" fontSize={{ base: '28px', md: '48px' }}>Adicionar Compra</chakra.h1>
-          <Grid w="80%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
+          <Grid w="100%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
               payments={userPayments}
               hanldeSearchPayment={handleSearchDropboxChange}
