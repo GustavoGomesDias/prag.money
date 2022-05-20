@@ -1,6 +1,6 @@
 # Prag.Money
 
-### Badges
+## Badges
 [![codecov](https://codecov.io/gh/GustavoGomesDias/prag.money/branch/main/graph/badge.svg?token=4OBXZSMZ4K)](https://codecov.io/gh/GustavoGomesDias/prag.money)
 
 <div styles="width: 100%; display: flex; justify-content: center">
