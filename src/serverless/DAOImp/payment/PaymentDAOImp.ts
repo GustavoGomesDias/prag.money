@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Prisma } from '@prisma/client';
 import { checkIfExists404code } from '../../api/helpers/Validations';
 import PaymentModel from '../../data/models/PaymentModel';
@@ -47,25 +48,30 @@ Prisma.PaymentFindManyArgs
 
   async findByPaymentIdWithPagination(paymentId: number, page: number): Promise<ReturnsAcquisitions> {
     const getAcquisitionsInfos = await this.findMany({
-      take: 6,
-      skip: (4 * page),
       where: {
         id: Number(paymentId),
       },
       select: {
-        PayWith: true,
+        PayWith: {
+          take: 6,
+          skip: (6 * page),
+        },
         default_value: true,
         nickname: true,
         reset_day: true,
         user_id: true,
       },
-    }) as GetAcquisitions;
+    }) as GetAcquisitions[];
 
-    const { PayWith, ...paymentInfos } = getAcquisitionsInfos;
+    checkIfExists404code(getAcquisitionsInfos[0], 'Não há mais gastos/compras cadastrados nessa conta.');
+
+    const {
+      PayWith, ...rest
+    } = getAcquisitionsInfos[0];
 
     return {
       acquisitions: Array.isArray(PayWith) ? PayWith : [PayWith],
-      ...paymentInfos,
+      ...rest,
     };
   }
 

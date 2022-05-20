@@ -5,7 +5,7 @@ import withProtect from '../../../serverless/api/middlewares/withProtect';
 import makeAcquisition from '../../../serverless/factories/purchase/AcquisitionFactory';
 import { NextApiUserRequest } from '../purchase/[id]';
 
-async function handleGetAcquisitonsById(
+async function handleGetAcquisitonsByIdWithPagination(
   req: NextApiRequest,
   res: NextApiResponse<Partial<HttpResponse>>,
 ) {
@@ -21,7 +21,8 @@ async function handleGetAcquisitonsById(
   }
 
   const { content } = response;
+  console.log(content);
   return res.status(response.statusCode).json({ content });
 }
 
-export default withProtect(handleGetAcquisitonsById);
+export default withProtect(handleGetAcquisitonsByIdWithPagination);
