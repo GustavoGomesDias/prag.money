@@ -3,30 +3,37 @@ prisma
   └── /schema.prisma         prisma schema
 src
   ├── /components            frontend components
+  ├── /context               React Context API
   ├── /pages
   ├        ├── /api			        routes layer: api routes
   ├        └── /*.tsx			      frontend layer
   ├
   ├── /serverless		          serverless code: api routes
-  ├        ├── /config			    config settings, env variables
   ├        ├── /services		    service layer: business logic
+  ├        ├── /DAOImp		      Entities DAO implementation
   ├        ├── /adapters	      adapter pattern
   ├        ├     └── /services  adapters interfaces for services
   ├        ├── /infra	          database handler
   ├        ├     └── /DAO       Data Access Object Pattern
   ├        ├── /api	            api layer: controllers
-  ├        ├     ├── /controllers 
+  ├        ├     ├── /controllers
+  ├              ├── /middlewares 
   ├        ├     └── /helpers   controllers helpers
-  ├        ├── /repositories	    call database
   ├        ├── /error 	          cusom handle errors
   ├        ├── /factories	      make controllers
   ├        └── /data			      data access layer: database models and usecases
   ├              ├── /models			   database models	
+  ├              ├── /prisma			   prisma access creations	
   ├              └── /usecases      usecases protocols
   ├
+  ├── /styles		             Chakra UI and CSS configs
+  ├
+  ├── /services              Frontend business logic
   ├
   └── /test                  test suites
           ├── /bakcend         backend tests
           ├      ├── /api      controllers tests  
-          ├      └── /repositories repositories tests
+          ├      ├── /DAO      Data persistence tests
+          ├      └── /services helper services tests
+          ├── /general       other auxiliary tests
           └── /mocks
