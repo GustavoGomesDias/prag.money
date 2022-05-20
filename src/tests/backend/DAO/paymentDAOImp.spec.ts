@@ -5,6 +5,7 @@
 import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
 import prisma from '../../../serverless/data/prisma/config';
+import { NotFoundError } from '../../../serverless/error/HttpError';
 import ExtendGenericDAOImp from '../../../serverless/infra/DAO/ExtendGenericDAOImp';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import mockReturnsAcquisitionsUseCase from '../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
@@ -121,7 +122,7 @@ describe('Payment DAO Implementation tests', () => {
     const paymentDAOImpStub = makeSut();
 
     jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve({
+      const result = await Promise.resolve([{
         PayWith: {
           payment_id: 1,
           purchase_id: 1,
@@ -131,7 +132,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
-      });
+      }]);
 
       return result;
     });
@@ -144,7 +145,7 @@ describe('Payment DAO Implementation tests', () => {
     const paymentDAOImpStub = makeSut();
 
     jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve({
+      const result = await Promise.resolve([{
         PayWith: {
           payment_id: 1,
           purchase_id: 1,
@@ -154,7 +155,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
-      });
+      }]);
 
       return result;
     });
@@ -167,7 +168,7 @@ describe('Payment DAO Implementation tests', () => {
     const paymentDAOImpStub = makeSut();
 
     jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve({
+      const result = await Promise.resolve([{
         PayWith: [{
           payment_id: 1,
           purchase_id: 1,
@@ -181,13 +182,29 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
-      });
+      }]);
 
       return result;
     });
     const acquisition = await paymentDAOImpStub.findByPaymentIdWithPagination(1, 0);
 
     expect(Array.isArray(acquisition.acquisitions)).toBeTruthy();
+  });
+
+  test('Should return 404 status code if findMany returns a empty array', async () => {
+    try {
+      const paymentDAOImpStub = makeSut();
+
+      jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
+        const result = await Promise.resolve([]);
+
+        return result;
+      });
+      await paymentDAOImpStub.findByPaymentIdWithPagination(1, 0);
+    } catch (err) {
+      expect((err as NotFoundError).statusCode).toEqual(404);
+      expect((err as NotFoundError).message).toEqual('Não há mais gastos/compras cadastrados nessa conta.');
+    }
   });
 
   test('Should call checkIfPaymentExists if correct paymentId', async () => {
