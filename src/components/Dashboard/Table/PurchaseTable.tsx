@@ -25,7 +25,7 @@ export interface PurchaseTableProps {
 const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Element => {
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const purchaseCtx = useContext(PurchaseContext);
 
   const { push } = useRouter();
@@ -94,13 +94,15 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
 
   const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const nextPage = page + 1;
+    setPage(nextPage);
+    setIsLoading(true);
     const response = await api.getWithBody('/acquisition', {
-      page,
+      page: nextPage,
       id: paymentId,
     });
 
-    console.log(page);
-    console.log(`response: ${response}`);
+    setTimeout(() => setIsLoading(false), 500);
 
     if (response.data.error) {
       if (response.statusCode === 404) {
@@ -125,18 +127,20 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
     }
 
     setPurchseList([...(response.data.content as {[key: string]: PurchaseModel[] }).purchases]);
-    const nextPage = page + 1;
-    setPage(nextPage);
   };
 
   const handleGetPrevPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (page > 1) {
-      const prevPage = page - 2;
+    if (page > 0) {
+      setIsLoading(true);
+      const prevPage = page - 1;
+      setPage(prevPage);
       const response = await api.getWithBody('/acquisition', {
-        page: prevPage > 0 ? prevPage : 0,
+        page: prevPage,
         id: paymentId,
       });
+
+      setTimeout(() => setIsLoading(false), 500);
 
       if (response.data.error) {
         toast({
@@ -149,7 +153,6 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
       }
 
       setPurchseList([...(response.data.content as {[key: string]: PurchaseModel[] }).purchases]);
-      setPage(prevPage);
     } else {
       toast({
         title: '📣',
