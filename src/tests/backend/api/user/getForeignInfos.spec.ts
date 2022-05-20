@@ -9,6 +9,7 @@ import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import makePaymentController, {} from '../../../../serverless/factories/users/UserFacotory';
 import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
+import { mockPayment, mockPaymentWithArray, mockPurchase } from '../../../mocks/mockForeignInfos';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const makeSut = (): UserController => makePaymentController();
@@ -16,28 +17,12 @@ const makeSut = (): UserController => makePaymentController();
 afterAll(() => jest.clearAllMocks());
 
 describe('Handle Get Payments Function', () => {
-  const purchaseDate = new Date();
+  const purchaseDate = new Date('2022-05-20T18:33:18.189Z');
 
-  test('Should return 200 if payments infos is returned', async () => {
+  test('Should return 200 if payments infos is returned (PayWith is array)', async () => {
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
-      Payment: {
-        nickname: 'nickname',
-        default_value: 800,
-        reset_day: 1,
-        user_id: 1,
-        PayWith: {
-          payment_id: 1,
-          purchase_id: 1,
-          value: 1,
-        },
-      },
-      Purchase: {
-        id: 1,
-        value: 800,
-        description: 'description',
-        purchase_date: purchaseDate,
-        user_id: 1,
-      },
+      Payment: mockPaymentWithArray,
+      Purchase: mockPurchase,
     }));
 
     const userController = makeSut();
@@ -48,12 +33,43 @@ describe('Handle Get Payments Function', () => {
       payments: [{
         nickname: 'nickname',
         default_value: 799,
-        reset_day: 1,
+        reset_day: Number(purchaseDate.getDate()),
+        user_id: 1,
+        PayWith: [{
+          payment_id: 1,
+          purchase_id: 1,
+          value: 1,
+          purchase: {
+            created_at: purchaseDate.toISOString(),
+          },
+        }],
+      }],
+    }));
+  });
+
+  test('Should return 200 if payments infos is returned (PayWith not is array)', async () => {
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
+      Payment: mockPayment,
+      Purchase: mockPurchase,
+    }));
+
+    const userController = makeSut();
+
+    const response = await userController.handleGetPaymentsByUserId(1);
+
+    expect(response).toEqual(okWithContent({
+      payments: [{
+        nickname: 'nickname',
+        default_value: 799,
+        reset_day: Number(purchaseDate.getDate()),
         user_id: 1,
         PayWith: {
           payment_id: 1,
           purchase_id: 1,
           value: 1,
+          purchase: {
+            created_at: purchaseDate.toISOString(),
+          },
         },
       }],
     }));

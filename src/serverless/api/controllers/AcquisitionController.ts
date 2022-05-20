@@ -77,8 +77,6 @@ export default class AcquisitionController {
       await this.paymentDAO.checkIfPaymentExists(paymentId);
 
       const { acquisitions, default_value, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
-      console.log(default_value);
-      console.log(paymentInfo);
       const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
       validationField400code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');

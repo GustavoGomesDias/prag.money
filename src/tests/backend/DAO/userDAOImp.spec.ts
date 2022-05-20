@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { PrismaClient } from '@prisma/client';
@@ -7,6 +8,7 @@ import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter
 import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import { NotFoundError } from '../../../serverless/error/HttpError';
+import { mockPayment, mockPurchase } from '../../mocks/mockForeignInfos';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
@@ -183,79 +185,11 @@ describe('User DAO Implementation test', () => {
     }
   });
 
-  test('Should getAllPaymentsByUserId returns foreign user infos', async () => {
-    const req = 1;
-
-    jest.spyOn(UserDAOImp.prototype, 'getAllForeignInfosByUserId').mockImplementationOnce(async (userId: number) => {
-      const result = await Promise.resolve({
-        payments: [{
-          nickname: 'nickname',
-          default_value: 800,
-          reset_day: 1,
-          user_id: 1,
-          PayWith: {
-            payment_id: 1,
-            purchase_id: 1,
-            value: 1,
-          },
-        }],
-        purchases: [{
-          id: 1,
-          value: 800,
-          description: 'description',
-          purchase_date: purchaseDate,
-          user_id: 1,
-        }],
-      });
-      return result;
-    });
-
-    const userDAOImpStub = makeSut();
-    const result = await userDAOImpStub.getAllForeignInfosByUserId(req);
-
-    expect(result).toEqual({
-      payments: [{
-        nickname: 'nickname',
-        default_value: 800,
-        reset_day: 1,
-        user_id: 1,
-        PayWith: {
-          payment_id: 1,
-          purchase_id: 1,
-          value: 1,
-        },
-      }],
-      purchases: [{
-        id: 1,
-        value: 800,
-        description: 'description',
-        purchase_date: purchaseDate,
-        user_id: 1,
-      }],
-    });
-  });
-
   test('Should return Purchase and Payment array if findUnique returns array', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
-        Payment: [{
-          nickname: 'nickname',
-          default_value: 800,
-          reset_day: 1,
-          user_id: 1,
-          PayWith: [{
-            payment_id: 1,
-            purchase_id: 1,
-            value: 1,
-          }],
-        }],
-        Purchase: [{
-          id: 1,
-          value: 800,
-          description: 'description',
-          purchase_date: purchaseDate,
-          user_id: 1,
-        }],
+        Payment: [mockPayment],
+        Purchase: [mockPurchase],
       });
 
       return result;
@@ -272,24 +206,8 @@ describe('User DAO Implementation test', () => {
   test('Should return Purchase and Payment array if findUnique no returns array', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
       const result = await Promise.resolve({
-        Payment: {
-          nickname: 'nickname',
-          default_value: 800,
-          reset_day: 1,
-          user_id: 1,
-          PayWith: {
-            payment_id: 1,
-            purchase_id: 1,
-            value: 1,
-          },
-        },
-        Purchase: {
-          id: 1,
-          value: 800,
-          description: 'description',
-          purchase_date: purchaseDate,
-          user_id: 1,
-        },
+        Payment: mockPayment,
+        Purchase: mockPurchase,
       });
 
       return result;
@@ -301,5 +219,63 @@ describe('User DAO Implementation test', () => {
 
     expect(Array.isArray(result?.payments)).toBeTruthy();
     expect(Array.isArray(result?.purchases)).toBeTruthy();
+  });
+
+  test('Should payment value is equals default value for older purchases (month)', async () => {
+    const { PayWith, default_value, ...anotherRest } = mockPayment;
+    const { purchase, ...rest } = PayWith;
+
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        Payment: {
+          ...anotherRest,
+          default_value: 800,
+          PayWith: {
+            ...rest,
+            purchase: {
+              create_at: new Date('2022-04-20T18:33:18.189Z'),
+            },
+          },
+        },
+        Purchase: mockPurchase,
+      });
+
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+
+    const result = await userDAOImpStub.getAllForeignInfosByUserId(1);
+
+    expect(result?.payments[0].default_value).toEqual(800);
+  });
+
+  test('Should payment value is equals default value for older purchases (day)', async () => {
+    const { PayWith, default_value, ...anotherRest } = mockPayment;
+    const { purchase, ...rest } = PayWith;
+
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve({
+        Payment: {
+          ...anotherRest,
+          default_value: 800,
+          PayWith: {
+            ...rest,
+            purchase: {
+              create_at: new Date('2022-05-18T18:33:18.189Z'),
+            },
+          },
+        },
+        Purchase: mockPurchase,
+      });
+
+      return result;
+    });
+
+    const userDAOImpStub = makeSut();
+
+    const result = await userDAOImpStub.getAllForeignInfosByUserId(1);
+
+    expect(result?.payments[0].default_value).toEqual(800);
   });
 });
