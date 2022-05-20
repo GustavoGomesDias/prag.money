@@ -33,7 +33,7 @@ const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
       isRequired
       w="100%"
     >
-      <FormLabel fontSize="26px">{label}</FormLabel>
+      <FormLabel fontSize={{ base: '16px', md: '26px' }} fontWeight={{ base: 'bold', md: 'normal' }}>{label}</FormLabel>
       <Input
         isRequired={placeholder !== 'Search'}
         placeholder={placeholder}
@@ -43,7 +43,7 @@ const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
         borderRadius="5px"
         h="60px"
         w="full"
-        fontSize="18px"
+        fontSize={{ base: '16px', md: '18px' }}
         type={type || ''}
         step={step || ''}
         min={min || ''}

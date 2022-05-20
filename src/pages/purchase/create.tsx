@@ -191,7 +191,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         padding="2em"
       >
         <Form handleSubmit={handleSubmit}>
-          <chakra.h1 w="full" textAlign="center" fontSize={{ base: '30px', md: '48px' }}>Adicionar Compra</chakra.h1>
+          <chakra.h1 w="full" textAlign="center" fontWeight="bold" fontSize={{ base: '28px', md: '48px' }}>Adicionar Compra</chakra.h1>
           <Grid w="80%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
               payments={userPayments}
@@ -242,7 +242,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
             >
               <Button
                 bg="#00735C"
-                fontSize="24px"
+                fontSize={{ base: '20px', md: '24px' }}
                 color="#fff"
                 w="100%"
                 h="60px"
@@ -258,7 +258,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
               <Button
                 onClick={() => back()}
                 bg="#D3D31A"
-                fontSize="24px"
+                fontSize={{ base: '20px', md: '24px' }}
                 color="#fff"
                 w="100%"
                 h="60px"
