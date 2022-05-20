@@ -1,7 +1,9 @@
 /* eslint-disable no-return-await */
-import React, { useContext, useState } from 'react';
+import React, {
+  useContext, useState, MouseEvent, useEffect,
+} from 'react';
 import {
-  Box, Flex, Text, Tooltip, useToast,
+  Box, Button, ButtonGroup, Flex, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { PurchaseTableProps } from './PurchaseTable';
 import formatDate from '../../../utils/formatDate';
@@ -10,11 +12,19 @@ import ActionButton from '../PurchaseDescription/ActionButton';
 import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import ModalLoader from '../../UI/Loader/ModalLoader';
 import api from '../../../services/fetchAPI/init';
+import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 
-const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Element => {
   const purchaseCtx = useContext(PurchaseContext);
+  const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
   const toast = useToast();
+
+  useEffect(() => {
+    setPurchseList(purchases);
+  }, [purchases]);
+
   const handleLongerDescription = (description: string): string => {
     if (description.length > 50) {
       return `${description.slice(0, 50)}...`;
@@ -68,6 +78,77 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
     });
   };
 
+  const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const nextPage = page + 1;
+    setPage(nextPage);
+    setIsLoading(true);
+    const response = await api.getWithBody('/acquisition', {
+      page: nextPage,
+      id: paymentId,
+    });
+
+    setTimeout(() => setIsLoading(false), 500);
+
+    if (response.data.error) {
+      if (response.statusCode === 404) {
+        if (response.data.error) {
+          toast({
+            title: '📣',
+            description: response.data.error,
+            status: 'info',
+            ...toastConfig,
+          });
+          return;
+        }
+      }
+
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+      return;
+    }
+
+    setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
+  };
+
+  const handleGetPrevPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (page > 0) {
+      setIsLoading(true);
+      const prevPage = page - 1;
+      setPage(prevPage);
+      const response = await api.getWithBody('/acquisition', {
+        page: prevPage,
+        id: paymentId,
+      });
+
+      setTimeout(() => setIsLoading(false), 500);
+
+      if (response.data.error) {
+        toast({
+          title: '📣',
+          description: response.data.error,
+          status: 'error',
+          ...toastConfig,
+        });
+        return;
+      }
+
+      setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
+    } else {
+      toast({
+        title: '📣',
+        description: 'Estamos na primeira página!',
+        status: 'info',
+        ...toastConfig,
+      });
+    }
+  };
+
   return (
     <Box
       w="100%"
@@ -76,7 +157,42 @@ const MobileDisplayTable = ({ purchases }: PurchaseTableProps): JSX.Element => {
       display={{ base: 'block', md: 'none' }}
     >
       {isLoading && <ModalLoader isOpen={isLoading} />}
-      {purchases.length > 0 && purchases.map((purchase) => (
+      <Flex w="100%" justifyContent="flex-end" px="1em" borderBottom="3px solid #00735C">
+        <ButtonGroup bg="#00735C" p="0.1em">
+          <Button
+            variant="unstyled"
+            fontSize="18px"
+            color="#fff"
+            borderRight="1px solid #fff"
+            borderRadius="0 !important"
+            p="0.5em"
+            transition="300ms"
+            _hover={{
+              opacity: 0.5,
+            }}
+            onClick={async (e) => await handleGetPrevPurchases(e)}
+          >
+            prev
+
+          </Button>
+          <Button
+            variant="unstyled"
+            fontSize="18px"
+            color="#fff"
+            margin="0 !important"
+            p="0.5em"
+            transition="300ms"
+            _hover={{
+              opacity: 0.5,
+            }}
+            onClick={async (e) => await handleGetNextPurchases(e)}
+          >
+            next
+
+          </Button>
+        </ButtonGroup>
+      </Flex>
+      {purchaseList.length > 0 && purchaseList.map((purchase) => (
         <Box
           key={purchase.description + purchase.id}
           w="full"
