@@ -6,22 +6,25 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test-w": "jest --coverage --watch",
-    "test": "jest --coverage",
+    "test-w": "jest --coverage --watch --no-cahce",
+    "test": "jest --coverage --no-cahce",
     "pstd": "prisma studio"
   },
   "resolutions": {
     "minimist": "upgraded version"
   },
   "dependencies": {
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.17.12",
     "@chakra-ui/react": "^1.7.4",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@prisma/client": "^3.12.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "bcrypt": "^5.0.1",
     "framer-motion": "^5.5.6",
     "jsonwebtoken": "^8.5.1",
-    "next": "12.1.0",
+    "next": "^12.1.6",
     "node-mocks-http": "^1.11.0",
     "nookies": "^2.5.2",
     "react": "17.0.2",
@@ -29,6 +32,8 @@
     "react-icons": "^4.3.1"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.17.12",
+    "@babel/plugin-proposal-decorators": "^7.17.12",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.2",
     "@types/bcrypt": "^5.0.0",

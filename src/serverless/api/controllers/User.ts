@@ -12,8 +12,8 @@ import {
   checkIfExists404code,
   checkIsEquals, validationEmailRequest, validationField400code, validationId,
 } from '../helpers/Validations';
-import handleErrors from '../../error/helpers/handleErrors';
 import GetForeignInfos from '../../data/usecases/GetForeignInfos';
+import Catch from '../../decorators/Catch';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -44,76 +44,59 @@ export default class UserController {
     checkIsEquals(password, passwordConfirmation, 'Senha diferente de confirmar senha.');
   }
 
+  @Catch()
   async handleRegister(req: HttpRequest): Promise<HttpResponse> {
-    try {
-      const {
-        email, password, name,
-      } = req.body.user as RegisterUser;
+    const {
+      email, password, name,
+    } = req.body.user as RegisterUser;
 
-      this.handleValidateUserFields(req.body.user as RegisterUser);
-      await this.userDAO.addUser({
-        email, name, password,
-      });
+    this.handleValidateUserFields(req.body.user as RegisterUser);
+    await this.userDAO.addUser({
+      email, name, password,
+    });
 
-      return created('Usuário criado com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return created('Usuário criado com sucesso!');
   }
 
+  @Catch()
   async handleGetUserById(userId: number): Promise<HttpResponse> {
-    try {
-      validationId(userId);
+    validationId(userId);
 
-      const user = await this.userDAO.findUnique({
-        where: {
-          id: Number(userId),
-        },
-      }) as Omit<UserModel, 'password'>;
+    const user = await this.userDAO.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    }) as Omit<UserModel, 'password'>;
 
-      checkIfExists404code(user, 'Usuário não existe.');
+    checkIfExists404code(user, 'Usuário não existe.');
 
-      const { id, email, name } = user;
-
-      return okWithContent({ id, email, name });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    const { id, email, name } = user;
+    return okWithContent({ id, email, name });
   }
 
+  @Catch()
   async handleGetPaymentsByUserId(userId: number): Promise<HttpResponse> {
-    try {
-      validationId(userId);
+    validationId(userId);
 
-      const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
+    const infos = await this.userDAO.getAllForeignInfosByUserId(userId);
 
-      const { payments } = infos as GetForeignInfos;
+    const { payments } = infos as GetForeignInfos;
 
-      checkIfExists404code(payments[0], 'Não há formas de pagamento cadastradas.');
+    checkIfExists404code(payments[0], 'Não há formas de pagamento cadastradas.');
 
-      return okWithContent({ payments });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithContent({ payments });
   }
 
+  @Catch()
   async handleDelete(userId: number): Promise<HttpResponse> {
-    try {
-      validationId(userId);
+    validationId(userId);
 
-      await this.userDAO.delete({
-        where: {
-          id: userId,
-        },
-      });
+    await this.userDAO.delete({
+      where: {
+        id: userId,
+      },
+    });
 
-      return ok('Deletado com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Deletado com sucesso!');
   }
 }

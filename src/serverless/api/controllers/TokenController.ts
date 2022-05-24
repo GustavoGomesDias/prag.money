@@ -11,7 +11,7 @@ import {
   checkIfExists404code,
   checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
 } from '../helpers/Validations';
-import handleErrors from '../../error/helpers/handleErrors';
+import Catch from '../../decorators/Catch';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -41,65 +41,57 @@ export default class TokenController {
     validationField400code(password, 'Senha requerida.');
   }
 
+  @Catch()
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
-    try {
-      const { email, password } = infos;
-      this.validationLoginInfos(infos);
+    const { email, password } = infos;
+    this.validationLoginInfos(infos);
 
-      const user = await this.userDAOImp.findByEmail(email);
+    const user = await this.userDAOImp.findByEmail(email);
 
-      await checkPasswordIsTheCertainPassword(password, user.password, this.encrypter);
+    await checkPasswordIsTheCertainPassword(password, user.password, this.encrypter);
 
-      const validationEmail = this.emailValidator.isEmail(email);
-      validationEmailRequest(validationEmail);
+    const validationEmail = this.emailValidator.isEmail(email);
+    validationEmailRequest(validationEmail);
 
-      const payload = this.webToken.sign({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      }, '2d');
+    const payload = this.webToken.sign({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    }, '2d');
 
-      const userInfo = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      };
+    const userInfo = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
 
-      return okWithPayload(payload, userInfo);
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithPayload(payload, userInfo);
   }
 
+  @Catch()
   async handleRecoverUserInfos(token: string): Promise<HttpResponse> {
-    try {
-      validationField400code(token, 'Não foi encontrado nenhum Token.');
+    validationField400code(token, 'Não foi encontrado nenhum Token.');
 
-      const result = this.webToken.verify(token);
+    const result = this.webToken.verify(token);
 
-      const user = await this.userDAOImp.findUnique({
-        where: {
-          id: result.id,
-        },
-      }) as UserModel;
+    const user = await this.userDAOImp.findUnique({
+      where: {
+        id: result.id,
+      },
+    }) as UserModel;
 
-      checkIfExists404code(user, 'Usuário não existe.');
+    checkIfExists404code(user, 'Usuário não existe.');
 
-      const newToken = this.webToken.sign({
-        id: user.id,
-        email: user.email as string,
-        name: user.name as string,
-      }, '2d');
+    const newToken = this.webToken.sign({
+      id: user.id,
+      email: user.email as string,
+      name: user.name as string,
+    }, '2d');
 
-      return okWithPayload(newToken, {
-        id: user.id,
-        email: user.email as string,
-        name: user.name as string,
-      });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithPayload(newToken, {
+      id: user.id,
+      email: user.email as string,
+      name: user.name as string,
+    });
   }
 }
