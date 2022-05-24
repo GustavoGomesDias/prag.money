@@ -27,6 +27,17 @@ describe('Handle Get By Purchase Id', () => {
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
+  test('Should return 400 if invalid user id is provided', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PurchaseDAOImp()['entity'];
+    jest.spyOn(entity, 'findUnique').mockImplementationOnce(jest.fn());
+
+    const result = await controllerStub.handleGetPurchaseById('1' as unknown as number, 1);
+
+    expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
   test('Should return 403 if purchase.user_id is is different from userId', async () => {
     const controllerStub = makeSut();
     // eslint-disable-next-line prefer-destructuring

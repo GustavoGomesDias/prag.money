@@ -27,6 +27,30 @@ describe('Handle Get By Payment Id', () => {
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
+  test('Should return 400 if user id is string', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    jest.spyOn(entity, 'findUnique').mockImplementationOnce(jest.fn());
+    jest.spyOn(validations, 'checkIsEquals403Error').mockImplementationOnce(jest.fn());
+
+    const result = await controllerStub.handleGetPaymentById('1' as unknown as number, 1);
+
+    expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 400 if user id is string and converted to number', async () => {
+    const controllerStub = makeSut();
+    // eslint-disable-next-line prefer-destructuring
+    const entity = new PaymentDAOImp()['entity'];
+    jest.spyOn(entity, 'findUnique').mockImplementationOnce(jest.fn());
+    jest.spyOn(validations, 'checkIsEquals403Error').mockImplementationOnce(jest.fn());
+
+    const result = await controllerStub.handleGetPaymentById(Number('aa'), 1);
+
+    expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
   test('Should return 200 with content if get payment it happened successfully', async () => {
     const payment: PaymentModel = {
       nickname: 'nickname',
