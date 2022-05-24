@@ -26,7 +26,7 @@ describe('Purchase DAO Implementation', () => {
     const purchaseDAOImpStub = new PurchaseDAOImp();
     const data = [{
       payment_id: 1,
-      purchase_id: 1,
+      purchase_id: -1,
       value: 1,
     }];
 
@@ -226,7 +226,7 @@ describe('Purchase DAO Implementation', () => {
   });
 
   test('Should ensure that checkIfPurchaseExists throws an error if the purchase does not exist', async () => {
-    const req = 1;
+    const req = -1;
     const purchaseStub = new PurchaseDAOImp();
 
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
