@@ -61,13 +61,13 @@ describe('Get acquisitions tests', () => {
     });
 
     jest.spyOn(PurchaseDAOImp.prototype, 'returnsPurchaseByAcquisitionsList').mockImplementationOnce(async (infos) => {
-      const result = await Promise.resolve(undefined);
+      const result = await Promise.resolve([]);
       return result;
     });
 
     const acquisitionController = makeSut();
     const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
-    expect(httpResponse).toEqual(badRequest(new BadRequestError('Não há compras relacionadas a essa forma de pagamento.')));
+    expect(httpResponse).toEqual(notFound(new NotFoundError('Não há compras relacionadas a essa forma de pagamento.')));
   });
 
   test('Should return 500 if any error occurs', async () => {

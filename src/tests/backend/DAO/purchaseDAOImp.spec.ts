@@ -5,7 +5,7 @@ import { PayWith } from '@prisma/client';
 import prisma from '../../../serverless/data/prisma/config';
 import PurchaseDAOImp from '../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
-import { NotFoundError } from '../../../serverless/error/HttpError';
+import { BadRequestError, NotFoundError } from '../../../serverless/error/HttpError';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
 describe('Purchase DAO Implementation', () => {
@@ -19,23 +19,18 @@ describe('Purchase DAO Implementation', () => {
   test('Should returns undefined if acquistion list is empty', async () => {
     const purchaseDAOImpStub = new PurchaseDAOImp();
 
-    const response = await purchaseDAOImpStub.returnsPurchaseByAcquisitionsList([]);
-
-    expect(response).toEqual(undefined);
+    await expect(purchaseDAOImpStub.returnsPurchaseByAcquisitionsList([])).rejects.toThrow(new BadRequestError('Não há compras relacionadas a essa forma de pagamento.'));
   });
 
   test('Should returns not found error if not exists matching purchases', async () => {
-    try {
-      const purchaseDAOImpStub = new PurchaseDAOImp();
+    const purchaseDAOImpStub = new PurchaseDAOImp();
+    const data = [{
+      payment_id: 1,
+      purchase_id: 1,
+      value: 1,
+    }];
 
-      await purchaseDAOImpStub.returnsPurchaseByAcquisitionsList([{
-        payment_id: 1,
-        purchase_id: 1,
-        value: 1,
-      }]);
-    } catch (err) {
-      expect(err as Error).toEqual(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
-    }
+    await expect(purchaseDAOImpStub.returnsPurchaseByAcquisitionsList(data)).rejects.toThrow(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
   });
 
   test('Should returns purchase list of acquisition list is not empty and has matching', async () => {
@@ -231,18 +226,15 @@ describe('Purchase DAO Implementation', () => {
   });
 
   test('Should ensure that checkIfPurchaseExists throws an error if the purchase does not exist', async () => {
-    try {
-      const req = 1;
-      const purchaseStub = new PurchaseDAOImp();
+    const req = 1;
+    const purchaseStub = new PurchaseDAOImp();
 
-      jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
-        const result = await Promise.resolve(undefined);
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(undefined);
 
-        return result;
-      });
-      await purchaseStub.checkIfPurchaseExists(req);
-    } catch (err) {
-      expect((err as Error).message).toBe('Compra/gasto não encontrada.');
-    }
+      return result;
+    });
+
+    await expect(purchaseStub.checkIfPurchaseExists(req)).rejects.toThrow(new NotFoundError('Compra/gasto não encontrada.'));
   });
 });

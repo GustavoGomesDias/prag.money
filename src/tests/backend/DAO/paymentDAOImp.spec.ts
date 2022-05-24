@@ -192,19 +192,14 @@ describe('Payment DAO Implementation tests', () => {
   });
 
   test('Should return 404 status code if findMany returns a empty array', async () => {
-    try {
-      const paymentDAOImpStub = makeSut();
+    const paymentDAOImpStub = makeSut();
 
-      jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
-        const result = await Promise.resolve([]);
+    jest.spyOn(ExtendGenericDAOImp.prototype, 'findMany').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve([]);
 
-        return result;
-      });
-      await paymentDAOImpStub.findByPaymentIdWithPagination(1, 0);
-    } catch (err) {
-      expect((err as NotFoundError).statusCode).toEqual(404);
-      expect((err as NotFoundError).message).toEqual('Não há mais gastos/compras cadastrados nessa conta.');
-    }
+      return result;
+    });
+    await expect(paymentDAOImpStub.findByPaymentIdWithPagination(1, 0)).rejects.toThrow(new NotFoundError('Não há mais gastos/compras cadastrados nessa conta.'));
   });
 
   test('Should call checkIfPaymentExists if correct paymentId', async () => {
@@ -218,19 +213,15 @@ describe('Payment DAO Implementation tests', () => {
   });
 
   test('Should ensure that checkIfPaymentExists throws an error if the user does not exist', async () => {
-    try {
-      const req = 1;
-      const userDAOImpStub = makeSut();
+    const req = 1;
+    const userDAOImpStub = makeSut();
 
-      jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
-        const result = await Promise.resolve(undefined);
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(undefined);
 
-        return result;
-      });
-      await userDAOImpStub.checkIfPaymentExists(req);
-    } catch (err) {
-      expect((err as Error).message).toBe('Forma de pagamento não cadastrada.');
-    }
+      return result;
+    });
+    await expect(userDAOImpStub.checkIfPaymentExists(req)).rejects.toThrow(new NotFoundError('Forma de pagamento não cadastrada.'));
   });
 
   test('Should call GenericDAOImp add function with correct value', async () => {
