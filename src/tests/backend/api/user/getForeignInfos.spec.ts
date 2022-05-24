@@ -129,6 +129,62 @@ describe('Handle Get Payments Function', () => {
     expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
+  test('Should return 400 if user id is string', async () => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve({
+        payments: [{
+          nickname: 'nickname',
+          default_value: 800,
+          reset_day: 1,
+          user_id: 1,
+        }],
+        purchases: [{
+          id: 1,
+          value: 800,
+          description: 'description',
+          purchase_date: purchaseDate,
+          user_id: 1,
+        }],
+      });
+
+      return result;
+    });
+
+    const userController = makeSut();
+
+    const response = await userController.handleGetPaymentsByUserId('1' as unknown as number);
+
+    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 400 if user id is string and converted to number', async () => {
+    jest.spyOn(mockUserDAOImp, 'findUnique').mockImplementationOnce(async (info) => {
+      const result = await Promise.resolve({
+        payments: [{
+          nickname: 'nickname',
+          default_value: 800,
+          reset_day: 1,
+          user_id: 1,
+        }],
+        purchases: [{
+          id: 1,
+          value: 800,
+          description: 'description',
+          purchase_date: purchaseDate,
+          user_id: 1,
+        }],
+      });
+
+      return result;
+    });
+
+    const userController = makeSut();
+
+    const response = await userController.handleGetPaymentsByUserId(Number('aa'));
+
+    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
   test('Should return 404 if invalid user not exists', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve(null));
 

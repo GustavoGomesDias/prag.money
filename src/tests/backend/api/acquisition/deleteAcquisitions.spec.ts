@@ -33,6 +33,22 @@ describe('Delete Acquisitions tests', () => {
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
+  test('Should return 400 if id is string', async () => {
+    const paymentId = '-1';
+
+    const acquisitionController = makeSut();
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId as unknown as number);
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
+  test('Should return 400 if id is string and converted to number', async () => {
+    const paymentId = 'aa';
+
+    const acquisitionController = makeSut();
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(Number(paymentId));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
+  });
+
   test('Should return 404 if payment not exists', async () => {
     const paymentId = 1;
 

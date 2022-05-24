@@ -2,7 +2,7 @@ import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../error/HttpError';
 
 export const validationId = (id: number) => {
-  if (Number.isNaN(id) || id < 0) {
+  if (!(typeof id === 'number') || Number.isNaN(id) || id < 0) {
     throw new BadRequestError('ID inválido.');
   }
 };
