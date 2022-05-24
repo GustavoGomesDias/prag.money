@@ -132,13 +132,9 @@ describe('User DAO Implementation test', () => {
   });
 
   test('Should findByEmail returns NotFoundError if user not exists', async () => {
-    try {
-      const req = 'email@email.com';
-      const userDAOImpStub = makeSut();
-      const result = await userDAOImpStub.findByEmail(req);
-    } catch (err) {
-      expect((err as Error).message).toBe('Usuário não existente, considere criar uma conta.');
-    }
+    const req = 'email@email.com';
+    const userDAOImpStub = makeSut();
+    await expect(userDAOImpStub.findByEmail(req)).rejects.toThrow(new NotFoundError('Usuário não existente, considere criar uma conta.'));
   });
 
   test('Should call checkIfUserExistis if correct user', async () => {
@@ -152,19 +148,15 @@ describe('User DAO Implementation test', () => {
   });
 
   test('Should ensure that checkIfUserExistis throws an error if the user does not exist', async () => {
-    try {
-      const req = 1;
-      const userDAOImpStub = makeSut();
+    const req = 1;
+    const userDAOImpStub = makeSut();
 
-      jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
-        const result = await Promise.resolve(undefined);
+    jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
+      const result = await Promise.resolve(undefined);
 
-        return result;
-      });
-      await userDAOImpStub.checkIfUserExists(req);
-    } catch (err) {
-      expect((err as Error).message).toBe('Usuário não existe.');
-    }
+      return result;
+    });
+    await expect(userDAOImpStub.checkIfUserExists(req)).rejects.toThrow('Usuário não existe.');
   });
 
   test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
@@ -176,13 +168,8 @@ describe('User DAO Implementation test', () => {
   });
 
   test('Should getAllPaymentsByUserId throw NotFoundError if user not exists', async () => {
-    try {
-      const userDAOImpStub = makeSut();
-      await userDAOImpStub.getAllForeignInfosByUserId(-1);
-    } catch (err) {
-      expect((err as NotFoundError).statusCode).toEqual(404);
-      expect((err as NotFoundError).message).toEqual('Não há formas de pagamento cadastradas.');
-    }
+    const userDAOImpStub = makeSut();
+    await expect(userDAOImpStub.getAllForeignInfosByUserId(-1)).rejects.toThrow(new NotFoundError('Não há formas de pagamento cadastradas.'));
   });
 
   test('Should return Purchase and Payment array if findUnique returns array', async () => {

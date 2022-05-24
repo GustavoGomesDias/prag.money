@@ -68,7 +68,7 @@ export default class UserDAOImp extends GenericDAOImp<
     }
   }
 
-  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos | undefined> {
+  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos> {
     const foreignInfos = await this.findUnique({
       where: {
         id: userId,

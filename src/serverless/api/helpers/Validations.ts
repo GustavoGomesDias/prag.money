@@ -20,7 +20,7 @@ export const validationField400code = (info: unknown, message: string) => {
 };
 
 export const checkIfExists404code = (info: unknown, message: string) => {
-  if (!info || info === undefined || info === null || info === '' || info === ' ') {
+  if (!info || info === undefined || info === null || info === '' || info === ' ' || (Array.isArray(info) && info.length < 1)) {
     throw new NotFoundError(message);
   }
 };
