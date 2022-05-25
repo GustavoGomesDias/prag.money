@@ -10,6 +10,7 @@ import {
 } from '../../../../serverless/api/helpers/http';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
+import { TokenExpired } from '../../../../serverless/error/PMoneyErrors';
 import JWTService from '../../../../serverless/services/JWTService';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
@@ -78,7 +79,7 @@ describe('Handle Recovering User Infos', () => {
     const webTokenStub = new JWTService();
 
     jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
-      throw new TokenExpiredError('jwt expired', new Date());
+      throw new TokenExpired();
     });
 
     const emailValidatorStub = makeEmailValidator();
@@ -88,7 +89,7 @@ describe('Handle Recovering User Infos', () => {
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Token expirado.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Token expirou. Faça login novamente.')));
   });
 
   test('Should return 404 if token id no return a user', async () => {

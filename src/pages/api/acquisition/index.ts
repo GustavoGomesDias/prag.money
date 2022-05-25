@@ -2,8 +2,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
+import AuthRequired from '../../../serverless/data/usecases/AuthRequired';
 import makeAcquisition from '../../../serverless/factories/purchase/AcquisitionFactory';
-import { NextApiUserRequest } from '../purchase/[id]';
 
 async function handleGetAcquisitonsByIdWithPagination(
   req: NextApiRequest,
@@ -13,7 +13,7 @@ async function handleGetAcquisitonsByIdWithPagination(
   const page = req.body.page as unknown as number;
   const acquisitionController = makeAcquisition();
 
-  const response = await acquisitionController.handleGetAcquisitionsByPaymentIdWithPagination(Number(id), Number(page), (req as NextApiUserRequest).user.id as number);
+  const response = await acquisitionController.handleGetAcquisitionsByPaymentIdWithPagination(Number(id), Number(page), (req as AuthRequired).user.id as number);
 
   if (response.error) {
     const { error } = response;

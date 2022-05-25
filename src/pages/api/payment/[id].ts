@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
+import AuthRequired from '../../../serverless/data/usecases/AuthRequired';
 import makePaymentController from '../../../serverless/factories/payment/PaymentFactory';
-import { NextApiUserRequest } from '../purchase/[id]';
 
 async function handleDeletePayment(
   req: NextApiRequest,
@@ -14,7 +14,7 @@ async function handleDeletePayment(
   const paymentController = makePaymentController();
 
   if (req.method === 'DELETE') {
-    const response = await paymentController.handleDelete(Number(paymentId));
+    const response = await paymentController.handleDelete(Number(paymentId), (req as AuthRequired).user.id as number);
 
     if (response.error) {
       const { error } = response;
@@ -31,7 +31,7 @@ async function handleDeletePayment(
     } = req.body as PaymentModel;
     const response = await paymentController.handleEdit({
       id, nickname, default_value, reset_day, user_id,
-    }, (req as NextApiUserRequest).user.id as number);
+    }, (req as AuthRequired).user.id as number);
 
     if (response.error) {
       const { error } = response;
@@ -42,7 +42,7 @@ async function handleDeletePayment(
     return res.status(response.statusCode).json({ message });
   }
 
-  const response = await paymentController.handleGetPaymentById(Number(paymentId), (req as NextApiUserRequest).user.id as number);
+  const response = await paymentController.handleGetPaymentById(Number(paymentId), (req as AuthRequired).user.id as number);
 
   if (response.error) {
     const { error } = response;

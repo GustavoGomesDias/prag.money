@@ -5,7 +5,7 @@ import {
 import {
   BadRequestError, ForbiddenError, InternalServerError, NotFoundError,
 } from '../HttpError';
-import { PMoneyErrors } from '../PMoneyErrors';
+import { TokenExpired } from '../PMoneyErrors';
 import uniqueError from './uniqueError';
 
 const handleErrors = (error: Error): HttpResponse => {
@@ -21,7 +21,8 @@ const handleErrors = (error: Error): HttpResponse => {
     return badRequest(new BadRequestError(`${uniqueError(error)} já existe, tente novamente.`));
   }
 
-  if (error instanceof PMoneyErrors.TokenExpired) {
+  if (error instanceof TokenExpired) {
+    console.log('entrou');
     return badRequest(new BadRequestError(error.message));
   }
 

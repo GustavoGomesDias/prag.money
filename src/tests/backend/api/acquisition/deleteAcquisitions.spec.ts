@@ -3,13 +3,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import AcquisitionController from '../../../../serverless/api/controllers/AcquisitionController';
 import {
-  badRequest, HttpResponse, notFound, ok, serverError,
+  badRequest, forbidden, HttpResponse, notFound, ok, serverError,
 } from '../../../../serverless/api/helpers/http';
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import { ReturnsAcquisitions } from '../../../../serverless/data/usecases/GetAcquisitions';
-import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
+import {
+  BadRequestError, ForbiddenError, InternalServerError, NotFoundError,
+} from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 import * as validations from '../../../../serverless/api/helpers/Validations';
@@ -24,12 +26,14 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
+beforeEach(() => jest.clearAllMocks());
+
 describe('Delete Acquisitions tests', () => {
   test('Should return 400 if id is invalid', async () => {
     const paymentId = -1;
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -37,7 +41,7 @@ describe('Delete Acquisitions tests', () => {
     const paymentId = '-1';
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId as unknown as number);
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId as unknown as number, 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -45,7 +49,7 @@ describe('Delete Acquisitions tests', () => {
     const paymentId = 'aa';
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(Number(paymentId));
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(Number(paymentId), 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -57,7 +61,7 @@ describe('Delete Acquisitions tests', () => {
     });
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não cadastrada.')));
   });
 
@@ -70,7 +74,7 @@ describe('Delete Acquisitions tests', () => {
     });
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(
       serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')),
     );
@@ -91,7 +95,7 @@ describe('Delete Acquisitions tests', () => {
 
     const acquisitionController = makeSut();
 
-    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleDeleteAcquisitionsByPaymentId(paymentId, 1);
 
     expect(httpResponse).toEqual(ok('Gastos/Compras deletas com sucesso!'));
   });
@@ -107,7 +111,7 @@ describe('Delete Acquisitions tests', () => {
     expect(result).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
-  test('Should return 400 if user ids not equals', async () => {
+  test('Should return 403 if user ids not equals', async () => {
     const controllerStub = makeSut();
     // eslint-disable-next-line prefer-destructuring
     const entity = new PurchaseDAOImp()['entity'];
@@ -130,7 +134,7 @@ describe('Delete Acquisitions tests', () => {
 
     const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1, 1);
 
-    expect(result).toEqual(badRequest(new BadRequestError('Você não tem permissão para excluir.')));
+    expect(result).toEqual(forbidden(new ForbiddenError('Você não tem permissão para acessar este conteúdo.')));
   });
 
   test('Should return 200 if payment is deleted', async () => {

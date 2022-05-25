@@ -3,7 +3,6 @@
 /* eslint-disable camelcase */
 import {
   checkIfExists404code,
-  checkIsEquals,
   checkIsEquals403Error,
   validationExpenseValue, validationField400code, validationId, validationPage,
 } from '../helpers/Validations';
@@ -37,11 +36,12 @@ export default class AcquisitionController {
   }
 
   @Catch()
-  async handleDeleteAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+  async handleDeleteAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
     validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
-    const { acquisitions } = await this.paymentDAO.findByPaymentId(paymentId);
+    const { acquisitions, user_id } = await this.paymentDAO.findByPaymentId(paymentId);
+    checkIsEquals403Error(userId, user_id, 'Você não tem permissão para acessar este conteúdo.');
     checkIfExists404code(acquisitions, 'Não existe compras/gastos pagas com essa forma de pagamento.');
     await this.purchaseDAO.deletePurchasesByAcquisisitionList(acquisitions);
 
@@ -52,7 +52,7 @@ export default class AcquisitionController {
   async handleDeleteAcquisitionByPurchaseId(purchaseId: number, userId: number): Promise<HttpResponse> {
     validationId(purchaseId);
     const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
-    checkIsEquals(userId, purchase.user_id, 'Você não tem permissão para excluir.');
+    checkIsEquals403Error(userId, purchase.user_id, 'Você não tem permissão para acessar este conteúdo.');
 
     await this.purchaseDAO.delete({
       where: {
@@ -64,7 +64,7 @@ export default class AcquisitionController {
   }
 
   @Catch()
-  async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+  async handleGetAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
     validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
@@ -72,6 +72,7 @@ export default class AcquisitionController {
     const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
     checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+    checkIsEquals403Error(purchases[0].user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
     return okWithContent({
       ...paymentInfo,

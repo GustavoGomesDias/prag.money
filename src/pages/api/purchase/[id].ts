@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { HttpResponse } from '../../../serverless/api/helpers/http';
 import withProtect from '../../../serverless/api/middlewares/withProtect';
 import UserModel from '../../../serverless/data/models/UserModel';
+import AuthRequired from '../../../serverless/data/usecases/AuthRequired';
 import UpdatePurchase from '../../../serverless/data/usecases/UpdatePurchase';
 import makeAcquisition from '../../../serverless/factories/purchase/AcquisitionFactory';
 import makePurchase from '../../../serverless/factories/purchase/PurchaseFactory';
@@ -21,7 +22,7 @@ async function handle(
   const purchaseController = makePurchase();
 
   if (req.method === 'DELETE') {
-    const response = await acquisitionController.handleDeleteAcquisitionByPurchaseId(Number(purchaseId), (req as NextApiUserRequest).user.id as number);
+    const response = await acquisitionController.handleDeleteAcquisitionByPurchaseId(Number(purchaseId), (req as AuthRequired).user.id as number);
 
     if (response.error) {
       const { error } = response;
@@ -38,7 +39,7 @@ async function handle(
     } = req.body as UpdatePurchase;
     const response = await acquisitionController.handleUpdatePurchase({
       id, description, purchase_date, user_id, value, payments, payWithDeleteds,
-    }, (req as NextApiUserRequest).user.id as number);
+    }, (req as AuthRequired).user.id as number);
 
     if (response.error) {
       const { error } = response;
@@ -49,7 +50,7 @@ async function handle(
     return res.status(response.statusCode).json({ message });
   }
 
-  const response = await purchaseController.handleGetPurchaseById(Number(purchaseId), (req as NextApiUserRequest).user.id as number);
+  const response = await purchaseController.handleGetPurchaseById(Number(purchaseId), (req as AuthRequired).user.id as number);
 
   if (response.error) {
     const { error } = response;

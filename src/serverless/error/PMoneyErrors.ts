@@ -1,8 +1,7 @@
-export namespace PMoneyErrors {
-  export class TokenExpired extends Error {
-    constructor(message: string) {
-      super(message);
-      this.name = 'TokenExpired';
-    }
+/* eslint-disable import/prefer-default-export */
+export class TokenExpired extends Error {
+  constructor() {
+    super('Token expirou. Faça login novamente.');
+    this.name = 'TokenExpired';
   }
 }
