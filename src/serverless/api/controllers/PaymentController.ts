@@ -7,7 +7,7 @@ import {
 } from '../helpers/http';
 import { checkIsEquals403Error, validationField400code, validationId } from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
-import handleErrors from '../../error/helpers/handleErrors';
+import Catch from '../../decorators/Catch';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -16,23 +16,19 @@ export default class PaymentController {
     this.paymentDAOImp = paymentDAOImp;
   }
 
+  @Catch()
   async handleGetPaymentById(paymentId: number, userId: number): Promise<HttpResponse> {
-    try {
-      validationId(paymentId);
+    validationId(paymentId);
 
-      const payment = await this.paymentDAOImp.findUnique({
-        where: {
-          id: paymentId,
-        },
-      }) as PaymentModel;
+    const payment = await this.paymentDAOImp.findUnique({
+      where: {
+        id: paymentId,
+      },
+    }) as PaymentModel;
 
-      checkIsEquals403Error(payment.user_id, userId, 'Você não tem permissão para acessar está informação.');
+    checkIsEquals403Error(payment.user_id, userId, 'Você não tem permissão para acessar está informação.');
 
-      return okWithContent({ payment });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithContent({ payment });
   }
 
   validatieAllRequestFields(paymentInfos: PaymentModel): void {
@@ -49,52 +45,40 @@ export default class PaymentController {
     }
   }
 
+  @Catch()
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
-    try {
-      this.validatieAllRequestFields(paymentInfos);
+    this.validatieAllRequestFields(paymentInfos);
 
-      await this.paymentDAOImp.add(paymentInfos);
+    await this.paymentDAOImp.add(paymentInfos);
 
-      return ok('Forma de pagamento criado com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Forma de pagamento criado com sucesso!');
   }
 
+  @Catch()
   async handleEdit(paymentInfos: PaymentModel, userId: number): Promise<HttpResponse> {
-    try {
-      this.validatieAllRequestFields(paymentInfos);
-      checkIsEquals403Error(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
+    this.validatieAllRequestFields(paymentInfos);
+    checkIsEquals403Error(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
 
-      await this.paymentDAOImp.update({
-        where: {
-          id: paymentInfos.id,
-        },
-        data: paymentInfos,
-      });
+    await this.paymentDAOImp.update({
+      where: {
+        id: paymentInfos.id,
+      },
+      data: paymentInfos,
+    });
 
-      return ok('Forma de pagamento editada com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Forma de pagamento editada com sucesso!');
   }
 
+  @Catch()
   async handleDelete(paymentId: number): Promise<HttpResponse> {
-    try {
-      validationId(paymentId);
+    validationId(paymentId);
 
-      await this.paymentDAOImp.delete({
-        where: {
-          id: paymentId,
-        },
-      });
+    await this.paymentDAOImp.delete({
+      where: {
+        id: paymentId,
+      },
+    });
 
-      return ok('Forma de pagamento deletada com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Forma de pagamento deletada com sucesso!');
   }
 }

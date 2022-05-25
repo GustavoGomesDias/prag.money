@@ -10,7 +10,7 @@ async function handleGetUserById(
   const id = req.query.id as unknown as number;
   const userController = makeUserController();
 
-  const response = await userController.handleGetUserById(id);
+  const response = await userController.handleGetUserById(Number(id));
 
   if (response.error) {
     const { error } = response;

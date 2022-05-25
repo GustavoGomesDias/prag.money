@@ -19,6 +19,7 @@ import {
 } from '../helpers/http';
 import { handleDate } from '../helpers/formatData';
 import UpdatePurchase from '../../data/usecases/UpdatePurchase';
+import Catch from '../../decorators/Catch';
 
 export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
@@ -36,83 +37,67 @@ export default class AcquisitionController {
     this.userDAO = user;
   }
 
+  @Catch()
   async handleDeleteAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
-    try {
-      validationId(paymentId);
-      await this.paymentDAO.checkIfPaymentExists(paymentId);
+    validationId(paymentId);
+    await this.paymentDAO.checkIfPaymentExists(paymentId);
 
-      const { acquisitions } = await this.paymentDAO.findByPaymentId(paymentId);
-      checkIfExists404code(acquisitions, 'Não existe compras/gastos pagas com essa forma de pagamento.');
-      await this.purchaseDAO.deletePurchasesByAcquisisitionList(acquisitions);
+    const { acquisitions } = await this.paymentDAO.findByPaymentId(paymentId);
+    checkIfExists404code(acquisitions, 'Não existe compras/gastos pagas com essa forma de pagamento.');
+    await this.purchaseDAO.deletePurchasesByAcquisisitionList(acquisitions);
 
-      return ok('Gastos/Compras deletas com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Gastos/Compras deletas com sucesso!');
   }
 
+  @Catch()
   async handleDeleteAcquisitionByPurchaseId(purchaseId: number, userId: number): Promise<HttpResponse> {
-    try {
-      validationId(purchaseId);
-      const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
-      checkIsEquals(userId, purchase.user_id, 'Você não tem permissão para excluir.');
+    validationId(purchaseId);
+    const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
+    checkIsEquals(userId, purchase.user_id, 'Você não tem permissão para excluir.');
 
-      await this.purchaseDAO.delete({
-        where: {
-          id: purchaseId,
-        },
-      });
+    await this.purchaseDAO.delete({
+      where: {
+        id: purchaseId,
+      },
+    });
 
-      return ok('Gasto/Compra deleta com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return ok('Gasto/Compra deleta com sucesso!');
   }
 
+  @Catch()
   async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
-    try {
-      validationId(paymentId);
-      await this.paymentDAO.checkIfPaymentExists(paymentId);
+    validationId(paymentId);
+    await this.paymentDAO.checkIfPaymentExists(paymentId);
 
-      const { acquisitions, default_value, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
-      const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+    const { acquisitions, default_value, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
+    const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
-      checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+    checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
 
-      return okWithContent({
-        ...paymentInfo,
-        default_value,
-        purchases,
-      });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithContent({
+      ...paymentInfo,
+      default_value,
+      purchases,
+    });
   }
 
+  @Catch()
   async handleGetAcquisitionsByPaymentIdWithPagination(paymentId: number, page: number, userId: number): Promise<HttpResponse> {
-    try {
-      validationId(paymentId);
-      validationPage(page);
-      await this.paymentDAO.checkIfPaymentExists(paymentId);
+    validationId(paymentId);
+    validationPage(page);
+    await this.paymentDAO.checkIfPaymentExists(paymentId);
 
-      const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentIdWithPagination(paymentId, page);
-      checkIsEquals403Error(paymentInfo.user_id, userId, 'Você não tem permissão para acessar essa informação.');
-      validationField400code(acquisitions[0], 'Não há mais compras relacionadas a essa forma de pagamento.');
-      const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+    const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentIdWithPagination(paymentId, page);
+    checkIsEquals403Error(paymentInfo.user_id, userId, 'Você não tem permissão para acessar essa informação.');
+    validationField400code(acquisitions[0], 'Não há mais compras relacionadas a essa forma de pagamento.');
+    const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
-      checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+    checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
 
-      return okWithContent({
-        ...paymentInfo,
-        purchases,
-      });
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return okWithContent({
+      ...paymentInfo,
+      purchases,
+    });
   }
 
   async checkAllPaymentsExists(payments: AddPayment[]): Promise<void> {
@@ -131,35 +116,31 @@ export default class AcquisitionController {
     });
   }
 
+  @Catch()
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
-    try {
-      const {
-        description, purchase_date, value, user_id, payments,
-      } = infos;
+    const {
+      description, purchase_date, value, user_id, payments,
+    } = infos;
 
-      validationField400code(description, 'Descrição de compra inválida.');
-      validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
-      await this.userDAO.checkIfUserExists(user_id);
-      await this.checkAllPaymentsExists(payments);
+    validationField400code(description, 'Descrição de compra inválida.');
+    validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+    await this.userDAO.checkIfUserExists(user_id);
+    await this.checkAllPaymentsExists(payments);
 
-      const setedDate = handleDate(purchase_date);
+    const setedDate = handleDate(purchase_date);
 
-      const result = await this.purchaseDAO.add({
-        description,
-        purchase_date: setedDate,
-        user_id,
-        value,
-      }) as PurchaseModel;
+    const result = await this.purchaseDAO.add({
+      description,
+      purchase_date: setedDate,
+      user_id,
+      value,
+    }) as PurchaseModel;
 
-      validationField400code(result, 'Não foi possível encontrar os gastos.');
+    validationField400code(result, 'Não foi possível encontrar os gastos.');
 
-      await this.handleAddPayWithRelations(payments, result);
+    await this.handleAddPayWithRelations(payments, result);
 
-      return created('Compra cadastrada com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
-    }
+    return created('Compra cadastrada com sucesso!');
   }
 
   async handleUpdatePayWithRelations(payments: AddPayment[], purchaseId: number): Promise<void> {
