@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import WebTokenAdapter from '../adapters/services/WebTokenAdapter';
 import UserModel from '../data/models/UserModel';
-import { PMoneyErrors } from '../error/PMoneyErrors';
+import { TokenExpired } from '../error/PMoneyErrors';
 
 export default class JWTService implements WebTokenAdapter {
   sign(payload: Omit<UserModel, 'password'>, expiresIn: string | number): string {
@@ -11,15 +11,19 @@ export default class JWTService implements WebTokenAdapter {
   }
 
   verify(token: string): Omit<UserModel, 'password'> {
-    try {
-      const { id, email, name } = jwt.verify(token, `${process.env.JWT_SECRET}` as string) as Omit<UserModel, 'password'>;
-      return {
-        id,
-        email,
-        name,
-      };
-    } catch (err) {
-      throw new PMoneyErrors.TokenExpired('Token expirado.');
-    }
+    const payload = jwt.verify(token, `${process.env.JWT_SECRET}` as string, (err, decoded) => {
+      if (err) {
+        throw new TokenExpired();
+      }
+
+      return decoded as Omit<UserModel, 'password'>;
+    }) as unknown as Omit<UserModel, 'password'>;
+
+    const { id, email, name } = payload;
+    return {
+      id,
+      email,
+      name,
+    };
   }
 }

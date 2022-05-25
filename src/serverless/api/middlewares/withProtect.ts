@@ -7,6 +7,7 @@ import BcryptService from '../../services/BcryptService';
 
 import JWTService from '../../services/JWTService';
 import { HttpResponse } from '../helpers/http';
+import { TokenExpired } from '../../error/PMoneyErrors';
 
 export interface GetUserAuthInfoRequest extends NextApiRequest {
   user: Omit<UserModel, 'password'> // or any other type
@@ -48,6 +49,10 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
     console.log(err);
     if (err instanceof JsonWebTokenError) {
       return res.status(401).json({ error: 'Token inválido.' });
+    }
+
+    if (err instanceof TokenExpired) {
+      return res.status(401).json({ error: err.message });
     }
     return res.status(500).json({ error: 'Erro no servidor, tente novamente mais tarde!' });
   }

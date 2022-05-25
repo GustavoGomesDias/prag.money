@@ -3,7 +3,6 @@
 /* eslint-disable camelcase */
 import {
   checkIfExists404code,
-  checkIsEquals,
   checkIsEquals403Error,
   validationExpenseValue, validationField400code, validationId, validationPage,
 } from '../helpers/Validations';
@@ -13,7 +12,6 @@ import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
-import handleErrors from '../../error/helpers/handleErrors';
 import {
   created, okWithContent, HttpResponse, ok,
 } from '../helpers/http';
@@ -38,11 +36,12 @@ export default class AcquisitionController {
   }
 
   @Catch()
-  async handleDeleteAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+  async handleDeleteAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
     validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
-    const { acquisitions } = await this.paymentDAO.findByPaymentId(paymentId);
+    const { acquisitions, user_id } = await this.paymentDAO.findByPaymentId(paymentId);
+    checkIsEquals403Error(userId, user_id, 'Você não tem permissão para acessar este conteúdo.');
     checkIfExists404code(acquisitions, 'Não existe compras/gastos pagas com essa forma de pagamento.');
     await this.purchaseDAO.deletePurchasesByAcquisisitionList(acquisitions);
 
@@ -53,7 +52,7 @@ export default class AcquisitionController {
   async handleDeleteAcquisitionByPurchaseId(purchaseId: number, userId: number): Promise<HttpResponse> {
     validationId(purchaseId);
     const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
-    checkIsEquals(userId, purchase.user_id, 'Você não tem permissão para excluir.');
+    checkIsEquals403Error(userId, purchase.user_id, 'Você não tem permissão para acessar este conteúdo.');
 
     await this.purchaseDAO.delete({
       where: {
@@ -65,7 +64,7 @@ export default class AcquisitionController {
   }
 
   @Catch()
-  async handleGetAcquisitionsByPaymentId(paymentId: number): Promise<HttpResponse> {
+  async handleGetAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
     validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
@@ -73,6 +72,7 @@ export default class AcquisitionController {
     const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
 
     checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
+    checkIsEquals403Error(purchases[0].user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
     return okWithContent({
       ...paymentInfo,
@@ -175,41 +175,37 @@ export default class AcquisitionController {
     }
   }
 
+  @Catch()
   async handleUpdatePurchase(infos: UpdatePurchase, userId: number): Promise<HttpResponse> {
-    try {
-      const {
-        id, description, purchase_date, value, user_id, payments, payWithDeleteds,
-      } = infos;
-      checkIsEquals403Error(user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
+    const {
+      id, description, purchase_date, value, user_id, payments, payWithDeleteds,
+    } = infos;
+    checkIsEquals403Error(user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
-      validationField400code(description, 'Descrição de compra inválida.');
-      validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
-      await this.userDAO.checkIfUserExists(user_id);
-      await this.checkAllPaymentsExists(payments);
+    validationField400code(description, 'Descrição de compra inválida.');
+    validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+    await this.userDAO.checkIfUserExists(user_id);
+    await this.checkAllPaymentsExists(payments);
 
-      if (payWithDeleteds.length > 0) {
-        await this.handleDeletePayWiths(payWithDeleteds);
-      }
-
-      const setedDate = handleDate(purchase_date);
-
-      await this.purchaseDAO.update({
-        where: {
-          id: id as number,
-        },
-        data: {
-          description,
-          value,
-          purchase_date: setedDate,
-        },
-      }) as PurchaseModel;
-
-      await this.handleUpdatePayWithRelations(payments, id as number);
-
-      return ok('Compra atualizada com sucesso!');
-    } catch (err) {
-      console.log(err);
-      return handleErrors(err as Error);
+    if (payWithDeleteds.length > 0) {
+      await this.handleDeletePayWiths(payWithDeleteds);
     }
+
+    const setedDate = handleDate(purchase_date);
+
+    await this.purchaseDAO.update({
+      where: {
+        id: id as number,
+      },
+      data: {
+        description,
+        value,
+        purchase_date: setedDate,
+      },
+    }) as PurchaseModel;
+
+    await this.handleUpdatePayWithRelations(payments, id as number);
+
+    return ok('Compra atualizada com sucesso!');
   }
 }

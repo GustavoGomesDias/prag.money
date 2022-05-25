@@ -70,9 +70,12 @@ export default class PaymentController {
   }
 
   @Catch()
-  async handleDelete(paymentId: number): Promise<HttpResponse> {
+  async handleDelete(paymentId: number, userId: number): Promise<HttpResponse> {
     validationId(paymentId);
 
+    const payment = await this.paymentDAOImp.findByPaymentId(paymentId);
+
+    checkIsEquals403Error(userId, payment.user_id, 'Você não tem permissão para acessar esse contaúdo.');
     await this.paymentDAOImp.delete({
       where: {
         id: paymentId,
