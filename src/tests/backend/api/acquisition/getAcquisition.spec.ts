@@ -12,6 +12,7 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../..
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
+import * as validations from '../../../../serverless/api/helpers/Validations';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');
@@ -33,7 +34,7 @@ describe('Get acquisitions tests', () => {
     const paymentId = -1;
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -41,7 +42,7 @@ describe('Get acquisitions tests', () => {
     const paymentId = '-1';
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId as unknown as number);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId as unknown as number, 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -49,7 +50,7 @@ describe('Get acquisitions tests', () => {
     const paymentId = 'aa';
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(Number(paymentId));
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(Number(paymentId), 1);
     expect(httpResponse).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
@@ -61,7 +62,7 @@ describe('Get acquisitions tests', () => {
     });
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(notFound(new NotFoundError('Forma de pagamento não cadastrada.')));
   });
 
@@ -82,7 +83,7 @@ describe('Get acquisitions tests', () => {
     });
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(notFound(new NotFoundError('Não há compras relacionadas a essa forma de pagamento.')));
   });
 
@@ -95,7 +96,7 @@ describe('Get acquisitions tests', () => {
     });
 
     const acquisitionController = makeSut();
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId, 1);
     expect(httpResponse).toEqual(
       serverError(new InternalServerError('Erro no servidor, tente novamente mais tarde.')),
     );
@@ -120,7 +121,7 @@ describe('Get acquisitions tests', () => {
 
     const acquisitionController = makeSut();
 
-    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId);
+    const httpResponse: HttpResponse = await acquisitionController.handleGetAcquisitionsByPaymentId(paymentId, 718);
 
     expect(httpResponse).toEqual(okWithContent({
       purchases: [returnPurchaseInfos(date)],
