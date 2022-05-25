@@ -100,6 +100,7 @@ const EditPurchase = ({ data, purchase }: CreatePurchaseProps): JSX.Element => {
         payWith[paymentIndex] = {
           paymentId: payWith[paymentIndex].paymentId,
           value: Number(e.target.value),
+          payWithId: payWith[paymentIndex].payWithId,
         };
 
         setPayWith([...payWith]);
