@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
@@ -9,6 +10,8 @@ import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import { NotFoundError } from '../../../serverless/error/HttpError';
 import { mockPayment, mockPurchase } from '../../mocks/mockForeignInfos';
+import FinancialHelperAdapter, { GetDate } from '../../../serverless/adapters/services/FinancialHelperAdapter';
+import GetAcquisitions from '../../../serverless/data/usecases/GetAcquisitions';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
@@ -34,20 +37,55 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncryptStub();
 };
 
+const makeFinancialHelper = (): FinancialHelperAdapter => {
+  class FinancialHelperStub implements FinancialHelperAdapter {
+    getDayAndMonth(date: string): GetDate {
+      return { day: 20, month: 5 };
+    }
+
+    updateCurrentValue(acquisition: GetAcquisitions): void {
+      let currentValue = 0;
+      const currentDate = new Date();
+      if (Array.isArray(acquisition.PayWith)) {
+        for (const paids of acquisition.PayWith) {
+          const { day, month } = this.getDayAndMonth(paids.purchase.created_at);
+          if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
+            currentValue += paids.value;
+          }
+        }
+
+        acquisition.default_value -= currentValue;
+      } else {
+        const { day, month } = this.getDayAndMonth(acquisition.PayWith.purchase.created_at);
+
+        if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
+          acquisition.default_value -= acquisition.PayWith.value;
+        }
+      }
+    }
+  }
+
+  return new FinancialHelperStub();
+};
+
 const makeSut = (): UserDAOImp => {
   const encrypter = makeEncrypter();
+  const financialHelper = makeFinancialHelper();
 
-  return new UserDAOImp(encrypter);
+  return new UserDAOImp(encrypter, financialHelper);
 };
 
 describe('User DAO Implementation test', () => {
   const purchaseDate = new Date();
   test('Should call constructor with prisma.user', () => {
     const encrypter = makeEncrypter();
-    const instance = new UserDAOImp(encrypter);
+    const financialHelper = makeFinancialHelper();
+    const instance = new UserDAOImp(encrypter, financialHelper);
 
     // eslint-disable-next-line dot-notation
     expect(instance['encrypter']).toEqual(encrypter);
+    // eslint-disable-next-line dot-notation
+    expect(instance['financialHelper']).toEqual(financialHelper);
     // eslint-disable-next-line dot-notation
     expect(instance['entity']).toEqual(prismaConfig.user);
   });
