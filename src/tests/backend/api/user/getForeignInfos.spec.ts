@@ -20,6 +20,8 @@ describe('Handle Get Payments Function', () => {
   const purchaseDate = new Date('2022-05-20T18:33:18.189Z');
 
   test('Should return 200 if payments infos is returned (PayWith is array)', async () => {
+    jest.spyOn(Date.prototype, 'getMonth').mockImplementationOnce(() => 5);
+
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
       Payment: mockPaymentWithArray,
       Purchase: mockPurchase,
@@ -48,6 +50,7 @@ describe('Handle Get Payments Function', () => {
   });
 
   test('Should return 200 if payments infos is returned (PayWith not is array)', async () => {
+    jest.spyOn(Date.prototype, 'getMonth').mockImplementationOnce(() => 5);
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
       Payment: mockPayment,
       Purchase: mockPurchase,
