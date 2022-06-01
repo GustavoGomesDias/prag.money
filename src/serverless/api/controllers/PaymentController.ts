@@ -10,6 +10,7 @@ import {
 } from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
 import Catch from '../../decorators/Catch';
+import AddAdditionalValue from '../../data/usecases/AddAdditionalValue';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -74,6 +75,28 @@ export default class PaymentController {
     });
 
     return ok('Forma de pagamento editada com sucesso!');
+  }
+
+  @Catch()
+  async handleAddAdditionalValue(infos: AddAdditionalValue, userId: number): Promise<HttpResponse> {
+    validationId(infos.userId);
+    validationId(infos.paymentId);
+    validationField400code(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
+    validationValues(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
+    checkIsEquals403Error(userId, infos.userId, 'Você não tem permissão para editar.');
+
+    await this.paymentDAOImp.update({
+      where: {
+        id: infos.paymentId,
+      },
+      data: {
+        additional_value: {
+          increment: infos.additionalValue,
+        },
+      },
+    });
+
+    return ok('Valor adicional adicionado com sucesso!');
   }
 
   @Catch()
