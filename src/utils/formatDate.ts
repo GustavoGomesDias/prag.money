@@ -1,7 +1,3 @@
-const formatDate = (date: Date): string => {
-  const setedDate = new Date(date);
-  setedDate.setDate(setedDate.getDate() + 1);
-  return `${setedDate.getDate()}/${setedDate.getMonth() + 1}/${setedDate.getFullYear()}`;
-};
+const formatDate = (date: Date): string => `${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()}/${(date.getMonth() + 1) < 10 ? `0${(date.getMonth() + 1)}` : (date.getMonth() + 1)}/${date.getFullYear()}`;
 
 export default formatDate;

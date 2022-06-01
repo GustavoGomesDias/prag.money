@@ -15,7 +15,6 @@ import AddPurchase, { AddPayment } from '../../data/usecases/AddPurchase';
 import {
   created, okWithContent, HttpResponse, ok,
 } from '../helpers/http';
-import { handleDate } from '../helpers/formatData';
 import UpdatePurchase from '../../data/usecases/UpdatePurchase';
 import Catch from '../../decorators/Catch';
 
@@ -127,11 +126,9 @@ export default class AcquisitionController {
     await this.userDAO.checkIfUserExists(user_id);
     await this.checkAllPaymentsExists(payments);
 
-    const setedDate = handleDate(purchase_date);
-
     const result = await this.purchaseDAO.add({
       description,
-      purchase_date: setedDate,
+      purchase_date,
       user_id,
       value,
     }) as PurchaseModel;
@@ -191,8 +188,6 @@ export default class AcquisitionController {
       await this.handleDeletePayWiths(payWithDeleteds);
     }
 
-    const setedDate = handleDate(purchase_date);
-
     await this.purchaseDAO.update({
       where: {
         id: id as number,
@@ -200,7 +195,7 @@ export default class AcquisitionController {
       data: {
         description,
         value,
-        purchase_date: setedDate,
+        purchase_date,
       },
     }) as PurchaseModel;
 
