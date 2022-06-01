@@ -13,6 +13,7 @@ import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetFore
 import { checkIfExists404code } from '../../api/helpers/Validations';
 import GetAcquisitions from '../../data/usecases/GetAcquisitions';
 import { NotFoundError } from '../../error/HttpError';
+import FinancialHelperAdapter from '../../adapters/services/FinancialHelperAdapter';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -27,9 +28,12 @@ export default class UserDAOImp extends GenericDAOImp<
 > {
   private readonly encrypter: EncryptAdapter;
 
-  constructor(encrypter: EncryptAdapter) {
+  private readonly financialHelper: FinancialHelperAdapter;
+
+  constructor(encrypter: EncryptAdapter, financialHelper: FinancialHelperAdapter) {
     super(prisma.user);
     this.encrypter = encrypter;
+    this.financialHelper = financialHelper;
   }
 
   async checkIfUserExists(userId: number): Promise<void> {
@@ -40,32 +44,6 @@ export default class UserDAOImp extends GenericDAOImp<
     }) as unknown as Omit<UserModel, 'password'> | undefined | null;
 
     checkIfExists404code(user, 'Usuário não existe.');
-  }
-
-  updatePaymentCurrentValue(acquisition: GetAcquisitions) {
-    let currentValue = 0;
-    if (Array.isArray(acquisition.PayWith)) {
-      for (const paids of acquisition.PayWith) {
-        const createdAt = new Date(paids.purchase.created_at);
-        const day = createdAt.getDate();
-        const month = createdAt.getMonth() + 1;
-        const currentDate = new Date();
-        if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
-          currentValue += paids.value;
-        }
-      }
-
-      acquisition.default_value -= currentValue;
-    } else {
-      const createdAt = new Date(acquisition.PayWith.purchase.created_at);
-      const day = createdAt.getDate();
-      const month = createdAt.getMonth() + 1;
-      const currentDate = new Date();
-
-      if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
-        acquisition.default_value -= acquisition.PayWith.value;
-      }
-    }
   }
 
   async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos> {
@@ -101,7 +79,6 @@ export default class UserDAOImp extends GenericDAOImp<
             nickname: true,
             user_id: true,
             id: true,
-
           },
         },
         Purchase: true,
@@ -114,10 +91,10 @@ export default class UserDAOImp extends GenericDAOImp<
 
     if (Array.isArray(Payment)) {
       for (const payment of Payment) {
-        this.updatePaymentCurrentValue(payment);
+        this.financialHelper.updateCurrentValue(payment);
       }
     } else {
-      this.updatePaymentCurrentValue(Payment);
+      this.financialHelper.updateCurrentValue(Payment);
     }
 
     return {
