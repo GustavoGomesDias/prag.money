@@ -22,15 +22,16 @@ model User {
 }
 
 model Payment {
-  id            Int       @id @default(autoincrement())
-  nickname      String    @db.VarChar(255)
-  default_value Decimal
-  reset_day     Int
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  user          User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id       Int
-  PayWith       PayWith[]
+  id               Int       @id @default(autoincrement())
+  nickname         String    @db.VarChar(255)
+  default_value    Decimal
+  additional_value Decimal   @default(0)
+  reset_day        Int
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id          Int
+  PayWith          PayWith[]
 }
 
 model Purchase {

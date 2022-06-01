@@ -5,7 +5,9 @@ import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
   HttpResponse, ok, okWithContent,
 } from '../helpers/http';
-import { checkIsEquals403Error, validationField400code, validationId } from '../helpers/Validations';
+import {
+  checkIsEquals403Error, validationField400code, validationId, validationValues,
+} from '../helpers/Validations';
 import { BadRequestError } from '../../error/HttpError';
 import Catch from '../../decorators/Catch';
 
@@ -33,11 +35,16 @@ export default class PaymentController {
 
   validatieAllRequestFields(paymentInfos: PaymentModel): void {
     const {
-      default_value, nickname, reset_day, user_id,
+      default_value, nickname, reset_day, user_id, additional_value,
     } = paymentInfos;
 
     validationField400code(nickname, 'É preciso dar um apelido para a forma de pagamento.');
     validationField400code(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
+    validationValues(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
+    if (additional_value !== undefined || Number.isNaN(additional_value)) {
+      validationField400code(additional_value, 'Valor adicional precisa ser um número e maior/igual que zero.');
+      validationValues(additional_value as number, 'Valor adicional precisa ser um número e maior/igual que zero.');
+    }
     validationId(user_id);
 
     if (!validationDay(reset_day)) {

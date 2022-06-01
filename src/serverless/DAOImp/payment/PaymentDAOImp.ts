@@ -41,6 +41,7 @@ Prisma.PaymentFindManyArgs
         nickname: true,
         reset_day: true,
         user_id: true,
+        additional_value: true,
       },
     }) as GetAcquisitions;
 
@@ -71,6 +72,7 @@ Prisma.PaymentFindManyArgs
         nickname: true,
         reset_day: true,
         user_id: true,
+        additional_value: true,
       },
     }) as GetAcquisitions[];
 

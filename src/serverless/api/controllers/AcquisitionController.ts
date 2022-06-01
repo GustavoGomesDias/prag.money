@@ -4,7 +4,7 @@
 import {
   checkIfExists404code,
   checkIsEquals403Error,
-  validationExpenseValue, validationField400code, validationId, validationPage,
+  validationValues, validationField400code, validationId, validationPage,
 } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
@@ -123,7 +123,7 @@ export default class AcquisitionController {
     } = infos;
 
     validationField400code(description, 'Descrição de compra inválida.');
-    validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+    validationValues(value, 'Valor do gasto tem que ser maior que zero.');
     await this.userDAO.checkIfUserExists(user_id);
     await this.checkAllPaymentsExists(payments);
 
@@ -183,7 +183,7 @@ export default class AcquisitionController {
     checkIsEquals403Error(user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
     validationField400code(description, 'Descrição de compra inválida.');
-    validationExpenseValue(value, 'Valor do gasto tem que ser maior que zero.');
+    validationValues(value, 'Valor do gasto tem que ser maior que zero.');
     await this.userDAO.checkIfUserExists(user_id);
     await this.checkAllPaymentsExists(payments);
 
