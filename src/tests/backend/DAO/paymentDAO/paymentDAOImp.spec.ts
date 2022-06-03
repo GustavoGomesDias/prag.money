@@ -2,13 +2,13 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
-import PaymentModel from '../../../serverless/data/models/PaymentModel';
-import prisma from '../../../serverless/data/prisma/config';
-import { NotFoundError } from '../../../serverless/error/HttpError';
-import ExtendGenericDAOImp from '../../../serverless/infra/DAO/ExtendGenericDAOImp';
-import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
-import mockReturnsAcquisitionsUseCase from '../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
+import PaymentModel from '../../../../serverless/data/models/PaymentModel';
+import prisma from '../../../../serverless/data/prisma/config';
+import { NotFoundError } from '../../../../serverless/error/HttpError';
+import ExtendGenericDAOImp from '../../../../serverless/infra/DAO/ExtendGenericDAOImp';
+import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
+import mockReturnsAcquisitionsUseCase from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 
 const makeSut = (): PaymentDAOImp => {
   const paymentDAOStub = new PaymentDAOImp();
