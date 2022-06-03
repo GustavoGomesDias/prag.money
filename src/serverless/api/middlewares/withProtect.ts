@@ -8,7 +8,6 @@ import BcryptService from '../../services/BcryptService';
 import JWTService from '../../services/JWTService';
 import { HttpResponse } from '../helpers/http';
 import { TokenExpired } from '../../error/PMoneyErrors';
-import FinancialHelper from '../../services/FinancialHelper';
 
 export interface GetUserAuthInfoRequest extends NextApiRequest {
   user: Omit<UserModel, 'password'> // or any other type
@@ -32,8 +31,7 @@ const withProtect = (handler: HandlerFunction) => async (req: GetUserAuthInfoReq
 
     const decoded = jwtService.verify(authorization.split(' ')[1]) as Omit<UserModel, 'password'>;
     const bcryptService = new BcryptService();
-    const financialHelper = new FinancialHelper();
-    const userDAO = new UserDAOImp(bcryptService, financialHelper);
+    const userDAO = new UserDAOImp(bcryptService);
     const user = await userDAO.findUnique({
       where: {
         id: decoded.id,
