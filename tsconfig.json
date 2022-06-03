@@ -19,6 +19,6 @@
     "emitDecoratorMetadata": true
   },
   "sourceMap": true,
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.spec.ts", "**/*.test.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.spec.ts", "**/*.test.ts", "**/*.tsx", "src/context/payment"],
   "exclude": ["node_modules"]
 }
