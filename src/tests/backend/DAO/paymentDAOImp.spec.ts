@@ -48,6 +48,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
+        current_month: 1,
       });
 
       return result;
@@ -132,6 +133,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
+        current_month: 1,
       }]);
 
       return result;
@@ -230,6 +232,7 @@ describe('Payment DAO Implementation tests', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     // eslint-disable-next-line prefer-destructuring
@@ -260,6 +263,7 @@ describe('Payment DAO Implementation tests', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     // eslint-disable-next-line prefer-destructuring

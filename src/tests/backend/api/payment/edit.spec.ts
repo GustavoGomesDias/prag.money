@@ -18,6 +18,7 @@ describe('Handler Create Payment', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -33,6 +34,7 @@ describe('Handler Create Payment', () => {
       default_value: NaN,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -48,6 +50,7 @@ describe('Handler Create Payment', () => {
       default_value: -1,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -63,7 +66,8 @@ describe('Handler Create Payment', () => {
       default_value: 1,
       reset_day: 1,
       user_id: 1,
-      additional_value: NaN,
+      current_value: NaN,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -79,7 +83,8 @@ describe('Handler Create Payment', () => {
       default_value: 1,
       reset_day: 1,
       user_id: 1,
-      additional_value: -1,
+      current_value: -1,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -95,6 +100,7 @@ describe('Handler Create Payment', () => {
       default_value: 800,
       reset_day: -1,
       user_id: 1,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -110,6 +116,7 @@ describe('Handler Create Payment', () => {
       default_value: 800,
       reset_day: 1,
       user_id: NaN,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -125,6 +132,7 @@ describe('Handler Create Payment', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 2,
+      current_month: 1,
     };
 
     const paymentControllerStub = makeSut();
@@ -139,6 +147,7 @@ describe('Handler Create Payment', () => {
       nickname: 'nickname',
       default_value: 800,
       reset_day: 1,
+      current_month: 1,
       user_id: 1,
     };
 
@@ -159,6 +168,7 @@ describe('Handler Create Payment', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());

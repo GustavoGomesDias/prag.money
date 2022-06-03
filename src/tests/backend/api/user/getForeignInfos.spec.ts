@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
@@ -22,8 +23,12 @@ describe('Handle Get Payments Function', () => {
   test('Should return 200 if payments infos is returned (PayWith is array)', async () => {
     jest.spyOn(Date.prototype, 'getMonth').mockImplementationOnce(() => 5);
 
+    const { current_value, ...rest } = mockPaymentWithArray;
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
-      Payment: mockPaymentWithArray,
+      Payment: {
+        current_value: current_value - 1,
+        ...rest,
+      },
       Purchase: mockPurchase,
     }));
 
@@ -34,7 +39,8 @@ describe('Handle Get Payments Function', () => {
     expect(response).toEqual(okWithContent({
       payments: [{
         nickname: 'nickname',
-        default_value: 799,
+        default_value: 800,
+        current_value: 4,
         reset_day: Number(purchaseDate.getDate()),
         user_id: 1,
         PayWith: [{
@@ -51,8 +57,12 @@ describe('Handle Get Payments Function', () => {
 
   test('Should return 200 if payments infos is returned (PayWith not is array)', async () => {
     jest.spyOn(Date.prototype, 'getMonth').mockImplementationOnce(() => 5);
+    const { current_value, ...rest } = mockPaymentWithArray;
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve({
-      Payment: mockPayment,
+      Payment: {
+        current_value: current_value - 1,
+        ...rest,
+      },
       Purchase: mockPurchase,
     }));
 
@@ -63,17 +73,18 @@ describe('Handle Get Payments Function', () => {
     expect(response).toEqual(okWithContent({
       payments: [{
         nickname: 'nickname',
-        default_value: 799,
+        default_value: 800,
+        current_value: 4,
         reset_day: Number(purchaseDate.getDate()),
         user_id: 1,
-        PayWith: {
+        PayWith: [{
           payment_id: 1,
           purchase_id: 1,
           value: 1,
           purchase: {
             created_at: purchaseDate.toISOString(),
           },
-        },
+        }],
       }],
     }));
   });
@@ -189,7 +200,7 @@ describe('Handle Get Payments Function', () => {
   });
 
   test('Should return 404 if invalid user not exists', async () => {
-    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve(null));
+    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve([null]));
 
     const userController = makeSut();
 

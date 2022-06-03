@@ -30,7 +30,8 @@ describe('Purchase DAO Implementation', () => {
       value: 1,
     }];
 
-    await expect(purchaseDAOImpStub.returnsPurchaseByAcquisitionsList(data)).rejects.toThrow(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
+    await expect(purchaseDAOImpStub.returnsPurchaseByAcquisitionsList(data))
+      .rejects.toThrow(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
   });
 
   test('Should returns purchase list of acquisition list is not empty and has matching', async () => {
@@ -161,7 +162,8 @@ describe('Purchase DAO Implementation', () => {
       value: 1,
     }];
 
-    const spy = jest.spyOn(PurchaseDAOImp.prototype, 'deletePurchasesByAcquisisitionList').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(PurchaseDAOImp.prototype, 'deletePurchasesByAcquisisitionList')
+      .mockImplementationOnce(jest.fn());
 
     const purchaseStub = new PurchaseDAOImp();
     await purchaseStub.deletePurchasesByAcquisisitionList(acquisitionList);

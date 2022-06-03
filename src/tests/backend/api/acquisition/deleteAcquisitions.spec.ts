@@ -155,6 +155,8 @@ describe('Delete Acquisitions tests', () => {
       return result;
     });
     jest.spyOn(validations, 'checkIsEquals').mockImplementationOnce(jest.fn());
+    jest.spyOn(AcquisitionController.prototype, 'handleEditCurrentValueInPurchaseDeletation')
+      .mockImplementationOnce(jest.fn());
 
     const controllerStub = makeSut();
     const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1, 1);
