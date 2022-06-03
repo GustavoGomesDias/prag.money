@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable camelcase */
 import { validationDay } from '../../../utils/validations';
 import PaymentModel from '../../data/models/PaymentModel';
@@ -36,15 +37,15 @@ export default class PaymentController {
 
   validatieAllRequestFields(paymentInfos: PaymentModel): void {
     const {
-      default_value, nickname, reset_day, user_id, additional_value,
+      default_value, nickname, reset_day, user_id, current_value,
     } = paymentInfos;
 
     validationField400code(nickname, 'É preciso dar um apelido para a forma de pagamento.');
     validationField400code(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
     validationValues(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
-    if (additional_value !== undefined || Number.isNaN(additional_value)) {
-      validationField400code(additional_value, 'Valor adicional precisa ser um número e maior/igual que zero.');
-      validationValues(additional_value as number, 'Valor adicional precisa ser um número e maior/igual que zero.');
+    if (current_value !== undefined || Number.isNaN(current_value)) {
+      validationField400code(current_value, 'Valor adicional precisa ser um número e maior/igual que zero.');
+      validationValues(current_value as number, 'Valor adicional precisa ser um número e maior/igual que zero.');
     }
     validationId(user_id);
 
@@ -85,16 +86,7 @@ export default class PaymentController {
     validationValues(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
     checkIsEquals403Error(userId, infos.userId, 'Você não tem permissão para editar.');
 
-    await this.paymentDAOImp.update({
-      where: {
-        id: infos.paymentId,
-      },
-      data: {
-        additional_value: {
-          increment: infos.additionalValue,
-        },
-      },
-    });
+    await this.paymentDAOImp.addAdditionValue(infos);
 
     return ok('Valor adicional adicionado com sucesso!');
   }
