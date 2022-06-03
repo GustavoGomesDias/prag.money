@@ -10,16 +10,10 @@ import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import { NotFoundError } from '../../../serverless/error/HttpError';
 import { mockPayment, mockPurchase } from '../../mocks/mockForeignInfos';
-import FinancialHelperAdapter, { GetDate } from '../../../serverless/adapters/services/FinancialHelperAdapter';
-import GetAcquisitions from '../../../serverless/data/usecases/GetAcquisitions';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
-const prisma = new PrismaClient();
-
-afterAll(async () => {
-  await prisma.$disconnect();
-});
+afterAll(() => jest.resetAllMocks());
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncryptStub implements EncryptAdapter {
@@ -158,16 +152,16 @@ describe('User DAO Implementation test', () => {
 
       return result;
     });
-    await expect(userDAOImpStub.checkIfUserExists(req)).rejects.toThrow('Usuário não existe.');
+    await expect(userDAOImpStub.checkIfUserExists(req)).rejects.toThrow(new NotFoundError('Usuário não existe.'));
   });
 
-  test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
-    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
-      const result = await Promise.resolve(undefined);
-      return result;
-    });
-    expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
-  });
+  // test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
+  //   jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
+  //     const result = await Promise.resolve(undefined);
+  //     return result;
+  //   });
+  //   await expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
+  // });
 
   test('Should return Purchase and Payment array if findUnique returns array', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {
