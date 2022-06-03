@@ -2,6 +2,7 @@ const purchaseDate = new Date('2022-05-20T18:33:18.189Z');
 export const mockPayment = {
   nickname: 'nickname',
   default_value: 800,
+  current_value: 5,
   reset_day: purchaseDate.getDate(),
   user_id: 1,
   PayWith: {
