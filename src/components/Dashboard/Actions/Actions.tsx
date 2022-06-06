@@ -13,7 +13,7 @@ const Actions = (): JSX.Element => {
 
   return (
     <Flex
-      bg="#012440"
+      bg="#0e2e50"
       flexDir="column"
       alignItems="center"
       w="40%"
