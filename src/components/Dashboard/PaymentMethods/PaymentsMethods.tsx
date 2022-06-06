@@ -4,36 +4,24 @@ import React, {
   useState, ChangeEvent, useContext, MouseEvent, useEffect,
 } from 'react';
 import {
-  Flex, IconButton, Select, Text, Tooltip, useToast, keyframes, Grid, GridItem,
+  Flex, Select, Text, useToast, Grid, GridItem,
 } from '@chakra-ui/react';
-import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
-import { ImLoop2 } from 'react-icons/im';
 import { useRouter } from 'next/router';
 
-import PurchaseContext from '../../context/purchases/PurchaseContext';
-import PaymentModel from '../../serverless/data/models/PaymentModel';
-import api from '../../services/fetchAPI/init';
-import toastConfig from '../../utils/config/tostConfig';
-import PragModal from '../Layout/PragModal';
-import ManagerContainer from '../Layout/ManagerContainer';
-import ModalLoader from '../UI/Loader/ModalLoader';
-import PaymentContext from '../../context/payment/PaymentContext';
+import PurchaseContext from '../../../context/purchases/PurchaseContext';
+import PaymentModel from '../../../serverless/data/models/PaymentModel';
+import api from '../../../services/fetchAPI/init';
+import toastConfig from '../../../utils/config/tostConfig';
+import PragModal from '../../Layout/PragModal';
+import ManagerContainer from '../../Layout/ManagerContainer';
+import ModalLoader from '../../UI/Loader/ModalLoader';
+import PaymentContext from '../../../context/payment/PaymentContext';
 import PaymentMethodCard from './PaymentMethodCard';
+import PaymentActions from './PaymentActions';
 
 export interface PaymentsMethodsProps {
   refresh(): Promise<void>
 }
-
-const spin = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(-360deg);
-  }
-`;
-
-const animationSpin = `${spin} 1.5s ease-in-out`;
 
 const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
   const purchaseCtx = useContext(PurchaseContext);
@@ -244,7 +232,9 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
           alignItems="center"
           justifyContent="center"
         >
-          <PaymentMethodCard>
+          <PaymentMethodCard
+            title="Suas contas"
+          >
             <Select
               w="full"
               height="3.5em"
@@ -253,91 +243,36 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               fontWeight="bold"
               borderRadius="5px"
               onChange={(e) => handleOnSelect(e)}
+              color="#00E091"
             >
-              <option value={0}>Selecione uma forma de pagamento</option>
+              <option value={0}>Selecione uma conta</option>
               {payments !== undefined && payments.map((payment) => (
-                (payment !== undefined && <option key={payment.id} value={payment.id}>{payment.nickname}</option>)
+                (payment !== undefined && <option style={{ color: '#06866c' }} key={payment.id} value={payment.id}>{payment.nickname}</option>)
               ))}
             </Select>
           </PaymentMethodCard>
         </GridItem>
-        <PaymentMethodCard>
+        <PaymentMethodCard
+          title="Saldo"
+        >
           <Text
             w="40%"
             textAlign="center"
             p="0.1em"
             fontSize="18px"
             fontWeight="bold"
+            color="#00E091"
           >
-            Saldo: R$
+            R$
             {' '}
             {balance.toFixed(2).replace('.', ',')}
           </Text>
         </PaymentMethodCard>
-        <PaymentMethodCard>
-          <Tooltip
-            hasArrow
-            label="Editar conta"
-            placement="left-start"
-          >
-
-            <IconButton
-              bg="none"
-              aria-label="Edit account"
-              icon={<FaRegEdit />}
-              transition="0.5ms"
-              _hover={{
-                color: '#00E091',
-              }}
-              w="50px"
-              h="50px"
-              size="lg"
-              onClick={(e) => handleEdit(e)}
-            />
-          </Tooltip>
-          <Tooltip
-            hasArrow
-            label="Excluir conta"
-            placement="right-start"
-          >
-            <IconButton
-              bg="none"
-              aria-label="Delete account"
-              icon={<FaTrashAlt />}
-              transition="0.5ms"
-              _hover={{
-                color: '#e85f7a',
-              }}
-              w="50px"
-              h="50px"
-              size="lg"
-              onClick={(e) => handleDelete(e)}
-            />
-          </Tooltip>
-
-          <Tooltip
-            hasArrow
-            label="Refrash"
-            placement="right-start"
-          >
-
-            <IconButton
-              bg="none"
-              aria-label="Search database"
-              icon={<ImLoop2 />}
-              _hover={{
-                color: '#049579',
-                animation: animationSpin,
-              }}
-              w="50px"
-              h="50px"
-              size="lg"
-              onClick={async (e) => {
-                await refreshAccount(e);
-              }}
-            />
-          </Tooltip>
-        </PaymentMethodCard>
+        <PaymentActions
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          refreshAccount={refreshAccount}
+        />
       </Grid>
     </Flex>
   );

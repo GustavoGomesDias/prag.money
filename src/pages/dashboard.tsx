@@ -10,7 +10,7 @@ import {
 import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions/Actions';
-import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
+import PaymentsMethods from '../components/Dashboard/PaymentMethods/PaymentsMethods';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
