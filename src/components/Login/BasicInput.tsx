@@ -37,6 +37,7 @@ const BasicInput = React.forwardRef<HTMLInputElement, InputControlProps>(({
       <Input
         isRequired={placeholder !== 'Search'}
         placeholder={placeholder}
+        color="#00735C"
         bg="#fff"
         borderColor="#00735C"
         borderWidth="2px"
