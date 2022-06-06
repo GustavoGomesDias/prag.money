@@ -8,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+import { parseCookies } from 'nookies';
 import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import PaymentModel from '../../../serverless/data/models/PaymentModel';
 import api from '../../../services/fetchAPI/init';
@@ -18,6 +19,8 @@ import ModalLoader from '../../UI/Loader/ModalLoader';
 import PaymentContext from '../../../context/payment/PaymentContext';
 import PaymentMethodCard from './PaymentMethodCard';
 import PaymentActions from './PaymentActions';
+import AddAdditonalValue from './AddAdditionalValue';
+import AddAdditionalValue from '../../../serverless/data/usecases/AddAdditionalValue';
 
 export interface PaymentsMethodsProps {
   refresh(): Promise<void>
@@ -32,6 +35,8 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
   const [paymentList, setPaymentList] = useState<PaymentModel[] | undefined>(payments);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [additionalValue, setAdditionalValue] = useState<number>(-1);
+  const [renderAdditionalValueForm, setRenderAdditionalValueForm] = useState<boolean>(false);
 
   const { push } = useRouter();
 
@@ -57,6 +62,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     }
 
     if (Number(e.target.value) === 0) {
+      setPaymentId(0);
       setBalance(0);
       purchaseCtx.handleClearPurchaseList();
       return;
@@ -198,12 +204,56 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     await handleDeletePayment();
   };
 
+  const handleAddAdditionalMoney = async () => {
+    if (paymentId === 0) {
+      toast({
+        title: '📣',
+        description: 'Eu sou eterno! Não há como me editar.',
+        status: 'info',
+        ...toastConfig,
+      });
+      return;
+    }
+    const { authToken, userId } = parseCookies();
+    const infos: AddAdditionalValue = {
+      userId: Number(userId),
+      additionalValue,
+      paymentId,
+    };
+    api.setAuthHeader(`Bearer ${authToken}`);
+    const response = await api.post(`payment/${paymentId}`, { infos });
+
+    if (response.data.message) {
+      toast({
+        title: '📣',
+        description: response.data.message,
+        status: 'success',
+        ...toastConfig,
+      });
+    } else {
+      toast({
+        title: '📣',
+        description: response.data.error,
+        status: 'error',
+        ...toastConfig,
+      });
+    }
+    setAdditionalValue(0);
+    console.log(additionalValue);
+  };
+
   return (
     <Flex
       width="100%"
       justifyContent="center"
       alignItems="center"
     >
+      <AddAdditonalValue
+        handleAddAdditionalMoney={handleAddAdditionalMoney}
+        renderAdditionalValueForm={renderAdditionalValueForm}
+        setAdditionalValue={setAdditionalValue}
+        setRenderAdditionalValueForm={setRenderAdditionalValueForm}
+      />
       <PragModal isOpen={openModal}>
         <ManagerContainer
           firstAction="Deletar apenas a conta"
@@ -269,6 +319,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
           </Text>
         </PaymentMethodCard>
         <PaymentActions
+          setRenderAdditionalValueForm={setRenderAdditionalValueForm}
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           refreshAccount={refreshAccount}

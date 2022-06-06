@@ -2,6 +2,7 @@ import { IconButton, keyframes, Tooltip } from '@chakra-ui/react';
 import React, { MouseEvent } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { ImLoop2 } from 'react-icons/im';
+import { RiCoinFill } from 'react-icons/ri';
 import PaymentMethodCard from './PaymentMethodCard';
 
 const spin = keyframes`
@@ -15,16 +16,53 @@ const spin = keyframes`
 
 const animationSpin = `${spin} 1.5s ease-in-out`;
 
+const flip = keyframes`
+  to {
+    transform: rotateX(0deg);
+  }
+
+  from {
+    transform: rotateX(-360deg);
+  }
+`;
+
+const animationFlip = `${flip} 1.5s ease-in-out infinite alternate-reverse both`;
+
 export interface PaymentActionsProps {
   handleEdit: (e: MouseEvent<HTMLButtonElement>) => void
   handleDelete: (e: MouseEvent<HTMLButtonElement>) => void
+  setRenderAdditionalValueForm: React.Dispatch<React.SetStateAction<boolean>>
   refreshAccount: (e: MouseEvent<HTMLButtonElement>) => Promise<void>
 }
 
-const PaymentActions = ({ handleDelete, handleEdit, refreshAccount }: PaymentActionsProps): JSX.Element => (
+const PaymentActions = ({
+  handleDelete, handleEdit, refreshAccount, setRenderAdditionalValueForm,
+}: PaymentActionsProps): JSX.Element => (
   <PaymentMethodCard
     title="Ações da conta"
   >
+    <Tooltip
+      hasArrow
+      label="Adicionar dinheiro a conta"
+      placement="left-start"
+    >
+
+      <IconButton
+        bg="none"
+        aria-label="Edit account"
+        icon={<RiCoinFill />}
+        transition="0.5ms"
+        animation={animationFlip}
+        _hover={{
+          animation: 'none',
+        }}
+        w="60px"
+        h="60px"
+        size="lg"
+        onClick={() => setRenderAdditionalValueForm(true)}
+        color="#dce66e"
+      />
+    </Tooltip>
     <Tooltip
       hasArrow
       label="Editar conta"

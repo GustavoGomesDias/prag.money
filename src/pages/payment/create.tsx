@@ -62,7 +62,7 @@ const Create = (): JSX.Element => {
       return;
     }
 
-    const data: PaymentModel = {
+    const data: Omit<PaymentModel, 'current_month'> = {
       nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
     const response = await api.post('/payment', data);
