@@ -87,7 +87,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           <SideActions />
         </Flex>
         <Flex
-          w={{ base: '90%', md: 'full', xl: 'full' }}
+          w={{ base: '90%', md: '95%', xl: '95%' }}
           bg="linear(to-br, #031426, #081828, #031426, #0b243f, #081828, #081828)"
           h="100vh"
           flexDir="column"

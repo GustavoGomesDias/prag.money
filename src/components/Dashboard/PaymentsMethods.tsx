@@ -227,7 +227,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
       </PragModal>
       <ModalLoader isOpen={isLoading} />
       <Flex
-        width={{ base: '100%', md: '60%', xl: '40%' }}
+        width={{ base: '100%', md: '60%', xl: '100%' }}
         padding="0.8em"
         alignItems="center"
         justifyContent="center"

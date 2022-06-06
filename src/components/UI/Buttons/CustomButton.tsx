@@ -18,7 +18,6 @@ const CustomButton = ({
     alignItems="center"
     onClick={() => handleOnClick()}
     color="#00E091"
-    zIndex={2}
     w="100%"
     size="lg"
     variant="unstyled"
