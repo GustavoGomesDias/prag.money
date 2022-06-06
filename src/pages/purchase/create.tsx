@@ -129,7 +129,9 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
     const year = Number(date.split('-')[0]);
     const month = Number(date.split('-')[1]);
     const day = Number(date.split('-')[2]);
-    const setedDate = new Date(Date.UTC(year, month, day, 3, 0, 0));
+    const setedDate = new Date(Date.UTC(year, month - 1, day, 3, 0, 0));
+
+    console.log(setedDate);
 
     const purchase: PurchaseModel = {
       description,

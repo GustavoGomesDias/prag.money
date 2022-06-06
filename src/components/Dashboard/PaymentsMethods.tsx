@@ -1,11 +1,13 @@
+/* eslint-disable camelcase */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {
   useState, ChangeEvent, useContext, MouseEvent, useEffect,
 } from 'react';
 import {
-  Button, Flex, Select, Text, Tooltip, useToast,
+  Flex, IconButton, Select, Text, Tooltip, useToast, keyframes,
 } from '@chakra-ui/react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+import { ImLoop2 } from 'react-icons/im';
 import { useRouter } from 'next/router';
 
 import PurchaseContext from '../../context/purchases/PurchaseContext';
@@ -14,17 +16,34 @@ import api from '../../services/fetchAPI/init';
 import toastConfig from '../../utils/config/tostConfig';
 import PragModal from '../Layout/PragModal';
 import ManagerContainer from '../Layout/ManagerContainer';
+import ModalLoader from '../UI/Loader/ModalLoader';
+import PaymentContext from '../../context/payment/PaymentContext';
 
 export interface PaymentsMethodsProps {
-  payments: PaymentModel[] | undefined
+  refresh(): Promise<void>
 }
 
-const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+`;
+
+const animationSpin = `${spin} 1.5s ease-in-out`;
+
+const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
+  const purchaseCtx = useContext(PurchaseContext);
+  const { payments } = useContext(PaymentContext);
+
   const [balance, setBalance] = useState<number>(0);
   const [paymentId, setPaymentId] = useState<number>(0);
   const [paymentList, setPaymentList] = useState<PaymentModel[] | undefined>(payments);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const purchaseCtx = useContext(PurchaseContext);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { push } = useRouter();
 
   const toast = useToast();
@@ -33,15 +52,13 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
     if (paymentId === 0) {
       purchaseCtx.handleClearPurchaseList();
     }
+
+    if (paymentList !== undefined) setPaymentList([...paymentList]);
   }, [paymentId]);
 
   useEffect(() => {
     if (payments !== undefined) setPaymentList([...payments]);
-  }, []);
-
-  useEffect(() => {
-    if (paymentList !== undefined) setPaymentList([...paymentList]);
-  }, [paymentId]);
+  }, [payments]);
 
   const handleOnSelect = async (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
@@ -60,8 +77,12 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
       const paymentsIds = payments.map((payment) => payment.id);
 
       const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
+      const { current_value } = payments[selectedPaymentIndex];
 
-      setBalance(Number(payments[selectedPaymentIndex].default_value));
+      if (current_value) {
+        setBalance(Number(current_value));
+      }
+
       await purchaseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
       setPaymentId(Number(e.target.value));
       return;
@@ -70,10 +91,40 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
     const paymentsIds = payments.map((payment) => payment.id);
 
     const selectedPaymentIndex: number = paymentsIds.indexOf(Number(e.target.value));
-    setBalance(Number(payments[selectedPaymentIndex].default_value));
+    const { current_value } = payments[selectedPaymentIndex];
+    if (current_value) {
+      setBalance(Number(current_value));
+    }
+
     purchaseCtx.handleClearPurchaseList();
     await purchaseCtx.handleGetPurchasesByPaymentId(Number(e.target.value));
     setPaymentId(Number(e.target.value));
+  };
+
+  useEffect(() => {
+    if (payments === undefined) {
+      return;
+    }
+
+    if (paymentId === 0) {
+      return;
+    }
+
+    setBalance(0);
+    const paymentsIds = payments.map((payment) => payment.id);
+
+    const selectedPaymentIndex: number = paymentsIds.indexOf(paymentId);
+    const { current_value } = payments[selectedPaymentIndex];
+    if (current_value) {
+      setBalance(Number(current_value));
+    }
+  }, [payments]);
+
+  const refreshAccount = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    await refresh();
+    setIsLoading(false);
   };
 
   const handleDelete = (e: MouseEvent<HTMLButtonElement>): void => {
@@ -107,7 +158,6 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
       return;
     }
 
-    // Usar filter
     if (paymentList !== undefined) {
       const filterPayments = paymentList.filter((payment) => payment.id !== paymentId);
       setPaymentList(filterPayments);
@@ -175,6 +225,7 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
           handleCancel={() => setOpenModal(false)}
         />
       </PragModal>
+      <ModalLoader isOpen={isLoading} />
       <Flex
         width={{ base: '100%', md: '60%', xl: '40%' }}
         padding="0.8em"
@@ -204,8 +255,8 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
             onChange={(e) => handleOnSelect(e)}
           >
             <option value={0}>Selecione uma forma de pagamento</option>
-            {paymentList !== undefined && paymentList.map((payment) => (
-              <option key={payment.id} value={payment.id}>{payment.nickname}</option>
+            {payments !== undefined && payments.map((payment) => (
+              (payment !== undefined && <option key={payment.id} value={payment.id}>{payment.nickname}</option>)
             ))}
           </Select>
           <Text w="40%" textAlign="center" p="0.1em">
@@ -214,19 +265,24 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
             {balance.toFixed(2).replace('.', ',')}
           </Text>
         </Flex>
-        <Flex width="10%">
+        <Flex width="100%" justifyContent="center" gap={6} mt="0.5em">
           <Tooltip
             hasArrow
             label="Editar conta"
             placement="left-start"
           >
-            <Button
+
+            <IconButton
               bg="none"
+              aria-label="Edit account"
+              icon={<FaRegEdit />}
+              transition="0.5ms"
               _hover={{
                 color: '#049579',
               }}
-              leftIcon={<FaRegEdit />}
-              w="100%"
+              w="50px"
+              h="50px"
+              size="lg"
               onClick={(e) => handleEdit(e)}
             />
           </Tooltip>
@@ -235,17 +291,43 @@ const PaymentsMethods = ({ payments }: PaymentsMethodsProps): JSX.Element => {
             label="Excluir conta"
             placement="right-start"
           >
-            <Button
+            <IconButton
               bg="none"
+              aria-label="Delete account"
+              icon={<FaTrashAlt />}
+              transition="0.5ms"
               _hover={{
                 color: '#e85f7a',
               }}
-              leftIcon={<FaTrashAlt />}
-              w="100%"
+              w="50px"
+              h="50px"
+              size="lg"
               onClick={(e) => handleDelete(e)}
             />
           </Tooltip>
 
+          <Tooltip
+            hasArrow
+            label="Refrash"
+            placement="right-start"
+          >
+
+            <IconButton
+              bg="none"
+              aria-label="Search database"
+              icon={<ImLoop2 />}
+              _hover={{
+                color: '#049579',
+                animation: animationSpin,
+              }}
+              w="50px"
+              h="50px"
+              size="lg"
+              onClick={async (e) => {
+                await refreshAccount(e);
+              }}
+            />
+          </Tooltip>
         </Flex>
       </Flex>
     </Flex>

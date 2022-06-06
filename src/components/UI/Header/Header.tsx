@@ -39,7 +39,7 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
       <Flex
         justifyContent="space-between"
       >
-        <Logo fontSize="64px" logo={logo} />
+        <Logo fontSize={logo === 'Dash' ? '40px' : '64px'} logo={logo} />
         <ButtonGroup display="flex" alignItems="center">
           {user?.userInfo !== undefined ? (
             <HeaderButton action="Sair" handleOnClick={logout} />

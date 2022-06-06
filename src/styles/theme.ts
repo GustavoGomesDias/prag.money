@@ -5,9 +5,9 @@ export const theme = extendTheme({
   styles: {
     global: {
       body: {
-        bg: '#C1D9B7',
-        color: '#00735C',
-        height: '100%',
+        bgGradient: 'linear(to-br, #031426, #081828, #031426, #0b243f, #081828, #081828)',
+        color: '#1B998B',
+        height: '100vh',
         padding: '0px !important',
         margin: '0px !important',
       },

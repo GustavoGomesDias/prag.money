@@ -28,7 +28,7 @@ const SideMenu = (): JSX.Element => {
         display={{ base: 'flex', xl: 'none' }}
         aria-label="Open menu"
         fontSize="20px"
-        color="blackAlpha.800"
+        bg="#083c67"
         variant="solid"
         icon={<AiOutlineMenu />}
         onClick={onOpen}
@@ -43,7 +43,7 @@ const SideMenu = (): JSX.Element => {
         <DrawerOverlay />
         <DrawerContent
           p="1em"
-          bg="#00735C"
+          bg="#012440"
           color="#fff"
         >
           <DrawerCloseButton />

@@ -1,6 +1,8 @@
 import { ButtonGroup } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { FaShoppingBag } from 'react-icons/fa';
+import { GiWallet } from 'react-icons/gi';
 import CustomButton from '../../UI/Buttons/CustomButton';
 
 // export interface SideContentProps {
@@ -21,8 +23,18 @@ const SideContent = (): JSX.Element => {
       gap={4}
       mt="3em"
     >
-      <CustomButton handleOnClick={handleRedirectToAddPurchase} action="Adicionar compra" textSize="16px" />
-      <CustomButton handleOnClick={handleRedirectToAddPayment} action="Adicionar conta" textSize="16px" />
+      <CustomButton
+        Icon={FaShoppingBag}
+        handleOnClick={handleRedirectToAddPurchase}
+        action="Adicionar compra"
+        textSize="18px"
+      />
+      <CustomButton
+        Icon={GiWallet}
+        handleOnClick={handleRedirectToAddPayment}
+        action="Adicionar conta"
+        textSize="18px"
+      />
     </ButtonGroup>
   );
 };

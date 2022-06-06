@@ -4,14 +4,11 @@ import ModalLoader from '../../components/UI/Loader/ModalLoader';
 import GetForeignInfos from '../../serverless/data/usecases/GetForeignInfos';
 import api from '../../services/fetchAPI/init';
 import toastConfig from '../../utils/config/tostConfig';
+import { PragMoneyProviderProps } from '../types/PragMoneyProviderProps';
 import PurchaseContext from './PurchaseContext';
 import purchaseReducer from './purchaseReducer';
 
-export interface PurchaseProviderProps {
-  children: JSX.Element | JSX.Element[]
-}
-
-export default function PurchaseProvider({ children }: PurchaseProviderProps) {
+export default function PurchaseProvider({ children }: PragMoneyProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [purchasesState, dispatchPurchasesActions] = useReducer(purchaseReducer, {
     purchases: [],
