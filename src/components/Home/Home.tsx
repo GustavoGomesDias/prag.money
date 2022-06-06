@@ -8,8 +8,7 @@ import Section from './Section';
 // import HealthBeat from '../Layout/HealthBeatMonitor/HealthBeat';
 
 const styles = {
-  color: '#00E091',
-  textDecoration: 'underline wavy #00735C',
+  color: '#6e978f',
 };
 
 const Home = (): JSX.Element => (

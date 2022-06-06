@@ -25,7 +25,7 @@ const beat = keyframes`
 const animationBeat = `${beat} 1s infinite`;
 
 const MoneyBeat = (): JSX.Element => (
-  <Image display={{ base: 'none', md: 'block' }} src="/dollar.svg" alt="Image Loading" width={{ base: '100%', md: '60%', xl: '30%' }} height={{ base: '100%', md: '60%', xl: '30%' }} animation={animationBeat} />
+  <Image display={{ base: 'none', md: 'block' }} src="/heart-with-dollar.svg" alt="Image Loading" width={{ base: '100%', md: '60%', xl: '30%' }} height={{ base: '100%', md: '60%', xl: '30%' }} animation={animationBeat} />
 );
 
 export default MoneyBeat;
