@@ -82,15 +82,17 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
       >
         <Flex
           w="full"
+          mb={{ base: '1em', md: '0' }}
         >
           <Actions />
           <SideActions />
         </Flex>
         <Flex
-          w={{ base: '90%', md: '95%', xl: '95%' }}
+          w={{ base: '90%', md: '100%', xl: '95%' }}
           bg="linear(to-br, #031426, #081828, #031426, #0b243f, #081828, #081828)"
           h="100vh"
           flexDir="column"
+          alignItems="center"
         >
           <PaymentsMethods refresh={refresh} />
           <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />

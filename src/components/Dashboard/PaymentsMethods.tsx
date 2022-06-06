@@ -4,7 +4,7 @@ import React, {
   useState, ChangeEvent, useContext, MouseEvent, useEffect,
 } from 'react';
 import {
-  Flex, IconButton, Select, Text, Tooltip, useToast, keyframes,
+  Flex, IconButton, Select, Text, Tooltip, useToast, keyframes, Grid, GridItem,
 } from '@chakra-ui/react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 import { ImLoop2 } from 'react-icons/im';
@@ -18,6 +18,7 @@ import PragModal from '../Layout/PragModal';
 import ManagerContainer from '../Layout/ManagerContainer';
 import ModalLoader from '../UI/Loader/ModalLoader';
 import PaymentContext from '../../context/payment/PaymentContext';
+import PaymentMethodCard from './PaymentMethodCard';
 
 export interface PaymentsMethodsProps {
   refresh(): Promise<void>
@@ -212,8 +213,8 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
   return (
     <Flex
       width="100%"
-      justifyContent="flex-end"
-      padding="2em"
+      justifyContent="center"
+      alignItems="center"
     >
       <PragModal isOpen={openModal}>
         <ManagerContainer
@@ -226,46 +227,54 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
         />
       </PragModal>
       <ModalLoader isOpen={isLoading} />
-      <Flex
-        width={{ base: '100%', md: '60%', xl: '100%' }}
-        padding="0.8em"
-        alignItems="center"
-        justifyContent="center"
-        bg="#fff"
-        borderRadius="15px"
-        border="2px solid #00735C"
-        flexDir="column"
+      <Grid
+        templateColumns={{ base: 'none', md: 'repeat(2, 50%)', xl: 'repeat(3, 1fr)' }}
+        templateRows={{ base: 'repeat(3, 1fr)', md: 'repeat(2, 1fr)', xl: 'none' }}
+        width={{ base: '90%', xl: '100%' }}
+        placeItems={{ base: 'start', md: 'center', xl: 'center' }}
+        py={5}
+        // flexDir={{ base: 'column', md: 'row' }}
+        gap={{ base: 4, md: 4, xl: 0 }}
       >
-        <Flex
-          padding="0.8em"
+        <GridItem
+          height="100%"
+          colSpan={{ base: 1, md: 2, xl: 1 }}
+          width={{ base: '100%', md: 'none', xl: 'none' }}
+          display="flex"
           alignItems="center"
           justifyContent="center"
-          borderRadius="5px"
-          border="2px solid #00735C"
         >
-          <Select
-            variant="outline"
-            width="50%"
-            height="2.5em"
-            mr="15px"
-            bg="#fff"
-            borderRadius="5px"
-            border="2px solid #00735C"
-            borderColor="initial"
-            onChange={(e) => handleOnSelect(e)}
+          <PaymentMethodCard>
+            <Select
+              w="full"
+              height="3.5em"
+              bg="transparent"
+              fontSize="18px"
+              fontWeight="bold"
+              borderRadius="5px"
+              onChange={(e) => handleOnSelect(e)}
+            >
+              <option value={0}>Selecione uma forma de pagamento</option>
+              {payments !== undefined && payments.map((payment) => (
+                (payment !== undefined && <option key={payment.id} value={payment.id}>{payment.nickname}</option>)
+              ))}
+            </Select>
+          </PaymentMethodCard>
+        </GridItem>
+        <PaymentMethodCard>
+          <Text
+            w="40%"
+            textAlign="center"
+            p="0.1em"
+            fontSize="18px"
+            fontWeight="bold"
           >
-            <option value={0}>Selecione uma forma de pagamento</option>
-            {payments !== undefined && payments.map((payment) => (
-              (payment !== undefined && <option key={payment.id} value={payment.id}>{payment.nickname}</option>)
-            ))}
-          </Select>
-          <Text w="40%" textAlign="center" p="0.1em">
             Saldo: R$
             {' '}
             {balance.toFixed(2).replace('.', ',')}
           </Text>
-        </Flex>
-        <Flex width="100%" justifyContent="center" gap={6} mt="0.5em">
+        </PaymentMethodCard>
+        <PaymentMethodCard>
           <Tooltip
             hasArrow
             label="Editar conta"
@@ -278,7 +287,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               icon={<FaRegEdit />}
               transition="0.5ms"
               _hover={{
-                color: '#049579',
+                color: '#00E091',
               }}
               w="50px"
               h="50px"
@@ -328,8 +337,8 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               }}
             />
           </Tooltip>
-        </Flex>
-      </Flex>
+        </PaymentMethodCard>
+      </Grid>
     </Flex>
   );
 };
