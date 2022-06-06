@@ -30,7 +30,7 @@ const Header = ({ logo }: HeaderProps): JSX.Element => {
 
   return (
     <chakra.header
-      bg="#fff"
+      bg="#012440"
       position="sticky"
       w="full"
       px={{ base: 2, sm: 4 }}

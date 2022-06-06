@@ -5,6 +5,7 @@ import {
 import { FaWallet } from 'react-icons/fa';
 
 import Section from './Section';
+// import HealthBeat from '../Layout/HealthBeatMonitor/HealthBeat';
 
 const styles = {
   color: '#00E091',
