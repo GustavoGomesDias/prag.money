@@ -292,6 +292,8 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               fontSize="18px"
               fontWeight="bold"
               borderRadius="5px"
+              border="none"
+              boxShadow="0 0 1em rgba(0, 0, 0, 0.4)"
               onChange={(e) => handleOnSelect(e)}
               color="#00E091"
             >
