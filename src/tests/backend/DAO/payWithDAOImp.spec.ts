@@ -3,7 +3,9 @@ import PayWithDAOImp from '../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PayWithModel from '../../../serverless/data/models/PayWithModel';
 import prisma from '../../../serverless/data/prisma/config';
 
-describe('Payment DAO Implementation tests', () => {
+afterAll(() => jest.resetAllMocks());
+
+describe('PayWith DAO Implementation tests', () => {
   test('Should call constructor with prisma.payWith', () => {
     const payWithtDAOStub = new PayWithDAOImp();
 
@@ -20,7 +22,7 @@ describe('Payment DAO Implementation tests', () => {
 
     // eslint-disable-next-line prefer-destructuring
     const entity = new PayWithDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(entity, 'create').mockImplementation(async () => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,
