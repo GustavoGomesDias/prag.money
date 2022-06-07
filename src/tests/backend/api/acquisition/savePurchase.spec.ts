@@ -149,7 +149,7 @@ describe('Add acquisition tests', () => {
     };
     jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(jest.fn());
 
-    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {
+    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(async (infos) => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,

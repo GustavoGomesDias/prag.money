@@ -219,7 +219,7 @@ describe('Update acquisition tests', () => {
     jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementation(async (info) => {
       await Promise.resolve(true);
     });
-    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());
+    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
     const spy = jest.spyOn(PayWithDAOImp.prototype, 'update');
     const userController = makeSut();
 
