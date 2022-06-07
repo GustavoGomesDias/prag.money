@@ -20,17 +20,8 @@ describe('PayWith DAO Implementation tests', () => {
       value: 800,
     };
 
-    // eslint-disable-next-line prefer-destructuring
-    const entity = new PayWithDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'create').mockImplementation(async () => {
-      const result = await Promise.resolve({
-        payment_id: 1,
-        purchase_id: 1,
-        value: 800,
-      });
-
-      return result;
-    });
+    const { entity } = new PayWithDAOImp();
+    const spy = jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     const payWithtDAOStub = new PayWithDAOImp();
 
