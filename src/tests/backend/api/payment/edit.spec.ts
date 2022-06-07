@@ -153,7 +153,7 @@ describe('Handler Create Payment', () => {
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(async () => {
+    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(async () => {
       throw new Error('Server Error');
     });
     const paymentControllerStub = new PaymentController(new PaymentDAOImp());
@@ -172,7 +172,7 @@ describe('Handler Create Payment', () => {
       current_month: 1,
     };
 
-    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());
+    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
 
     const paymentControllerStub = new PaymentController(new PaymentDAOImp());
 

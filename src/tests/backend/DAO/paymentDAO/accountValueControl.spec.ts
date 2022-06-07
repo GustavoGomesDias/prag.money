@@ -91,7 +91,7 @@ describe('Extended PaymentDAO tests for payment account value transactions', () 
 
   test('Should ensure that updateAccountValueWithBalance has been called with correct contract', async () => {
     jest.spyOn(Date, 'now').mockImplementationOnce(() => 1654284219226);
-    const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
 
     const paymentDAOStub = makeSut();
 

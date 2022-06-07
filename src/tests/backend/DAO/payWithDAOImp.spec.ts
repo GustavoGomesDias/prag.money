@@ -49,7 +49,7 @@ describe('PayWith DAO Implementation tests', () => {
     };
 
     // eslint-disable-next-line prefer-destructuring
-    const spy = jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementation(async () => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,

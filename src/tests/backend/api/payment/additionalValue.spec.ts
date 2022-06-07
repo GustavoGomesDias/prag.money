@@ -88,7 +88,7 @@ describe('Handle Additional Value', () => {
       userId: 1,
     };
 
-    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());
+    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
 
     const paymentControllerStub = new PaymentController(new PaymentDAOImp());
 

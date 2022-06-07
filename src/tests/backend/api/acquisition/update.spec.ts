@@ -199,9 +199,8 @@ describe('Update acquisition tests', () => {
     }];
 
     const entity = new PayWithDAOImp()['entity'];
-    jest.spyOn(entity, 'update').mockImplementationOnce(jest.fn());
-    jest.spyOn(entity, 'create').mockImplementationOnce(jest.fn());
-    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());
+    jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementation(jest.fn());
+    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
     const spy = jest.spyOn(AcquisitionController.prototype, 'handleUpdatePayWithRelations');
     const userController = makeSut();
 
@@ -217,7 +216,7 @@ describe('Update acquisition tests', () => {
       payWithId: 1,
     }];
 
-    jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementationOnce(async (info) => {
+    jest.spyOn(PayWithDAOImp.prototype, 'update').mockImplementation(async (info) => {
       await Promise.resolve(true);
     });
     jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());

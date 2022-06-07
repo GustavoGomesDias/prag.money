@@ -64,7 +64,7 @@ describe('Account Controll Tests', () => {
 
   test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
     jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
-    const spy = jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
 
     const acquisitionControlerStub = makeSut();
 
