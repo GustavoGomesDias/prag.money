@@ -66,7 +66,7 @@ const Edit = ({ payment }: EditProps): JSX.Element => {
       return;
     }
 
-    const data: PaymentModel = {
+    const data: Omit<PaymentModel, 'current_month'> = {
       id: payment.id, nickname, default_value: Number(defaultValue), reset_day: Number(resetDay), user_id: (user?.userInfo.id as number),
     };
     const response = await api.put(`/payment/${payment.id}`, data);
