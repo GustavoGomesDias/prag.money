@@ -208,10 +208,10 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
       <Table>
         <Thead>
           <Tr>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Descrição</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Valor (R$)</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Data de compra</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Ações</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Descrição</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Valor (R$)</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Data de compra</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Ações</Th>
           </Tr>
         </Thead>
         <Tbody>
