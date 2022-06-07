@@ -201,7 +201,7 @@ describe('Update acquisition tests', () => {
     const spy = jest.spyOn(AcquisitionController.prototype, 'handleUpdatePayWithRelations');
     const userController = makeSut();
 
-    const { entity } = userController['payWithDAO'];
+    const entity = userController['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -224,7 +224,7 @@ describe('Update acquisition tests', () => {
     const spy = jest.spyOn(PayWithDAOImp.prototype, 'update');
     const userController = makeSut();
 
-    const { entity } = userController['payWithDAO'];
+    const entity = userController['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -280,7 +280,7 @@ describe('Update acquisition tests', () => {
     const spy = jest.spyOn(AcquisitionController.prototype, 'handleDeletePayWiths');
     const userController = makeSut();
 
-    const { entity } = userController['payWithDAO'];
+    const entity = userController['payWithDAO']['entity'];
     jest.spyOn(entity, 'update').mockImplementation(jest.fn());
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());

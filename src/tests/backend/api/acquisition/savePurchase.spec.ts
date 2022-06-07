@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable dot-notation */
 /* eslint-disable no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -165,7 +166,7 @@ describe('Add acquisition tests', () => {
     });
     const userController = makeSut();
 
-    const { entity } = userController['payWithDAO'];
+    const entity = userController['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 

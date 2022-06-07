@@ -29,6 +29,6 @@ jobs:
           echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
           cat .env
       - run: npm ci
-      - run: npm test
+      - run: npm test --no-cache
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3

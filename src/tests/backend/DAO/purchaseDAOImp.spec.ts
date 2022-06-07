@@ -31,7 +31,7 @@ describe('Purchase DAO Implementation', () => {
     }];
 
     await expect(purchaseDAOImpStub.returnsPurchaseByAcquisitionsList(data))
-      .rejects.toThrow(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.'));
+      .rejects.toThrow(new NotFoundError('Algo de errado não está certo. Não foi possível encontrar nenhuma compras.'));
   });
 
   test('Should returns purchase list of acquisition list is not empty and has matching', async () => {
@@ -76,7 +76,7 @@ describe('Purchase DAO Implementation', () => {
 
     // eslint-disable-next-line prefer-destructuring
     const entity = new PurchaseDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'create').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(entity, 'create').mockImplementation(async () => {
       const result = await Promise.resolve({
         value: 11,
         description: 'description',
@@ -106,7 +106,7 @@ describe('Purchase DAO Implementation', () => {
 
     // eslint-disable-next-line prefer-destructuring
     const entity = new PurchaseDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(entity, 'update').mockImplementation(async () => {
       const result = await Promise.resolve({
         value: 11,
         description: 'description',
@@ -137,7 +137,7 @@ describe('Purchase DAO Implementation', () => {
   test('Should call GenericDAOImp delete function with correct value', async () => {
     // eslint-disable-next-line prefer-destructuring
     const entity = new PurchaseDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'delete').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(entity, 'delete').mockImplementation(jest.fn());
 
     const purchaseStub = new PurchaseDAOImp();
 

@@ -103,7 +103,7 @@ export default {
   // reporters: undefined,
 
   // Automatically reset mock state before every test
-  // resetMocks: false,
+  resetMocks: false,
 
   // Reset the module registry before running each individual test
   // resetModules: false,

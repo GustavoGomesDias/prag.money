@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable dot-notation */
 import AcquisitionController from '../../../../serverless/api/controllers/AcquisitionController';
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
@@ -46,7 +47,7 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
-    const { entity } = acquisitionControlerStub['payWithDAO'];
+    const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -71,7 +72,7 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
-    const { entity } = acquisitionControlerStub['payWithDAO'];
+    const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -92,7 +93,7 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
-    const { entity } = acquisitionControlerStub['payWithDAO'];
+    const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -122,7 +123,7 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
-    const { entity } = acquisitionControlerStub['payWithDAO'];
+    const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
@@ -143,7 +144,7 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
-    const { entity } = acquisitionControlerStub['payWithDAO'];
+    const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
     jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 

@@ -6,8 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test-w": "jest --coverage --watch --no-cahce",
-    "test": "jest --coverage --no-cahce",
+    "test-w": "jest --coverage --watch --no-cache",
+    "test": "jest --coverage --no-cache",
     "pstd": "prisma studio"
   },
   "resolutions": {

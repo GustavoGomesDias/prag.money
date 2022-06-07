@@ -33,7 +33,7 @@ export default class PurchaseDAOImp extends GenericDAOImp<
       const purchases = await Promise.all(getAllPurchases) as unknown as PurchaseModel[];
 
       if (purchases[0] === null || purchases[0] === undefined || purchases.length <= 0) {
-        throw new NotFoundError('Algo de errado não está certo. Não foi possível encontrar compras para assa aquisição.');
+        throw new NotFoundError('Algo de errado não está certo. Não foi possível encontrar nenhuma compras.');
       }
 
       return purchases;

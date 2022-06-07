@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable dot-notation */
 import PayWithDAOImp from '../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PayWithModel from '../../../serverless/data/models/PayWithModel';
@@ -18,7 +19,7 @@ describe('PayWith DAO Implementation tests', () => {
       value: 800,
     };
 
-    const { entity } = new PayWithDAOImp();
+    const entity = new PayWithDAOImp()['entity'];
     const spy = jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     const payWithtDAOStub = new PayWithDAOImp();

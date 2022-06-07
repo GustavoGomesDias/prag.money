@@ -2,7 +2,7 @@ import GenericDAO from './GenericDAO';
 import { Delegate } from './Delegate';
 
 export default abstract class GenericDAOImp<C, R, U, D> implements GenericDAO<C, R, U, D> {
-  public readonly entity: Delegate;
+  private readonly entity: Delegate;
 
   constructor(entity: Delegate) {
     this.entity = entity;
