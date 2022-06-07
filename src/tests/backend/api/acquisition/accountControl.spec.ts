@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import AcquisitionController from '../../../../serverless/api/controllers/AcquisitionController';
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../../../serverless/DAOImp/payWith/PayWithDAOImp';
@@ -6,8 +7,6 @@ import PurchaseModel from '../../../../serverless/data/models/PurchaseModel';
 import { AddPayment } from '../../../../serverless/data/usecases/AddPurchase';
 import UpdateCurrentValue from '../../../../serverless/data/usecases/UpdateCurrentValue';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
-
-afterAll(() => jest.resetAllMocks());
 
 const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
@@ -47,6 +46,10 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
+    const { entity } = acquisitionControlerStub['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+
     await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
 
     expect(spy).toHaveBeenCalledWith({
@@ -64,9 +67,13 @@ describe('Account Controll Tests', () => {
 
   test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
     jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
-    const spy = jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
+    const spy = jest.spyOn(PayWithDAOImp.prototype, 'add');
 
     const acquisitionControlerStub = makeSut();
+
+    const { entity } = acquisitionControlerStub['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
 
@@ -84,6 +91,10 @@ describe('Account Controll Tests', () => {
     const id = 1;
 
     const acquisitionControlerStub = makeSut();
+
+    const { entity } = acquisitionControlerStub['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     await acquisitionControlerStub.handleEditCurrentValueInPurchaseDeletation(id);
 
@@ -111,6 +122,10 @@ describe('Account Controll Tests', () => {
 
     const acquisitionControlerStub = makeSut();
 
+    const { entity } = acquisitionControlerStub['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+
     await acquisitionControlerStub.handleEditCurrentValueInPurchaseDeletation(id);
 
     expect(spy).toHaveBeenCalledWith({ paymentId: payWith.PayWith[0].payment_id, additionalValue: payWith.PayWith[0].value });
@@ -127,6 +142,10 @@ describe('Account Controll Tests', () => {
     const id = 1;
 
     const acquisitionControlerStub = makeSut();
+
+    const { entity } = acquisitionControlerStub['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     await acquisitionControlerStub.handleEditCurrentValueInPurchaseDeletation(id);
 

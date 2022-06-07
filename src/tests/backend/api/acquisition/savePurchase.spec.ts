@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
@@ -165,6 +166,10 @@ describe('Add acquisition tests', () => {
       return result;
     });
     const userController = makeSut();
+
+    const { entity } = userController['payWithDAO'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 
