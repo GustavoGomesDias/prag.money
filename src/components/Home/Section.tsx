@@ -1,12 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Flex, Box, chakra, Image, Button,
+  Flex, Box, chakra, Button,
 } from '@chakra-ui/react';
 import {
   FaMoneyBillWaveAlt, FaCreditCard, FaTshirt, FaHamburger, FaMobile,
 } from 'react-icons/fa';
-import classes from './Home.module.css';
+import MoneyBeat from '../Layout/MoneyBeat/MoneyBeat';
 
 const Section = (): JSX.Element => (
   <Flex
@@ -21,7 +21,6 @@ const Section = (): JSX.Element => (
         flexDir="column"
         justifyContent="center"
         alignItems="center"
-        className={classes['p1-animation']}
         mb="15px"
       >
         <Flex justifyContent="center">
@@ -39,13 +38,12 @@ const Section = (): JSX.Element => (
             <FaCreditCard size="60px" />
           </Box>
         </Flex>
-        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">Cadastre várias formas de pagamento</chakra.h3>
+        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">Cadastre suas contas de forma prática</chakra.h3>
       </Flex>
       <Flex
         flexDir="column"
         justifyContent="center"
         alignItems="center"
-        className={classes['p2-animation']}
         mb="15px"
       >
         <Flex justifyContent="center">
@@ -70,15 +68,29 @@ const Section = (): JSX.Element => (
             <FaMobile size="60px" />
           </Box>
         </Flex>
-        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">Use-as para trackear suas compras</chakra.h3>
+        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">E tenha controle sobre sua vida financeira</chakra.h3>
       </Flex>
       <Link href="/register" passHref>
-        <Button colorScheme="teal" width={{ base: '80%', md: '100%' }} bg="#fff" size="lg" variant="outline" fontWeight="bold">
+        <Button
+          colorScheme="teal"
+          w="100%"
+          size="lg"
+          variant="outline"
+          fontWeight="bold"
+          borderColor="initial"
+          border="2px solid"
+          margin="0px !important"
+          fontSize="18px"
+          style={{
+            whiteSpace: 'normal',
+            wordWrap: 'break-word',
+          }}
+        >
           Cadastre-se
         </Button>
       </Link>
     </Flex>
-    <Image display={{ base: 'none', md: 'block' }} src="/wallet.svg" alt="Wallet image" w="40%" />
+    <MoneyBeat />
   </Flex>
 );
 

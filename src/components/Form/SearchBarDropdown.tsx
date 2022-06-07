@@ -82,6 +82,7 @@ const SearchBarDropdown = ({
               borderRadius="0px"
               borderColor="rgba(0, 0, 0, 0.1)"
               borderWidth="1px"
+              color="#00735C"
               onClick={(e) => handlePaymentsSelecteds(e, payment)}
             >
               {payment.nickname}

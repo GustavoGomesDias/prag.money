@@ -26,8 +26,6 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-beforeEach(() => jest.clearAllMocks());
-
 describe('Delete Acquisitions tests', () => {
   test('Should return 400 if id is invalid', async () => {
     const paymentId = -1;
@@ -155,6 +153,8 @@ describe('Delete Acquisitions tests', () => {
       return result;
     });
     jest.spyOn(validations, 'checkIsEquals').mockImplementationOnce(jest.fn());
+    jest.spyOn(AcquisitionController.prototype, 'handleEditCurrentValueInPurchaseDeletation')
+      .mockImplementationOnce(jest.fn());
 
     const controllerStub = makeSut();
     const result = await controllerStub.handleDeleteAcquisitionByPurchaseId(1, 1);

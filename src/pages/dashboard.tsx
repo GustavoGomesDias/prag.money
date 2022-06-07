@@ -1,4 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, {
+  useContext, useEffect,
+} from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
 import {
@@ -8,17 +10,18 @@ import {
 import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions/Actions';
-import PaymentsMethods from '../components/Dashboard/PaymentsMethods';
+import PaymentsMethods from '../components/Dashboard/PaymentMethods/PaymentsMethods';
 import api from '../services/fetchAPI/init';
 import PaymentModel from '../serverless/data/models/PaymentModel';
 import toastConfig from '../utils/config/tostConfig';
 import PurchaseContext from '../context/purchases/PurchaseContext';
+import PaymentContext from '../context/payment/PaymentContext';
 import SideActions from '../components/Dashboard/Actions/SideActions';
 import PurchaseTable from '../components/Dashboard/Table/PurchaseTable';
 import MobileDisplayTable from '../components/Dashboard/Table/MobileDispalyTable';
 
 export interface DashboardProps {
-  payments?: PaymentModel[]
+  payments: PaymentModel[]
   error?: {
     statusCode: number
     error: string
@@ -28,6 +31,15 @@ export interface DashboardProps {
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
+  const { handleSetPayments } = useContext(PaymentContext);
+
+  const refresh = async () => {
+    const { authToken, userId } = parseCookies();
+    api.setAuthHeader(`Bearer ${authToken}`);
+    const response = await api.get(`/user/payment/${userId}`);
+
+    handleSetPayments(response.data.content !== undefined ? (response.data.content as ({ [key: string]: PaymentModel[] })).payments : []);
+  };
 
   useEffect(() => {
     const handlePayment = () => {
@@ -51,7 +63,8 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     };
 
     handlePayment();
-  });
+    handleSetPayments(payments);
+  }, []);
 
   return (
     <>
@@ -69,17 +82,19 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
       >
         <Flex
           w="full"
+          mb={{ base: '1em', md: '0' }}
         >
           <Actions />
           <SideActions />
         </Flex>
         <Flex
-          w={{ base: '90%', md: 'full', xl: 'full' }}
-          bg="#C1D9B7"
+          w={{ base: '90%', md: '100%', xl: '95%' }}
+          bg="linear(to-br, #031426, #081828, #031426, #0b243f, #081828, #081828)"
           h="100vh"
           flexDir="column"
+          alignItems="center"
         >
-          <PaymentsMethods payments={payments} />
+          <PaymentsMethods refresh={refresh} />
           <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
           <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
         </Flex>

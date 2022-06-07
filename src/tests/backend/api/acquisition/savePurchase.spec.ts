@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable dot-notation */
 /* eslint-disable no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
@@ -147,7 +149,7 @@ describe('Add acquisition tests', () => {
     };
     jest.spyOn(PaymentDAOImp.prototype, 'checkIfPaymentExists').mockImplementationOnce(jest.fn());
 
-    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(async (infos) => {
+    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(async (infos) => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,
@@ -163,6 +165,10 @@ describe('Add acquisition tests', () => {
       return result;
     });
     const userController = makeSut();
+
+    const entity = userController['payWithDAO']['entity'];
+
+    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
     const httpResponse: HttpResponse = await userController.handleAddPurchase(infos);
 

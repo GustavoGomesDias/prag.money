@@ -15,7 +15,7 @@ async function handleRegisterPayment(
   const controller = makePaymentController();
 
   const response = await controller.handleAdd({
-    nickname, default_value, reset_day, user_id,
+    nickname, default_value, reset_day, user_id, current_month: new Date().getMonth() + 1, current_value: default_value,
   });
 
   if (response.error) {

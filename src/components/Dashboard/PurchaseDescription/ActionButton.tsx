@@ -8,7 +8,15 @@ export interface ActionButtonProps {
 }
 
 const ActionButton = ({ action, handleOnClick }: ActionButtonProps): JSX.Element => (
-  <Button leftIcon={action === 'Excluir' ? <FaTrashAlt /> : <FaRegEdit />} variant="solid" onClick={() => handleOnClick()}>
+  <Button
+    bg="#0e2e50"
+    leftIcon={action === 'Excluir' ? <FaTrashAlt /> : <FaRegEdit />}
+    _hover={{
+      color: action === 'Excluir' ? '#e85f7a' : '#dce66e',
+    }}
+    variant="solid"
+    onClick={() => handleOnClick()}
+  >
     {action}
   </Button>
 );

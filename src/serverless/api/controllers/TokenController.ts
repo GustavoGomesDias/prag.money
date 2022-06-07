@@ -12,11 +12,15 @@ import {
   checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
 } from '../helpers/Validations';
 import Catch from '../../decorators/Catch';
+import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
+import GetAcquisitions from '../../data/usecases/GetAcquisitions';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
 
   private readonly userDAOImp: UserDAOImp;
+
+  private readonly paymentDAOImp: PaymentDAOImp;
 
   private readonly webToken: WebTokenAdapter;
 
@@ -27,11 +31,13 @@ export default class TokenController {
     userDAOImp: UserDAOImp,
     webToken: WebTokenAdapter,
     encrypter: EncryptAdapter,
+    paymentDAOImp: PaymentDAOImp,
   ) {
     this.emailValidator = emailValidator;
     this.userDAOImp = userDAOImp;
     this.webToken = webToken;
     this.encrypter = encrypter;
+    this.paymentDAOImp = paymentDAOImp;
   }
 
   validationLoginInfos(infos: LoginProps): void {
@@ -39,6 +45,15 @@ export default class TokenController {
 
     validationField400code(email, 'E-mail requerido.');
     validationField400code(password, 'Senha requerida.');
+  }
+
+  async resolveMonthBalance(payments: GetAcquisitions[]) {
+    const result = [];
+    for (const payment of payments) {
+      result.push(this.paymentDAOImp.setMonthBalance(payment));
+    }
+
+    await Promise.all(result);
   }
 
   @Catch()
@@ -64,6 +79,10 @@ export default class TokenController {
       name: user.name,
       email: user.email,
     };
+
+    const { payments } = await this.userDAOImp.getAllForeignInfosByUserId(user.id as number);
+
+    await this.resolveMonthBalance(payments);
 
     return okWithPayload(payload, userInfo);
   }

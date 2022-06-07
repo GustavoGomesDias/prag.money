@@ -208,10 +208,10 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
       <Table>
         <Thead>
           <Tr>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Descrição</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Valor (R$)</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Data de compra</Th>
-            <Th color="#00735C" fontSize="14px" textAlign="center">Ações</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Descrição</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Valor (R$)</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Data de compra</Th>
+            <Th color="#00E091" fontSize="14px" textAlign="center">Ações</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -231,7 +231,7 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
               <Td width="25% !important" textAlign="center">
                 {(purchase.value.toFixed(2)).replace('.', ',')}
               </Td>
-              <Td width="25% !important" textAlign="center">{formatDate(new Date(purchase.purchase_date))}</Td>
+              <Td width="25% !important" textAlign="center">{formatDate(new Date((purchase.purchase_date)))}</Td>
               <Td
                 display="flex"
                 gap={4}

@@ -27,8 +27,6 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-beforeEach(() => jest.clearAllMocks());
-
 describe('Get acquisitions tests', () => {
   test('Should return 400 if id is invalid', async () => {
     const paymentId = -1;
@@ -155,6 +153,7 @@ describe('Get acquisitions tests', () => {
       nickname: 'nickname',
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     }));
   });
 });

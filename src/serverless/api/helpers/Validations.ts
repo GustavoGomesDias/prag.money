@@ -25,7 +25,7 @@ export const checkIfExists404code = (info: unknown, message: string) => {
   }
 };
 
-export const validationExpenseValue = (value: number, message: string) => {
+export const validationValues = (value: number, message: string) => {
   if (value < 0) {
     throw new BadRequestError(message);
   }

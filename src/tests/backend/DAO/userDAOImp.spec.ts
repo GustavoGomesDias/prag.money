@@ -10,16 +10,10 @@ import prismaConfig from '../../../serverless/data/prisma/config';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 import { NotFoundError } from '../../../serverless/error/HttpError';
 import { mockPayment, mockPurchase } from '../../mocks/mockForeignInfos';
-import FinancialHelperAdapter, { GetDate } from '../../../serverless/adapters/services/FinancialHelperAdapter';
-import GetAcquisitions from '../../../serverless/data/usecases/GetAcquisitions';
 
 jest.mock('../../mocks/mockUserDAOImp');
 
-const prisma = new PrismaClient();
-
-afterAll(async () => {
-  await prisma.$disconnect();
-});
+beforeAll(() => jest.resetAllMocks());
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncryptStub implements EncryptAdapter {
@@ -36,56 +30,20 @@ const makeEncrypter = (): EncryptAdapter => {
 
   return new EncryptStub();
 };
-
-const makeFinancialHelper = (): FinancialHelperAdapter => {
-  class FinancialHelperStub implements FinancialHelperAdapter {
-    getDayAndMonth(date: string): GetDate {
-      return { day: 20, month: 5 };
-    }
-
-    updateCurrentValue(acquisition: GetAcquisitions): void {
-      let currentValue = 0;
-      const currentDate = new Date();
-      if (Array.isArray(acquisition.PayWith)) {
-        for (const paids of acquisition.PayWith) {
-          const { day, month } = this.getDayAndMonth(paids.purchase.created_at);
-          if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
-            currentValue += paids.value;
-          }
-        }
-
-        acquisition.default_value -= currentValue;
-      } else {
-        const { day, month } = this.getDayAndMonth(acquisition.PayWith.purchase.created_at);
-
-        if (day >= acquisition.reset_day && (currentDate.getMonth() + 1) === month) {
-          acquisition.default_value -= acquisition.PayWith.value;
-        }
-      }
-    }
-  }
-
-  return new FinancialHelperStub();
-};
-
 const makeSut = (): UserDAOImp => {
   const encrypter = makeEncrypter();
-  const financialHelper = makeFinancialHelper();
 
-  return new UserDAOImp(encrypter, financialHelper);
+  return new UserDAOImp(encrypter);
 };
 
 describe('User DAO Implementation test', () => {
   const purchaseDate = new Date();
   test('Should call constructor with prisma.user', () => {
     const encrypter = makeEncrypter();
-    const financialHelper = makeFinancialHelper();
-    const instance = new UserDAOImp(encrypter, financialHelper);
+    const instance = new UserDAOImp(encrypter);
 
     // eslint-disable-next-line dot-notation
     expect(instance['encrypter']).toEqual(encrypter);
-    // eslint-disable-next-line dot-notation
-    expect(instance['financialHelper']).toEqual(financialHelper);
     // eslint-disable-next-line dot-notation
     expect(instance['entity']).toEqual(prismaConfig.user);
   });
@@ -194,21 +152,16 @@ describe('User DAO Implementation test', () => {
 
       return result;
     });
-    await expect(userDAOImpStub.checkIfUserExists(req)).rejects.toThrow('Usuário não existe.');
+    await expect(userDAOImpStub.checkIfUserExists(req)).rejects.toThrow(new NotFoundError('Usuário não existe.'));
   });
 
-  test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
-    jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
-      const result = await Promise.resolve(undefined);
-      return result;
-    });
-    expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
-  });
-
-  test('Should getAllPaymentsByUserId throw NotFoundError if user not exists', async () => {
-    const userDAOImpStub = makeSut();
-    await expect(userDAOImpStub.getAllForeignInfosByUserId(-1)).rejects.toThrow(new NotFoundError('Não há formas de pagamento cadastradas.'));
-  });
+  // test('Should ensure that checkIfUserExistis throws an NotFoundError if the user does not exist', async () => {
+  //   jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (info) => {
+  //     const result = await Promise.resolve(undefined);
+  //     return result;
+  //   });
+  //   await expect(UserDAOImp.prototype.checkIfUserExists(-1)).rejects.toThrowError(NotFoundError);
+  // });
 
   test('Should return Purchase and Payment array if findUnique returns array', async () => {
     jest.spyOn(UserDAOImp.prototype, 'findUnique').mockImplementationOnce(async (infos) => {

@@ -2,13 +2,13 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import PaymentDAOImp from '../../../serverless/DAOImp/payment/PaymentDAOImp';
-import PaymentModel from '../../../serverless/data/models/PaymentModel';
-import prisma from '../../../serverless/data/prisma/config';
-import { NotFoundError } from '../../../serverless/error/HttpError';
-import ExtendGenericDAOImp from '../../../serverless/infra/DAO/ExtendGenericDAOImp';
-import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
-import mockReturnsAcquisitionsUseCase from '../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
+import PaymentModel from '../../../../serverless/data/models/PaymentModel';
+import prisma from '../../../../serverless/data/prisma/config';
+import { NotFoundError } from '../../../../serverless/error/HttpError';
+import ExtendGenericDAOImp from '../../../../serverless/infra/DAO/ExtendGenericDAOImp';
+import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
+import mockReturnsAcquisitionsUseCase from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 
 const makeSut = (): PaymentDAOImp => {
   const paymentDAOStub = new PaymentDAOImp();
@@ -48,6 +48,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
+        current_month: 1,
       });
 
       return result;
@@ -132,6 +133,7 @@ describe('Payment DAO Implementation tests', () => {
         nickname: 'nickname',
         reset_day: 1,
         user_id: 1,
+        current_month: 1,
       }]);
 
       return result;
@@ -230,6 +232,7 @@ describe('Payment DAO Implementation tests', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     // eslint-disable-next-line prefer-destructuring
@@ -260,11 +263,12 @@ describe('Payment DAO Implementation tests', () => {
       default_value: 800,
       reset_day: 1,
       user_id: 1,
+      current_month: 1,
     };
 
     // eslint-disable-next-line prefer-destructuring
     const entity = new PaymentDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(entity, 'update').mockImplementation(async () => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,

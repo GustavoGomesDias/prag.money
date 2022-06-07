@@ -20,3 +20,13 @@ a {
   padding: 0em;
   margin: 0em;
 }
+
+*::-webkit-scrollbar {
+  background-color: #012440;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #06866c;
+  border-radius: 50px;
+}

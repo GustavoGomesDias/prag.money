@@ -52,7 +52,7 @@ describe('Handle Get By Payment Id', () => {
   });
 
   test('Should return 200 with content if get payment it happened successfully', async () => {
-    const payment: PaymentModel = {
+    const payment: Omit<PaymentModel, 'current_month'> = {
       nickname: 'nickname',
       default_value: 800,
       reset_day: 1,

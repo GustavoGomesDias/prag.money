@@ -1,7 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from '@prisma/client';
 import UserModel from '../../data/models/UserModel';
 
@@ -11,9 +7,6 @@ import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
 import { checkIfExists404code } from '../../api/helpers/Validations';
-import GetAcquisitions from '../../data/usecases/GetAcquisitions';
-import { NotFoundError } from '../../error/HttpError';
-import FinancialHelperAdapter from '../../adapters/services/FinancialHelperAdapter';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,
@@ -28,12 +21,9 @@ export default class UserDAOImp extends GenericDAOImp<
 > {
   private readonly encrypter: EncryptAdapter;
 
-  private readonly financialHelper: FinancialHelperAdapter;
-
-  constructor(encrypter: EncryptAdapter, financialHelper: FinancialHelperAdapter) {
+  constructor(encrypter: EncryptAdapter) {
     super(prisma.user);
     this.encrypter = encrypter;
-    this.financialHelper = financialHelper;
   }
 
   async checkIfUserExists(userId: number): Promise<void> {
@@ -46,7 +36,7 @@ export default class UserDAOImp extends GenericDAOImp<
     checkIfExists404code(user, 'Usuário não existe.');
   }
 
-  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos> {
+  async customFindUniqueContract(userId: number): Promise<ReturnForeignInfos> {
     const foreignInfos = await this.findUnique({
       where: {
         id: userId,
@@ -79,23 +69,20 @@ export default class UserDAOImp extends GenericDAOImp<
             nickname: true,
             user_id: true,
             id: true,
+            current_value: true,
+            current_month: true,
           },
         },
         Purchase: true,
       },
     }) as ReturnForeignInfos;
 
-    checkIfExists404code(foreignInfos, 'Não há formas de pagamento cadastradas.');
-    const { Payment, Purchase } = foreignInfos;
-    checkIfExists404code(Payment, 'Não há formas de pagamento cadastradas.');
+    return foreignInfos;
+  }
 
-    if (Array.isArray(Payment)) {
-      for (const payment of Payment) {
-        this.financialHelper.updateCurrentValue(payment);
-      }
-    } else {
-      this.financialHelper.updateCurrentValue(Payment);
-    }
+  async getAllForeignInfosByUserId(userId: number): Promise<GetForeignInfos> {
+    const foreignInfos = await this.customFindUniqueContract(userId);
+    const { Payment, Purchase } = foreignInfos;
 
     return {
       payments: Array.isArray(Payment) ? Payment : [Payment],
