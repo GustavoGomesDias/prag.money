@@ -206,9 +206,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
           borderBottom="1px solid #00735C"
           borderRadius="5px"
           fontWeight="bold"
-          _hover={{
-            bg: '#C1D9B7',
-          }}
         >
           <Text onClick={() => copyText(purchase.description)} cursor="pointer">
             <Tooltip
