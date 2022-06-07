@@ -1,13 +1,13 @@
 {
   "name": "pragmoney",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test-w": "jest --coverage --watch --no-cache",
-    "test": "jest --coverage --no-cache",
+    "test": "jest --coverage",
     "pstd": "prisma studio"
   },
   "resolutions": {
