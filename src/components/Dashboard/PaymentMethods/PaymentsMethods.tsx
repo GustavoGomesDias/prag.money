@@ -299,7 +299,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               onChange={(e) => handleOnSelect(e)}
               color="#00E091"
             >
-              <option value={0}>Selecione uma conta</option>
+              <option style={{ color: '#06866c' }} value={0}>Selecione uma conta</option>
               {payments !== undefined && payments.map((payment) => (
                 (payment !== undefined && <option style={{ color: '#06866c' }} key={payment.id} value={payment.id}>{payment.nickname}</option>)
               ))}
