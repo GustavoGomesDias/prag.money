@@ -7,6 +7,8 @@ import { AddPayment } from '../../../../serverless/data/usecases/AddPurchase';
 import UpdateCurrentValue from '../../../../serverless/data/usecases/UpdateCurrentValue';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
+afterAll(() => jest.resetAllMocks());
+
 const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
   const purchaseDAOStub = new PurchaseDAOImp();
@@ -40,7 +42,7 @@ describe('Account Controll Tests', () => {
   };
 
   test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
-    const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
     jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());
 
     const acquisitionControlerStub = makeSut();
@@ -61,7 +63,7 @@ describe('Account Controll Tests', () => {
   });
 
   test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
-    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementationOnce(jest.fn());
+    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
     const spy = jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementationOnce(jest.fn());
 
     const acquisitionControlerStub = makeSut();

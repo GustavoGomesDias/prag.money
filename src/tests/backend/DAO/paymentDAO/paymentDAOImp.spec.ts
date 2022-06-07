@@ -15,6 +15,8 @@ const makeSut = (): PaymentDAOImp => {
   return paymentDAOStub;
 };
 
+afterAll(() => jest.resetAllMocks());
+
 describe('Payment DAO Implementation tests', () => {
   test('Should call constructor with prisma.payment', () => {
     const paymentDAOStub = makeSut();
@@ -268,7 +270,7 @@ describe('Payment DAO Implementation tests', () => {
 
     // eslint-disable-next-line prefer-destructuring
     const entity = new PaymentDAOImp()['entity'];
-    const spy = jest.spyOn(entity, 'update').mockImplementationOnce(async () => {
+    const spy = jest.spyOn(entity, 'update').mockImplementation(async () => {
       const result = await Promise.resolve({
         payment_id: 1,
         purchase_id: 1,

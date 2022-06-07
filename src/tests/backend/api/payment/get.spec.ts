@@ -14,6 +14,8 @@ const makeSut = (): PaymentController => {
   return controllerStub;
 };
 
+afterAll(() => jest.resetAllMocks());
+
 describe('Handle Get By Payment Id', () => {
   test('Should return 400 if invalid user id is provided', async () => {
     const controllerStub = makeSut();
@@ -52,7 +54,7 @@ describe('Handle Get By Payment Id', () => {
   });
 
   test('Should return 200 with content if get payment it happened successfully', async () => {
-    const payment: PaymentModel = {
+    const payment: Omit<PaymentModel, 'current_month'> = {
       nickname: 'nickname',
       default_value: 800,
       reset_day: 1,

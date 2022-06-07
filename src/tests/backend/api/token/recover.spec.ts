@@ -8,6 +8,7 @@ import TokenController from '../../../../serverless/api/controllers/TokenControl
 import {
   badRequest, HttpResponse, notFound, okWithPayload, serverError,
 } from '../../../../serverless/api/helpers/http';
+import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import { TokenExpired } from '../../../../serverless/error/PMoneyErrors';
@@ -57,11 +58,14 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncryptStub();
 };
 
+afterAll(() => jest.resetAllMocks());
+
 const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
-  return new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
+  const paymentDAOStub = new PaymentDAOImp();
+  return new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 };
 
 describe('Handle Recovering User Infos', () => {
@@ -84,8 +88,9 @@ describe('Handle Recovering User Infos', () => {
 
     const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
+    const paymentDAOStub = new PaymentDAOImp();
 
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
@@ -97,8 +102,9 @@ describe('Handle Recovering User Infos', () => {
     const webTokenStub = makeWebToken();
     const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
+    const paymentDAOStub = new PaymentDAOImp();
     jest.spyOn(mockUserDAOImp, 'findUnique').mockResolvedValueOnce(await Promise.resolve(undefined));
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub);
+    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 

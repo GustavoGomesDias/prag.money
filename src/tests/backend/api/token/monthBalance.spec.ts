@@ -10,6 +10,7 @@ import UserModel from '../../../../serverless/data/models/UserModel';
 import GetAcquisitions from '../../../../serverless/data/usecases/GetAcquisitions';
 
 jest.mock('../../../mocks/mockUserDAOImp');
+afterAll(() => jest.resetAllMocks());
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {

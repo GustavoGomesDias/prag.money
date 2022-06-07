@@ -6,6 +6,8 @@ import withProtect, { GetUserAuthInfoRequest } from '../../../../serverless/api/
 import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import JWTService from '../../../../serverless/services/JWTService';
 
+afterAll(() => jest.resetAllMocks());
+
 describe('Auth middleare test', () => {
   const mockRequestResponse = (method: RequestMethod = 'GET') => {
     const { req, res }: { req: GetUserAuthInfoRequest, res: NextApiResponse } = createMocks({ method });

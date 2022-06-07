@@ -13,6 +13,7 @@ import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 const prisma = new PrismaClient();
 
 jest.mock('../../../mocks/mockUserDAOImp');
+afterAll(() => jest.resetAllMocks());
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {

@@ -29,13 +29,7 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-// beforeEach(() => {
-//   jest.clearAllMocks();
-// });
-
-// afterEach(() => {
-//   jest.clearAllMocks();
-// });
+afterAll(() => jest.resetAllMocks());
 
 describe('Update acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
