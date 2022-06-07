@@ -19,7 +19,6 @@ import { mockPaymentWithArray } from '../../../mocks/mockForeignInfos';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
-afterAll(() => jest.resetAllMocks());
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {

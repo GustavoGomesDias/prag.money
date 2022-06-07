@@ -15,8 +15,6 @@ const makeSut = (): PaymentDAOImp => {
   return paymentDAOStub;
 };
 
-afterAll(() => jest.resetAllMocks());
-
 describe('Payment DAO Implementation tests', () => {
   test('Should call constructor with prisma.payment', () => {
     const paymentDAOStub = makeSut();

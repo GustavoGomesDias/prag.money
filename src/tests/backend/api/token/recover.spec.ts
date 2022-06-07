@@ -58,8 +58,6 @@ const makeEncrypter = (): EncryptAdapter => {
   return new EncryptStub();
 };
 
-afterAll(() => jest.resetAllMocks());
-
 const makeSut = (): TokenController => {
   const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();

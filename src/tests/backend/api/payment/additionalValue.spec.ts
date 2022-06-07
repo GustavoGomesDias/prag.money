@@ -6,7 +6,6 @@ import { BadRequestError, ForbiddenError } from '../../../../serverless/error/Ht
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockPaymentDAOImp');
-afterAll(() => jest.resetAllMocks());
 
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
 

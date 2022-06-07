@@ -6,7 +6,6 @@ import { BadRequestError, InternalServerError } from '../../../../serverless/err
 import PaymentDAOMocked from '../../../mocks/mockPaymentDAOImp';
 
 jest.mock('../../../mocks/mockPaymentDAOImp');
-afterAll(() => jest.resetAllMocks());
 
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
 

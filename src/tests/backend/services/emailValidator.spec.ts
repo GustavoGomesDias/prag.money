@@ -3,8 +3,6 @@ import EmailValidator from '../../../serverless/services/EmailValidator';
 
 const makeSut = (): EmailValidatorAdapter => new EmailValidator();
 
-afterAll(() => jest.resetAllMocks());
-
 describe('Email validator', () => {
   test('Should call validator with correct email', () => {
     const sut = makeSut();

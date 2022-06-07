@@ -2,8 +2,6 @@ import bcrypt from 'bcrypt';
 import EncryptAdapter from '../../../serverless/adapters/services/EncryptAdapter';
 import BcryptService from '../../../serverless/services/BcryptService';
 
-afterAll(() => jest.resetAllMocks());
-
 jest.mock('bcrypt', () => ({
   async hash(): Promise<string> {
     const result: string = await Promise.resolve('hash');

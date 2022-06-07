@@ -1,7 +1,5 @@
 import { validationField } from '../../../utils/validations';
 
-afterAll(() => jest.resetAllMocks());
-
 describe('Handle Validate Field', () => {
   test('Should return true if field equal undefined', () => {
     const field = undefined;

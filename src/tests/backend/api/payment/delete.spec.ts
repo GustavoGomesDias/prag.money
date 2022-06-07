@@ -8,7 +8,6 @@ import GetAcquisitions, { ReturnsAcquisitions } from '../../../../serverless/dat
 import { BadRequestError } from '../../../../serverless/error/HttpError';
 import mockReturnsAcquisitionsUseCase from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 
-afterAll(() => jest.resetAllMocks());
 const makeSut = (): PaymentController => {
   const daoIMP = new PaymentDAOImp();
   const controllerStub = new PaymentController(daoIMP);

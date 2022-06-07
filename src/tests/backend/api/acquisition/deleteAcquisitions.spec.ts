@@ -26,9 +26,6 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-beforeEach(() => jest.clearAllMocks());
-afterAll(() => jest.resetAllMocks());
-
 describe('Delete Acquisitions tests', () => {
   test('Should return 400 if id is invalid', async () => {
     const paymentId = -1;

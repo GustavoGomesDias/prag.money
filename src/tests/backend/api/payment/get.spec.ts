@@ -14,8 +14,6 @@ const makeSut = (): PaymentController => {
   return controllerStub;
 };
 
-afterAll(() => jest.resetAllMocks());
-
 describe('Handle Get By Payment Id', () => {
   test('Should return 400 if invalid user id is provided', async () => {
     const controllerStub = makeSut();

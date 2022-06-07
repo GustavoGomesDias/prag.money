@@ -14,7 +14,6 @@ import { mockPayment, mockPurchase } from '../../mocks/mockForeignInfos';
 jest.mock('../../mocks/mockUserDAOImp');
 
 beforeAll(() => jest.resetAllMocks());
-afterAll(() => jest.resetAllMocks());
 
 const makeEncrypter = (): EncryptAdapter => {
   class EncryptStub implements EncryptAdapter {

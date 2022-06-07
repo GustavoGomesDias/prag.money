@@ -29,8 +29,6 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
-afterAll(() => jest.resetAllMocks());
-
 describe('Update acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
     const infos: UpdatePurchase = {
