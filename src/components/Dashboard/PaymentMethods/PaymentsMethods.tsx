@@ -3,8 +3,9 @@
 import React, {
   useState, ChangeEvent, useContext, MouseEvent, useEffect,
 } from 'react';
+import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
 import {
-  Flex, Select, Text, useToast, Grid, GridItem,
+  Flex, Select, Text, useToast, Grid, GridItem, IconButton,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
@@ -37,6 +38,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [additionalValue, setAdditionalValue] = useState<number>(-1);
   const [renderAdditionalValueForm, setRenderAdditionalValueForm] = useState<boolean>(false);
+  const [showBalance, setShowBalance] = useState<boolean>(false);
 
   const { push } = useRouter();
 
@@ -293,7 +295,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
               fontWeight="bold"
               borderRadius="5px"
               border="none"
-              boxShadow="0 0 1em rgba(0, 0, 0, 0.4)"
+              boxShadow="0 0 1em rgba(0, 0, 0, 0.6)"
               onChange={(e) => handleOnSelect(e)}
               color="#00E091"
             >
@@ -308,16 +310,34 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
           title="Saldo"
         >
           <Text
-            w="40%"
+            w="100%"
             textAlign="center"
-            p="0.1em"
+            py="0.8em"
             fontSize="18px"
             fontWeight="bold"
             color="#00E091"
+            borderRadius="5px"
+            border="none"
+            boxShadow="0 0 1em rgba(0, 0, 0, 0.6)"
           >
             R$
             {' '}
-            {balance.toFixed(2).replace('.', ',')}
+            {!showBalance ? '*****' : balance.toFixed(2).replace('.', ',')}
+            <IconButton
+              ml="0.5em"
+              transition="0.5s"
+              _hover={{
+                bg: 'transparent',
+                transform: 'scale(1.2)',
+              }}
+              bg="transparent"
+              aria-label="show-balance"
+              icon={!showBalance ? <RiEyeCloseLine /> : <RiEyeLine />}
+              onClick={() => {
+                const result = showBalance;
+                setShowBalance(!result);
+              }}
+            />
           </Text>
         </PaymentMethodCard>
         <PaymentActions
