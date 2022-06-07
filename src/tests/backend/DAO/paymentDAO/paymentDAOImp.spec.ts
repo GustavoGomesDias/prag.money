@@ -10,6 +10,8 @@ import ExtendGenericDAOImp from '../../../../serverless/infra/DAO/ExtendGenericD
 import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
 import mockReturnsAcquisitionsUseCase from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeSut = (): PaymentDAOImp => {
   const paymentDAOStub = new PaymentDAOImp();
   return paymentDAOStub;

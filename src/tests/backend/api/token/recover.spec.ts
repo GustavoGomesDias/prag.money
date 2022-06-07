@@ -15,6 +15,8 @@ import { TokenExpired } from '../../../../serverless/error/PMoneyErrors';
 import JWTService from '../../../../serverless/services/JWTService';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
     isEmail(email: string): boolean {

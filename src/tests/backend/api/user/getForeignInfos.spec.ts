@@ -15,7 +15,7 @@ import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 const makeSut = (): UserController => makePaymentController();
 
-afterAll(() => jest.clearAllMocks());
+afterAll(() => jest.restoreAllMocks());
 
 describe('Handle Get Payments Function', () => {
   const purchaseDate = new Date('2022-05-20T18:33:18.189Z');

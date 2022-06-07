@@ -14,6 +14,8 @@ const makeSut = (): PaymentController => {
   return controllerStub;
 };
 
+afterAll(() => jest.restoreAllMocks());
+
 describe('Handle Payment Delete', () => {
   test('Should return 400 if invalid user id is provided', async () => {
     const controllerStub = makeSut();

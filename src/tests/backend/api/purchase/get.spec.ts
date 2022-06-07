@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable dot-notation */
-import PaymentController from '../../../../serverless/api/controllers/PaymentController';
 import PurchaseController from '../../../../serverless/api/controllers/PurchaseController';
 import { badRequest, forbidden } from '../../../../serverless/api/helpers/http';
 import PurchaseDAOImp from '../../../../serverless/DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../../../serverless/data/models/PurchaseModel';
 import { BadRequestError, ForbiddenError } from '../../../../serverless/error/HttpError';
-import handleErrors from '../../../../serverless/error/helpers/handleErrors';
 
 const makeSut = (): PurchaseController => {
   const daoIMP = new PurchaseDAOImp();
   const controllerStub = new PurchaseController(daoIMP);
   return controllerStub;
 };
+
+afterAll(() => jest.restoreAllMocks());
 
 describe('Handle Get By Purchase Id', () => {
   test('Should return 400 if invalid user id is provided', async () => {

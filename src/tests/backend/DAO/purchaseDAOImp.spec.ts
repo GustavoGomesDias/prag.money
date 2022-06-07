@@ -8,6 +8,8 @@ import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 import { BadRequestError, NotFoundError } from '../../../serverless/error/HttpError';
 import GenericDAOImp from '../../../serverless/infra/DAO/GenericDAOImp';
 
+afterAll(() => jest.restoreAllMocks());
+
 describe('Purchase DAO Implementation', () => {
   test('Should call constructor with prisma.payment', () => {
     const purchaseDAOImpStub = new PurchaseDAOImp();

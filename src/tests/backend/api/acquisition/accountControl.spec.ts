@@ -19,6 +19,8 @@ const makeSut = (): AcquisitionController => {
   return acquisitionControlerStub;
 };
 
+afterAll(() => jest.restoreAllMocks());
+
 describe('Account Controll Tests', () => {
   const payment: AddPayment[] = [{
     paymentId: 1,

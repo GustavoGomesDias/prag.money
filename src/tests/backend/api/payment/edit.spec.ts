@@ -9,6 +9,8 @@ import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 
 jest.mock('../../../mocks/mockPaymentDAOImp');
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
 
 describe('Handler Create Payment', () => {

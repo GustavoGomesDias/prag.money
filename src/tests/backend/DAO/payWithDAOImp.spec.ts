@@ -4,6 +4,8 @@ import PayWithDAOImp from '../../../serverless/DAOImp/payWith/PayWithDAOImp';
 import PayWithModel from '../../../serverless/data/models/PayWithModel';
 import prisma from '../../../serverless/data/prisma/config';
 
+afterAll(() => jest.restoreAllMocks());
+
 describe('PayWith DAO Implementation tests', () => {
   test('Should call constructor with prisma.payWith', () => {
     const payWithtDAOStub = new PayWithDAOImp();

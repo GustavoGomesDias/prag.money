@@ -7,6 +7,8 @@ import PaymentDAOMocked from '../../../mocks/mockPaymentDAOImp';
 
 jest.mock('../../../mocks/mockPaymentDAOImp');
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
 
 describe('Handler Create Payment', () => {

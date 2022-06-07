@@ -8,7 +8,7 @@ const makeSut = (): PaymentDAOImp => {
   return paymentDAOStub;
 };
 
-afterEach(() => jest.restoreAllMocks());
+beforeEach(() => jest.restoreAllMocks());
 
 describe('Extended PaymentDAO tests for payment account value transactions', () => {
   test('Should call hasMonthBalance through setMonthBalance', async () => {
@@ -41,7 +41,7 @@ describe('Extended PaymentDAO tests for payment account value transactions', () 
       month: 6,
     }));
 
-    const spy = jest.spyOn(PaymentDAOImp.prototype, 'updateAccountValueWithBalance').mockImplementationOnce(jest.fn());
+    const spy = jest.spyOn(PaymentDAOImp.prototype, 'updateAccountValueWithBalance').mockImplementation(jest.fn());
 
     const paymentDAOStub = makeSut();
 

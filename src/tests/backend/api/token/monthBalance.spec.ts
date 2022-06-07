@@ -11,6 +11,8 @@ import GetAcquisitions from '../../../../serverless/data/usecases/GetAcquisition
 
 jest.mock('../../../mocks/mockUserDAOImp');
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
     isEmail(email: string): boolean {

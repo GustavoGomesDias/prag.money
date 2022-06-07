@@ -20,6 +20,8 @@ import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 
+afterAll(() => jest.restoreAllMocks());
+
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
     isEmail(email: string): boolean {

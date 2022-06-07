@@ -31,6 +31,8 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
+afterAll(() => jest.restoreAllMocks());
+
 describe('Add acquisition tests', () => {
   test('Should return 400 if no description is provided', async () => {
     const infos: AddPurchase = {

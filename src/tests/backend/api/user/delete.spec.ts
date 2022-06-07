@@ -9,7 +9,8 @@ import { BadRequestError } from '../../../../serverless/error/HttpError';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 
-afterEach(() => jest.clearAllMocks());
+// afterEach(() => jest.clearAllMocks());
+afterAll(() => jest.restoreAllMocks());
 
 const makeEmailValidator = (): EmailValidatorAdapter => {
   class EmailValidatorStub implements EmailValidatorAdapter {
