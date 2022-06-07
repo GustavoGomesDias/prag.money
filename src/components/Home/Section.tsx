@@ -38,7 +38,7 @@ const Section = (): JSX.Element => (
             <FaCreditCard size="60px" />
           </Box>
         </Flex>
-        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">Cadastre suas contas de forma facilitada</chakra.h3>
+        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">Cadastre suas contas de forma prática</chakra.h3>
       </Flex>
       <Flex
         flexDir="column"
@@ -68,7 +68,7 @@ const Section = (): JSX.Element => (
             <FaMobile size="60px" />
           </Box>
         </Flex>
-        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">E tenha controle sobre a vida do seu dinheiro</chakra.h3>
+        <chakra.h3 fontSize={{ base: '30px', md: '36px' }} textAlign="center">E tenha controle sobre sua vida financeira</chakra.h3>
       </Flex>
       <Link href="/register" passHref>
         <Button
