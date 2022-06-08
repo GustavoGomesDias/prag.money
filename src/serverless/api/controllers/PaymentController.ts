@@ -12,6 +12,8 @@ import {
 import { BadRequestError } from '../../error/HttpError';
 import Catch from '../../decorators/Catch';
 import AddAdditionalValue from '../../data/usecases/AddAdditionalValue';
+import IsValid from '../../decorators/IsValid';
+import IsDayOfTheMonth from '../../decorators/IsDayOfTheMonth';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -21,14 +23,15 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
   async handleGetPaymentById(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
-
     const payment = await this.paymentDAOImp.findUnique({
       where: {
         id: paymentId,
       },
     }) as PaymentModel;
+
+    validationField400code(payment, 'Conta não existe.');
 
     checkIsEquals403Error(payment.user_id, userId, 'Você não tem permissão para acessar está informação.');
 
@@ -55,17 +58,22 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ paramName: 'paymentInfos', notEmpty: ['nickname', 'default_value', 'current_value'], fieldIdIsValid: 'user_id' })
+  @IsDayOfTheMonth({ paramName: 'paymentInfos', fieldName: 'reset_day' })
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
-    this.validatieAllRequestFields(paymentInfos);
-
     await this.paymentDAOImp.add(paymentInfos);
 
     return ok('Forma de pagamento criado com sucesso!');
   }
 
   @Catch()
+  @IsValid({
+    paramName: 'paymentInfos',
+    notEmpty: ['nickname', 'default_value', 'current_value'],
+    fieldIdIsValid: 'user_id',
+  })
+  @IsDayOfTheMonth({ paramName: 'paymentInfos', fieldName: 'reset_day' })
   async handleEdit(paymentInfos: PaymentModel, userId: number): Promise<HttpResponse> {
-    this.validatieAllRequestFields(paymentInfos);
     checkIsEquals403Error(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
 
     await this.paymentDAOImp.update({
@@ -79,11 +87,8 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: ['userId, paymentId'], notEmpty: ['additionalValue'] })
   async handleAddAdditionalValue(infos: AddAdditionalValue, userId: number): Promise<HttpResponse> {
-    validationId(infos.userId);
-    validationId(infos.paymentId);
-    validationField400code(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
-    validationValues(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
     checkIsEquals403Error(userId, infos.userId, 'Você não tem permissão para editar.');
 
     await this.paymentDAOImp.addAdditionValue(infos);
@@ -92,9 +97,8 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
   async handleDelete(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
-
     const payment = await this.paymentDAOImp.findByPaymentId(paymentId);
 
     checkIsEquals403Error(userId, payment.user_id, 'Você não tem permissão para acessar esse contaúdo.');

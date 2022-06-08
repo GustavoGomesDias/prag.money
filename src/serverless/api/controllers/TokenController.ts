@@ -14,6 +14,8 @@ import {
 import Catch from '../../decorators/Catch';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import GetAcquisitions from '../../data/usecases/GetAcquisitions';
+import IsValid from '../../decorators/IsValid';
+import IsEmail from '../../decorators/IsEmail';
 
 export default class TokenController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -57,9 +59,10 @@ export default class TokenController {
   }
 
   @Catch()
+  @IsValid({ notEmpty: ['email', 'password'] })
+  @IsEmail()
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
     const { email, password } = infos;
-    this.validationLoginInfos(infos);
 
     const user = await this.userDAOImp.findByEmail(email);
 

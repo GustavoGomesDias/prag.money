@@ -3,7 +3,7 @@
 import {
   checkIfExists404code,
   checkIsEquals403Error,
-  validationValues, validationField400code, validationId, validationPage,
+  validationField400code,
 } from '../helpers/Validations';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
@@ -17,6 +17,8 @@ import {
 import UpdatePurchase from '../../data/usecases/UpdatePurchase';
 import Catch from '../../decorators/Catch';
 import UpdateCurrentValue from '../../data/usecases/UpdateCurrentValue';
+import IsValid from '../../decorators/IsValid';
+import PageIsValid from '../../decorators/PageIsValid';
 
 export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
@@ -35,8 +37,8 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
   async handleDeleteAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
     const { acquisitions, user_id } = await this.paymentDAO.findByPaymentId(paymentId);
@@ -48,8 +50,8 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
   async handleGetAcquisitionsByPaymentId(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
     const { acquisitions, default_value, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
@@ -66,9 +68,9 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
+  @PageIsValid({ fieldName: 'page' })
   async handleGetAcquisitionsByPaymentIdWithPagination(paymentId: number, page: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
-    validationPage(page);
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
     const { acquisitions, ...paymentInfo } = await this.paymentDAO.findByPaymentIdWithPagination(paymentId, page);
@@ -116,13 +118,12 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ notEmpty: ['description', 'value'], validationValueMsg: 'Valor do gasto tem que ser maior que zero.' })
   async handleAddPurchase(infos: AddPurchase): Promise<HttpResponse> {
     const {
       description, purchase_date, value, user_id, payments,
     } = infos;
 
-    validationField400code(description, 'Descrição de compra inválida.');
-    validationValues(value, 'Valor do gasto tem que ser maior que zero.');
     await this.userDAO.checkIfUserExists(user_id);
     await this.checkAllPaymentsExists(payments);
 
@@ -190,8 +191,8 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ fieldIdIsValid: 'paymentId' })
   async handleDeleteAcquisitionByPurchaseId(purchaseId: number, userId: number): Promise<HttpResponse> {
-    validationId(purchaseId);
     const purchase = await this.purchaseDAO.checkIfPurchaseExists(purchaseId);
     checkIsEquals403Error(userId, purchase.user_id, 'Você não tem permissão para acessar este conteúdo.');
     await this.handleEditCurrentValueInPurchaseDeletation(purchaseId);
@@ -218,14 +219,13 @@ export default class AcquisitionController {
   }
 
   @Catch()
+  @IsValid({ notEmpty: ['description', 'value'], validationValueMsg: 'Valor do gasto tem que ser maior que zero.' })
   async handleUpdatePurchase(infos: UpdatePurchase, userId: number): Promise<HttpResponse> {
     const {
       id, description, purchase_date, value, user_id, payments, payWithDeleteds,
     } = infos;
     checkIsEquals403Error(user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
-    validationField400code(description, 'Descrição de compra inválida.');
-    validationValues(value, 'Valor do gasto tem que ser maior que zero.');
     await this.userDAO.checkIfUserExists(user_id);
     await this.checkAllPaymentsExists(payments);
 
