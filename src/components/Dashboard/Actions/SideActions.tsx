@@ -13,6 +13,7 @@ const SideMenu = (): JSX.Element => {
       display={{ base: 'flex', xl: 'none' }}
       position="fixed"
       bottom="0"
+      zIndex={2}
       transition="0.5s ease"
       transform={`translate(0%, ${showUserActions ? '0%' : '80%'})`}
       flexDir="column"
