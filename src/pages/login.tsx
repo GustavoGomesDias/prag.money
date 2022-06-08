@@ -87,7 +87,7 @@ const Login = (): JSX.Element => {
         <FormHeader />
         <Form handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontSize="48px">Entrar</chakra.h1>
-          <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
+          <Grid w={{ base: '100%', md: '80%' }} templateRows="repeat(3, 0.8fr)">
             <BasicInput id="email" label="E-mail" placeholder="example@example.com" onSetHandle={setEmail} />
             <BasicInput id="password" label="Senha" placeholder="************" type="password" onSetHandle={setPassword} />
             <ButtonGroup

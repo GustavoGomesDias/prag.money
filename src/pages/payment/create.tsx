@@ -98,9 +98,9 @@ const Create = (): JSX.Element => {
       <Flex
         flexDir="column"
         alignItems="center"
-        padding="2em"
+        padding="1em"
       >
-        <Form handleSubmit={handleSubmit}>
+        <Form fullWidth handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontWeight="bold" fontSize={{ base: '28px', md: '48px' }}>Adicionar Forma de Pagamento</chakra.h1>
           <Grid w="80%" templateRows="repeat(3, 1fr)" alignItems="center" gap={6}>
             <BasicInput

@@ -190,9 +190,9 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
       <Flex
         flexDir="column"
         alignItems="center"
-        padding="2em"
+        padding="1em"
       >
-        <Form handleSubmit={handleSubmit}>
+        <Form fullWidth handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontWeight="bold" fontSize={{ base: '28px', md: '48px' }}>Adicionar Compra</chakra.h1>
           <Grid w="100%" templateRows="repeat(4, 0.5fr)" alignItems="center" gap={6}>
             <SearchBarDropdown
@@ -240,7 +240,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
             ))}
             <ButtonGroup
               flexDir="column"
-              py="1em"
+              pb="1em"
             >
               <Button
                 bg="#00735C"
