@@ -22,7 +22,6 @@ const handleErrors = (error: Error): HttpResponse => {
   }
 
   if (error instanceof TokenExpired) {
-    console.log('entrou');
     return badRequest(new BadRequestError(error.message));
   }
 
