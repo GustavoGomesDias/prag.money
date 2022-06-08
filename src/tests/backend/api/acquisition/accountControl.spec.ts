@@ -43,47 +43,81 @@ describe('Account Controll Tests', () => {
     }],
   };
 
-  test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
-    const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
-    jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
+  describe('Test for call PaymentDAOImp update function by handleAddPayWithRelations', () => {
+    test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
+      const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
+      jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
 
-    const acquisitionControlerStub = makeSut();
+      const acquisitionControlerStub = makeSut();
 
-    const entity = acquisitionControlerStub['payWithDAO']['entity'];
+      const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
-    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+      jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
-    await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
+      await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
 
-    expect(spy).toHaveBeenCalledWith({
-      where: {
-        id: 1,
-      },
-
-      data: {
-        current_value: {
-          decrement: 1,
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          id: 1,
         },
-      },
+
+        data: {
+          current_value: {
+            decrement: 1,
+          },
+        },
+      });
+    });
+
+    test('Shoud ensure PaymentDAOImp update function has been called for three times', async () => {
+      const spy = jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
+      jest.spyOn(PayWithDAOImp.prototype, 'add').mockImplementation(jest.fn());
+
+      const acquisitionControlerStub = makeSut();
+
+      const entity = acquisitionControlerStub['payWithDAO']['entity'];
+
+      jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+
+      await acquisitionControlerStub.handleAddPayWithRelations([payment[0], payment[0], payment[0]], purchase);
+
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 
-  test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
-    jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
-    const spy = jest.spyOn(PayWithDAOImp.prototype, 'add');
+  describe('Test for call PaymentDAOImp add function by handleAddPayWithRelations', () => {
+    test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
+      jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
+      const spy = jest.spyOn(PayWithDAOImp.prototype, 'add');
 
-    const acquisitionControlerStub = makeSut();
+      const acquisitionControlerStub = makeSut();
 
-    const entity = acquisitionControlerStub['payWithDAO']['entity'];
+      const entity = acquisitionControlerStub['payWithDAO']['entity'];
 
-    jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+      jest.spyOn(entity, 'create').mockImplementation(jest.fn());
 
-    await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
+      await acquisitionControlerStub.handleAddPayWithRelations(payment, purchase);
 
-    expect(spy).toHaveBeenCalledWith({
-      payment_id: payment[0].paymentId,
-      purchase_id: purchase.id as number,
-      value: payment[0].value,
+      expect(spy).toHaveBeenCalledWith({
+        payment_id: payment[0].paymentId,
+        purchase_id: purchase.id as number,
+        value: payment[0].value,
+      });
+    });
+
+    test('Shoud ensure PaymentDAOImp update function was called with correct contract', async () => {
+      jest.spyOn(PaymentDAOImp.prototype, 'update').mockImplementation(jest.fn());
+      const spy = jest.spyOn(PayWithDAOImp.prototype, 'add');
+
+      const acquisitionControlerStub = makeSut();
+
+      const entity = acquisitionControlerStub['payWithDAO']['entity'];
+
+      jest.spyOn(entity, 'create').mockImplementation(jest.fn());
+
+      await acquisitionControlerStub.handleAddPayWithRelations([payment[0], payment[0], payment[0]], purchase);
+
+      expect(spy).toHaveBeenCalledTimes(3);
     });
   });
 
