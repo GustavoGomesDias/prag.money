@@ -11,20 +11,6 @@ afterAll(() => jest.restoreAllMocks());
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
 
 describe('Handle Additional Value', () => {
-  test('Should return 400 if user id is invalid', async () => {
-    const infos: AddAdditionalValue = {
-      additionalValue: 1,
-      paymentId: 1,
-      userId: -1,
-    };
-
-    const paymentControllerStub = makeSut();
-
-    const response = await paymentControllerStub.handleAddAdditionalValue(infos, 1);
-
-    expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
-  });
-
   test('Should return 400 if payment id is invalid', async () => {
     const infos: AddAdditionalValue = {
       additionalValue: 1,

@@ -1,7 +1,6 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
@@ -13,7 +12,6 @@ import UserDAOImp from '../../../../serverless/DAOImp/users/UserDAOImp';
 import UserModel from '../../../../serverless/data/models/UserModel';
 import { BadRequestError, InternalServerError, NotFoundError } from '../../../../serverless/error/HttpError';
 import GenericDAOImp from '../../../../serverless/infra/DAO/GenericDAOImp';
-import EmailValidator from '../../../../serverless/services/EmailValidator';
 import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
 import { mockPaymentWithArray } from '../../../mocks/mockForeignInfos';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
@@ -21,16 +19,6 @@ import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 jest.mock('../../../mocks/mockUserDAOImp');
 
 afterAll(() => jest.restoreAllMocks());
-
-const makeEmailValidator = (): EmailValidatorAdapter => {
-  class EmailValidatorStub implements EmailValidatorAdapter {
-    isEmail(email: string): boolean {
-      return true;
-    }
-  }
-
-  return new EmailValidatorStub();
-};
 
 const makeWebToken = (): WebTokenAdapter => {
   class WebTokenStub implements WebTokenAdapter {
@@ -62,12 +50,11 @@ const makeEncrypter = (): EncryptAdapter => {
 };
 
 const makeSut = (): TokenController => {
-  const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
   const paymentDAOStub = new PaymentDAOImp();
   const userDAOStub = new UserDAOImp(encrypterStub);
-  return new TokenController(emailValidatorStub, userDAOStub, webTokenStub, encrypterStub, paymentDAOStub);
+  return new TokenController(userDAOStub, webTokenStub, encrypterStub, paymentDAOStub);
 };
 
 describe('Handle User Login Tests', () => {
@@ -101,11 +88,10 @@ describe('Handle User Login Tests', () => {
       password: 'password',
     };
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
     const webTokenStub = makeWebToken();
     const paymentDAO = new PaymentDAOImp();
-    const tokenController = new TokenController(emailValidatorStub, new UserDAOImp(encrypterStub), webTokenStub, encrypterStub, paymentDAO);
+    const tokenController = new TokenController(new UserDAOImp(encrypterStub), webTokenStub, encrypterStub, paymentDAO);
     jest.spyOn(GenericDAOImp.prototype, 'findUnique').mockReturnValueOnce(Promise.resolve(undefined));
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
@@ -118,14 +104,12 @@ describe('Handle User Login Tests', () => {
       password: 'password',
     };
 
-    const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
     const encrypterStub = makeEncrypter();
     const paymentDAO = new PaymentDAOImp();
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(emailValidatorStub, 'isEmail').mockReturnValue(false);
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAO);
+    const tokenController = new TokenController(mockUserDAOImp, webTokenStub, encrypterStub, paymentDAO);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest(new BadRequestError('E-mail inválido.')));
@@ -136,7 +120,6 @@ describe('Handle User Login Tests', () => {
       email: 'email@email.com',
       password: 'incorrect_password',
     };
-    const emailValidatorStub = makeEmailValidator();
     const webTokenStub = makeWebToken();
     const encrypterStub = makeEncrypter();
     const paymentDAO = new PaymentDAOImp();
@@ -146,7 +129,7 @@ describe('Handle User Login Tests', () => {
       const result = await Promise.resolve(false);
       return result;
     });
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAO);
+    const tokenController = new TokenController(mockUserDAOImp, webTokenStub, encrypterStub, paymentDAO);
     const httpResponse: HttpResponse = await tokenController.handleLogin(infos);
 
     expect(httpResponse).toEqual(badRequest(new BadRequestError('E-mail ou senhas incorretos.')));

@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import PaymentController from '../../../../serverless/api/controllers/PaymentController';
 import { badRequest, ok, serverError } from '../../../../serverless/api/helpers/http';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
@@ -10,6 +9,14 @@ jest.mock('../../../mocks/mockPaymentDAOImp');
 afterAll(() => jest.restoreAllMocks());
 
 const makeSut = (): PaymentController => new PaymentController(PaymentDAOMocked);
+
+class TestError extends Error {
+  constructor() {
+    super('Server error');
+
+    this.name = 'TestError';
+  }
+}
 
 describe('Handler Create Payment', () => {
   test('Should return 400 if no nickname is provided ', async () => {
@@ -54,7 +61,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleAdd(infos as PaymentModel);
 
-    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um valor padrão para a forma de pagamento.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if incorrect reset day is provided', async () => {
@@ -87,37 +94,17 @@ describe('Handler Create Payment', () => {
     expect(response).toEqual(badRequest(new BadRequestError('ID inválido.')));
   });
 
-  test('Should return 400 if unique field (nickname) already existis', async () => {
-    const infos: Omit<PaymentModel, 'current_month'> = {
-      nickname: 'nickname',
-      default_value: 800,
-      reset_day: 1,
-      user_id: 1,
-    };
-
-    jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(PaymentDAOMocked, 'add').mockImplementationOnce(async () => {
-      throw new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`nickname`)', 'P2002', '3.9.1');
-    });
-    const paymentControllerStub = makeSut();
-
-    const response = await paymentControllerStub.handleAdd(infos as PaymentModel);
-
-    expect(response).toEqual(badRequest(new BadRequestError('Nickname já existe, tente novamente.')));
-  });
-
   test('Should return 500 if server returns a error', async () => {
     const infos: Omit<PaymentModel, 'current_month'> = {
       nickname: 'nickname',
       default_value: 800,
-      reset_day: 1,
+      reset_day: 2,
       user_id: 1,
     };
 
     jest.spyOn(console, 'log').mockImplementationOnce(jest.fn());
-    jest.spyOn(PaymentDAOMocked, 'add').mockImplementationOnce(async () => {
-      throw new Error('Server Error');
-    });
+    jest.spyOn(PaymentDAOMocked, 'add').mockRejectedValueOnce(new TestError());
+
     const paymentControllerStub = makeSut();
 
     const response = await paymentControllerStub.handleAdd(infos as PaymentModel);

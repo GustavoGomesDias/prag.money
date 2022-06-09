@@ -48,7 +48,7 @@ describe('Update acquisition tests', () => {
 
     const httpResponse: HttpResponse = await acquisitionControler.handleUpdatePurchase(infos, 1);
 
-    expect(httpResponse).toEqual(badRequest(new BadRequestError('Descrição de compra inválida.')));
+    expect(httpResponse).toEqual(badRequest(new BadRequestError('Descrição é requerido.')));
   });
 
   test('Should return 400 if value is invalid', async () => {
