@@ -6,6 +6,8 @@ import {
   Box, Button, ButtonGroup, Flex, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 import { PurchaseTableProps } from './PurchaseTable';
 import formatDate from '../../../utils/formatDate';
 import toastConfig from '../../../utils/config/tostConfig';
@@ -86,11 +88,10 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
 
   const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const nextPage = page + 1;
-    setPage(nextPage);
+    const searchPage = page + 1;
     setIsLoading(true);
     const response = await api.getWithBody('/acquisition', {
-      page: nextPage,
+      page: searchPage,
       id: paymentId,
     });
 
@@ -118,6 +119,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
       return;
     }
 
+    setPage(searchPage);
     setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
   };
 
@@ -126,7 +128,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
     if (page > 0) {
       setIsLoading(true);
       const prevPage = page - 1;
-      setPage(prevPage);
       const response = await api.getWithBody('/acquisition', {
         page: prevPage,
         id: paymentId,
@@ -144,6 +145,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
         return;
       }
 
+      setPage(prevPage);
       setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
     } else {
       toast({
@@ -166,22 +168,28 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
       <Flex w="100%" justifyContent="flex-end" px="1em" borderBottom="3px solid #00735C">
         <ButtonGroup bg="#00735C" p="0.1em">
           <Button
+            display="flex"
+            flexDir="column"
             variant="unstyled"
+            h="60px"
             fontSize="18px"
             color="#fff"
             borderRight="1px solid #fff"
             borderRadius="0 !important"
             p="0.5em"
+            bg="#0e2e50"
             transition="300ms"
             _hover={{
               opacity: 0.5,
             }}
             onClick={async (e) => await handleGetPrevPurchases(e)}
           >
-            prev
-
+            <AiOutlineArrowLeft />
           </Button>
           <Button
+            display="flex"
+            flexDir="column"
+            h="60px"
             variant="unstyled"
             fontSize="18px"
             color="#fff"
@@ -193,11 +201,22 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
             }}
             onClick={async (e) => await handleGetNextPurchases(e)}
           >
-            next
+            <AiOutlineArrowRight />
 
           </Button>
         </ButtonGroup>
       </Flex>
+      {purchaseList.length < 1 && (
+        <Text
+          fontWeight="bold"
+          textAlign="center"
+        >
+          Por favor, selecione uma conta financeira. Caso não tenha, considere
+          {' '}
+          <Link href="/payment/create" passHref><span style={{ color: '#9fdbcf', cursor: 'pointer' }}>criar uma</span></Link>
+          .
+        </Text>
+      )}
       {purchaseList.length > 0 && purchaseList.map((purchase) => (
         <Box
           key={purchase.description + purchase.id}

@@ -5,24 +5,20 @@ import {
   Button, ButtonGroup, chakra, Flex, Grid, useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { GetServerSideProps } from 'next';
-import { parseCookies } from 'nookies';
-import Header from '../../components/UI/Header/Header';
-import Form from '../../components/Form/Form';
-import SEO from '../../components/SEO';
-import BasicInput from '../../components/Login/BasicInput';
-import PaymentModel from '../../serverless/data/models/PaymentModel';
-import api from '../../services/fetchAPI/init';
-import SearchBarDropdown from '../../components/Form/SearchBarDropdown';
-import InfoOfSelecteds from '../../components/Form/InfoSelected';
-import { validationField } from '../../utils/validations';
-import toastConfig from '../../utils/config/tostConfig';
-import ModalLoader from '../../components/UI/Loader/ModalLoader';
-import PurchaseModel from '../../serverless/data/models/PurchaseModel';
-import { AuthContext } from '../../context/AuthContext';
-import AddPurchase, { AddPayment } from '../../serverless/data/usecases/AddPurchase';
-import PragModal from '../../components/Layout/PragModal';
-import InfoContainer from '../../components/Layout/InfoContainer';
+import Form from '../../../Form/Form';
+import BasicInput from '../../../Login/BasicInput';
+import PaymentModel from '../../../../serverless/data/models/PaymentModel';
+import api from '../../../../services/fetchAPI/init';
+import SearchBarDropdown from '../../../Form/SearchBarDropdown';
+import InfoOfSelecteds from '../../../Form/InfoSelected';
+import { validationField } from '../../../../utils/validations';
+import toastConfig from '../../../../utils/config/tostConfig';
+import ModalLoader from '../../../UI/Loader/ModalLoader';
+import PurchaseModel from '../../../../serverless/data/models/PurchaseModel';
+import { AuthContext } from '../../../../context/AuthContext';
+import AddPurchase, { AddPayment } from '../../../../serverless/data/usecases/AddPurchase';
+import PragModal from '../../../Layout/PragModal';
+import InfoContainer from '../../../Layout/InfoContainer';
 
 export interface CreatePurchaseProps {
   data: {
@@ -37,16 +33,16 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const [paymentsSelecteds, setPaymentsSelecteds] = useState<PaymentModel[]>([]);
   const [payWith, setPayWith] = useState<AddPayment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [notHasPayment, setNotHasPayment] = useState<boolean>(false);
+  const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
   const toast = useToast();
   const { user } = useContext(AuthContext);
 
-  const { push, back } = useRouter();
+  const { push } = useRouter();
 
   useEffect(() => {
-    if (data.payments === undefined) setNotHasPayment(true);
+    if (data.payments === undefined) setNotHavePayment(true);
     if (Array.isArray(data.payments) && data.payments.length === 0) {
-      setNotHasPayment(true);
+      setNotHavePayment(true);
     }
   }, []);
 
@@ -174,11 +170,9 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
 
   return (
     <>
-      <SEO title="p.$ | Adicionar compra" description="Create purchase page" />
-      <Header logo="Buy" />
       {isLoading && <ModalLoader isOpen={isLoading} />}
-      {notHasPayment && (
-      <PragModal isOpen={notHasPayment}>
+      {notHavePayment && (
+      <PragModal isOpen={notHavePayment}>
         <InfoContainer
           action="Cadastrar pagamento"
           message="Por favor, cadastre uma forma de pagamento primeiro."
@@ -190,6 +184,7 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
         flexDir="column"
         alignItems="center"
         padding="1em"
+        w="100%"
       >
         <Form fullWidth handleSubmit={handleSubmit}>
           <chakra.h1 w="full" textAlign="center" fontWeight="bold" fontSize={{ base: '28px', md: '48px' }}>Adicionar Compra</chakra.h1>
@@ -256,21 +251,6 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
               >
                 Salvar
               </Button>
-              <Button
-                onClick={() => back()}
-                bg="#D3D31A"
-                fontSize={{ base: '20px', md: '24px' }}
-                color="#fff"
-                w="100%"
-                h="60px"
-                mx="0px !important"
-                mt="15px"
-                _hover={{
-                  bg: '#ECEC11',
-                }}
-              >
-                Voltar
-              </Button>
             </ButtonGroup>
           </Grid>
         </Form>
@@ -280,24 +260,3 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
 };
 
 export default CreatePurchase;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { authToken, userId } = parseCookies(ctx);
-
-  if (!authToken || userId === undefined || !userId) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-  api.setAuthHeader(`Bearer ${authToken}`);
-  const response = await api.get(`/user/payment/${userId}`);
-
-  return {
-    props: {
-      data: response.data.content === undefined ? [] : response.data.content,
-    },
-  };
-};

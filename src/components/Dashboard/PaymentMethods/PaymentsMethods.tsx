@@ -269,11 +269,11 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
       <Grid
         templateColumns={{ base: 'none', md: 'repeat(2, 50%)', xl: 'repeat(3, 1fr)' }}
         templateRows={{ base: 'repeat(3, 1fr)', md: 'repeat(2, 1fr)', xl: 'none' }}
-        width={{ base: '90%', xl: '100%' }}
+        width={{ base: '90%', xl: '60%' }}
         placeItems={{ base: 'start', md: 'center', xl: 'center' }}
         py={5}
         // flexDir={{ base: 'column', md: 'row' }}
-        gap={{ base: 4, md: 4, xl: 0 }}
+        gap={{ base: 4, md: 4, xl: 2 }}
       >
         <GridItem
           height="100%"

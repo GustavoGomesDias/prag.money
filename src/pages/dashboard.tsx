@@ -1,5 +1,5 @@
 import React, {
-  useContext, useEffect,
+  useContext, useEffect, useState,
 } from 'react';
 import { GetServerSideProps } from 'next';
 import { parseCookies } from 'nookies';
@@ -19,6 +19,10 @@ import PaymentContext from '../context/payment/PaymentContext';
 import SideActions from '../components/Dashboard/Actions/SideActions';
 import PurchaseTable from '../components/Dashboard/Table/PurchaseTable';
 import MobileDisplayTable from '../components/Dashboard/Table/MobileDispalyTable';
+import CreateForm from '../components/Dashboard/Form/Payments/CreateForm';
+import CreatePurchase from '../components/Dashboard/Form/Purchase/PurchaseForm';
+import PragModal from '../components/Layout/PragModal';
+import InfoContainer from '../components/Layout/InfoContainer';
 
 export interface DashboardProps {
   payments: PaymentModel[]
@@ -29,6 +33,8 @@ export interface DashboardProps {
 }
 
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
+  const [actualAction, setActualAction] = useState<number>(0);
+  const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
   const { handleSetPayments } = useContext(PaymentContext);
@@ -44,6 +50,11 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   useEffect(() => {
     const handlePayment = () => {
       if (error) {
+        if (error.statusCode === 404) {
+          setNotHavePayment(true);
+          return;
+        }
+
         if (error.statusCode === 400) {
           toast({
             title: '📣',
@@ -70,9 +81,16 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     <>
       <SEO title="p.$ | Dashboard" description="Dashboard page" />
       <Header logo="Dash" />
+      <PragModal isOpen={actualAction === 0 && notHavePayment}>
+        <InfoContainer
+          action="Cadastrar pagamento"
+          message="Você ainda não tem uma conta cadastrada e para usar será necessário ter uma. Vamos lá?"
+          handleAction={() => setActualAction(1)}
+        />
+      </PragModal>
       <Grid
         templateRows="repeat(1, 1fr)"
-        templateColumns={{ base: 'repeat(1, 1fr)', xl: '10% 90%' }}
+        templateColumns={{ base: 'repeat(1, 1fr)', xl: '15% 85%' }}
         w="100%"
         justifyContent="center"
         alignItems="center"
@@ -84,7 +102,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           w="full"
           mb={{ base: '1em', md: '0' }}
         >
-          <Actions />
+          <Actions action={actualAction} setAction={setActualAction} />
           <SideActions />
         </Flex>
         <Flex
@@ -93,10 +111,18 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           h="100vh"
           flexDir="column"
           alignItems="center"
+          justifyContent={actualAction === 1 || actualAction === 2 ? 'center' : 'flex-start'}
         >
-          <PaymentsMethods refresh={refresh} />
-          <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
-          <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
+
+          {actualAction === 0 && (
+            <>
+              <PaymentsMethods refresh={refresh} />
+              <PurchaseTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
+              <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
+            </>
+          )}
+          {actualAction === 1 && <CreateForm />}
+          {actualAction === 2 && <CreatePurchase data={{ payments }} />}
         </Flex>
       </Grid>
     </>
