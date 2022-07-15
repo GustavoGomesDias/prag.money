@@ -34,22 +34,7 @@ describe('Handler Create Payment', () => {
     expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um apelido para a forma de pagamento.')));
   });
 
-  test('Should return 400 if no default value is provided ', async () => {
-    const infos: Omit<PaymentModel, 'current_month'> = {
-      nickname: 'nickname',
-      default_value: NaN,
-      reset_day: 1,
-      user_id: 1,
-    };
-
-    const paymentControllerStub = makeSut();
-
-    const response = await paymentControllerStub.handleAdd(infos as PaymentModel);
-
-    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um valor padrão para a forma de pagamento.')));
-  });
-
-  test('Should return 400 if default value is less than zero ', async () => {
+  test('Should return 400 if default value is less than zero', async () => {
     const infos: Omit<PaymentModel, 'current_month'> = {
       nickname: 'nickname',
       default_value: -1,

@@ -17,7 +17,7 @@ const IsNumber = ({
   descriptor.value = async function (...args: any) {
     if (paramName) {
       if (argName) {
-        validationValues(args[0][argName], 'Valor adicional precisa ser um número e maior/igual que zero.');
+        validationValues(args[0][argName], 'Valor precisa ser um número e maior/igual que zero.');
       }
     }
 

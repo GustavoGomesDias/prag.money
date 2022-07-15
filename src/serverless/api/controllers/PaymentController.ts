@@ -40,13 +40,13 @@ export default class PaymentController {
   @Catch()
   @IsValid({
     paramName: 'paymentInfos',
-    notEmpty: ['nickname', 'default_value'],
+    notEmpty: ['nickname'],
     messageError: [
       'É preciso dar um apelido para a forma de pagamento.',
-      'É preciso dar um valor padrão para a forma de pagamento.',
     ],
     fieldIdIsValid: 'user_id',
   })
+  @IsNumber({ paramName: 'paymentInfos', argName: 'default_value' })
   @IsDayOfTheMonth({ paramName: 'paymentInfos', fieldName: 'reset_day' })
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
     await this.paymentDAOImp.add(paymentInfos);

@@ -60,7 +60,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if additional value is provided and is less than zero ', async () => {
@@ -77,7 +77,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if incorrect reset day is provided', async () => {

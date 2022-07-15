@@ -36,7 +36,7 @@ describe('Handle Additional Value', () => {
 
     const response = await paymentControllerStub.handleAddAdditionalValue(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if additional value is less than zero', async () => {
@@ -50,7 +50,7 @@ describe('Handle Additional Value', () => {
 
     const response = await paymentControllerStub.handleAddAdditionalValue(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 403 if user id in info is different logged user id', async () => {
