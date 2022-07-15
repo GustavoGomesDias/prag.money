@@ -6,7 +6,7 @@ import { badRequest, ok, okWithContent } from '../../../../serverless/api/helper
 import PaymentDAOImp from '../../../../serverless/DAOImp/payment/PaymentDAOImp';
 import PaymentModel from '../../../../serverless/data/models/PaymentModel';
 import { BadRequestError } from '../../../../serverless/error/HttpError';
-import * as validations from '../../../../serverless/api/helpers/Validations';
+import * as validations from '../../../../serverless/api/helpers/validations';
 
 const makeSut = (): PaymentController => {
   const daoIMP = new PaymentDAOImp();

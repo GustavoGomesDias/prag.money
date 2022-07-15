@@ -1,8 +1,9 @@
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import Catch from '../../decorators/Catch';
+import IsValid from '../../decorators/IsValid';
 import { HttpResponse, okWithContent } from '../helpers/http';
-import { checkIsEquals403Error, validationId } from '../helpers/Validations';
+import { checkIsEquals403Error } from '../helpers/validations';
 
 export default class PurchaseController {
   private readonly purchaseDAO: PurchaseDAOImp;
@@ -12,9 +13,8 @@ export default class PurchaseController {
   }
 
   @Catch()
+  @IsValid({ idPosition: 0 })
   async handleGetPurchaseById(purchaseId: number, userId: number): Promise<HttpResponse> {
-    validationId(purchaseId);
-
     const purchase = await this.purchaseDAO.findUnique({
       where: {
         id: purchaseId,

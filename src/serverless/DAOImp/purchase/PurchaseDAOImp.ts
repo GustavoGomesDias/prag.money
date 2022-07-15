@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { Prisma } from '@prisma/client';
-import { checkIfExists404code } from '../../api/helpers/Validations';
+import { checkIfExists404code } from '../../api/helpers/validations';
 import PayWithModel from '../../data/models/PayWithModel';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import prisma from '../../data/prisma/config';

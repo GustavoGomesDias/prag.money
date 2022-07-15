@@ -21,7 +21,6 @@ async function handleGetAcquisitonsByIdWithPagination(
   }
 
   const { content } = response;
-  console.log(content);
   return res.status(response.statusCode).json({ content });
 }
 

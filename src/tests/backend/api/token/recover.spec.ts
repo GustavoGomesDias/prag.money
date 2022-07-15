@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import jwt, { TokenExpiredError } from 'jsonwebtoken';
-import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
+import jwt from 'jsonwebtoken';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
@@ -16,16 +15,6 @@ import JWTService from '../../../../serverless/services/JWTService';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 
 afterAll(() => jest.restoreAllMocks());
-
-const makeEmailValidator = (): EmailValidatorAdapter => {
-  class EmailValidatorStub implements EmailValidatorAdapter {
-    isEmail(email: string): boolean {
-      return true;
-    }
-  }
-
-  return new EmailValidatorStub();
-};
 
 const makeWebToken = (): WebTokenAdapter => {
   class WebTokenStub implements WebTokenAdapter {
@@ -61,11 +50,10 @@ const makeEncrypter = (): EncryptAdapter => {
 };
 
 const makeSut = (): TokenController => {
-  const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
   const paymentDAOStub = new PaymentDAOImp();
-  return new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
+  return new TokenController(mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 };
 
 describe('Handle Recovering User Infos', () => {
@@ -85,12 +73,10 @@ describe('Handle Recovering User Infos', () => {
     jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
       throw new TokenExpired();
     });
-
-    const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
     const paymentDAOStub = new PaymentDAOImp();
 
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
+    const tokenController = new TokenController(mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 
@@ -100,11 +86,10 @@ describe('Handle Recovering User Infos', () => {
   test('Should return 404 if token id no return a user', async () => {
     const token = 'token';
     const webTokenStub = makeWebToken();
-    const emailValidatorStub = makeEmailValidator();
     const encrypterStub = makeEncrypter();
     const paymentDAOStub = new PaymentDAOImp();
     jest.spyOn(mockUserDAOImp, 'findUnique').mockResolvedValueOnce(await Promise.resolve(undefined));
-    const tokenController = new TokenController(emailValidatorStub, mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
+    const tokenController = new TokenController(mockUserDAOImp, webTokenStub, encrypterStub, paymentDAOStub);
 
     const response = await tokenController.handleRecoverUserInfos(token);
 

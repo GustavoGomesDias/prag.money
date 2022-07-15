@@ -5,15 +5,18 @@ import RegisterUser from '../../data/usecases/RegisterUser';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  HttpRequest, HttpResponse, created, okWithContent, ok,
+  HttpResponse, created, okWithContent, ok,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
 import {
   checkIfExists404code,
-  checkIsEquals, validationEmailRequest, validationField400code, validationId,
-} from '../helpers/Validations';
+  validationId,
+} from '../helpers/validations';
 import GetForeignInfos from '../../data/usecases/GetForeignInfos';
 import Catch from '../../decorators/Catch';
+import IsValid from '../../decorators/IsValid';
+import IsEmail from '../../decorators/IsEmail';
+import CheckIsEquals from '../../decorators/CheckIsEquals';
 
 export default class UserController {
   private readonly emailValidator: EmailValidatorAdapter;
@@ -28,29 +31,29 @@ export default class UserController {
     this.userDAO = userDAO;
   }
 
-  handleValidateUserFields(userInfos: RegisterUser): void {
-    const {
-      name, email, password, passwordConfirmation,
-    } = userInfos;
-
-    validationField400code(name, 'Nome de usuário requerido.');
-    validationField400code(email, 'E-mail requerido.');
-    validationField400code(password, 'Senha requerida.');
-    validationField400code(passwordConfirmation, 'Confirmação de senha requerida.');
-
-    const validationEmail = this.emailValidator.isEmail(email);
-    validationEmailRequest(validationEmail);
-
-    checkIsEquals(password, passwordConfirmation, 'Senha diferente de confirmar senha.');
-  }
-
   @Catch()
-  async handleRegister(req: HttpRequest): Promise<HttpResponse> {
+  @IsValid({
+    notEmpty: ['name', 'email', 'password', 'passwordConfirmation'],
+    paramName: 'req',
+    messageError: [
+      'Nome de usuário requerido.',
+      'E-mail requerido.',
+      'Senha requerida.',
+      'Confirmação de senha requerida.',
+    ],
+  })
+  @IsEmail()
+  @CheckIsEquals({
+    paramName: 'req',
+    firstFieldName: 'password',
+    secondFieldName: 'passwordConfirmation',
+    messageError: 'Senha diferente de confirmar senha.',
+  })
+  async handleRegister(infos: RegisterUser): Promise<HttpResponse> {
     const {
       email, password, name,
-    } = req.body.user as RegisterUser;
+    } = infos;
 
-    this.handleValidateUserFields(req.body.user as RegisterUser);
     await this.userDAO.addUser({
       email, name, password,
     });

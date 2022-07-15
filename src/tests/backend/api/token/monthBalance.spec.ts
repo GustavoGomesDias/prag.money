@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
-import { EmailValidatorAdapter } from '../../../../serverless/adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../../../serverless/adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../../../serverless/adapters/services/WebTokenAdapter';
 import TokenController from '../../../../serverless/api/controllers/TokenController';
@@ -12,16 +11,6 @@ import GetAcquisitions from '../../../../serverless/data/usecases/GetAcquisition
 jest.mock('../../../mocks/mockUserDAOImp');
 
 afterAll(() => jest.restoreAllMocks());
-
-const makeEmailValidator = (): EmailValidatorAdapter => {
-  class EmailValidatorStub implements EmailValidatorAdapter {
-    isEmail(email: string): boolean {
-      return true;
-    }
-  }
-
-  return new EmailValidatorStub();
-};
 
 const makeWebToken = (): WebTokenAdapter => {
   class WebTokenStub implements WebTokenAdapter {
@@ -53,12 +42,11 @@ const makeEncrypter = (): EncryptAdapter => {
 };
 
 const makeSut = (): TokenController => {
-  const emailValidatorStub = makeEmailValidator();
   const webTokenStub = makeWebToken();
   const encrypterStub = makeEncrypter();
   const paymentDAOStub = new PaymentDAOImp();
   const userDAOStub = new UserDAOImp(encrypterStub);
-  return new TokenController(emailValidatorStub, userDAOStub, webTokenStub, encrypterStub, paymentDAOStub);
+  return new TokenController(userDAOStub, webTokenStub, encrypterStub, paymentDAOStub);
 };
 
 describe('Resolve Month Balance Tests', () => {

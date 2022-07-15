@@ -241,7 +241,6 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
       });
     }
     setAdditionalValue(0);
-    console.log(additionalValue);
   };
 
   return (

@@ -19,11 +19,7 @@ export default async function handlerRegister(
     password,
     passwordConfirmation,
   };
-  const response = await userController.handleRegister({
-    body: {
-      user,
-    },
-  });
+  const response = await userController.handleRegister(user);
   if (response.error) {
     const { error } = response;
     return res.status(response.statusCode).json({ error });

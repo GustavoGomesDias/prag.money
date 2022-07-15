@@ -27,29 +27,13 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um apelido para a forma de pagamento.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Nickname (apelido) é requerido.')));
   });
 
   test('Should return 400 if no default value is provided ', async () => {
     const infos: PaymentModel = {
       nickname: 'nickname',
       default_value: NaN,
-      reset_day: 1,
-      user_id: 1,
-      current_month: 1,
-    };
-
-    const paymentControllerStub = makeSut();
-
-    const response = await paymentControllerStub.handleEdit(infos, 1);
-
-    expect(response).toEqual(badRequest(new BadRequestError('É preciso dar um valor padrão para a forma de pagamento.')));
-  });
-
-  test('Should return 400 if default value is less than zero ', async () => {
-    const infos: PaymentModel = {
-      nickname: 'nickname',
-      default_value: -1,
       reset_day: 1,
       user_id: 1,
       current_month: 1,
@@ -76,7 +60,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if additional value is provided and is less than zero ', async () => {
@@ -93,7 +77,7 @@ describe('Handler Create Payment', () => {
 
     const response = await paymentControllerStub.handleEdit(infos, 1);
 
-    expect(response).toEqual(badRequest(new BadRequestError('Valor adicional precisa ser um número e maior/igual que zero.')));
+    expect(response).toEqual(badRequest(new BadRequestError('Valor precisa ser um número e maior/igual que zero.')));
   });
 
   test('Should return 400 if incorrect reset day is provided', async () => {

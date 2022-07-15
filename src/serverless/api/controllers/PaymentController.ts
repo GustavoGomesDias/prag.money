@@ -1,17 +1,18 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable camelcase */
-import { validationDay } from '../../../utils/validations';
-import PaymentModel from '../../data/models/PaymentModel';
+import type PaymentModel from '../../data/models/PaymentModel';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import {
   HttpResponse, ok, okWithContent,
 } from '../helpers/http';
 import {
-  checkIsEquals403Error, validationField400code, validationId, validationValues,
-} from '../helpers/Validations';
-import { BadRequestError } from '../../error/HttpError';
+  checkIsEquals403Error, validationField400code,
+} from '../helpers/validations';
 import Catch from '../../decorators/Catch';
-import AddAdditionalValue from '../../data/usecases/AddAdditionalValue';
+import type AddAdditionalValue from '../../data/usecases/AddAdditionalValue';
+import IsValid from '../../decorators/IsValid';
+import IsDayOfTheMonth from '../../decorators/IsDayOfTheMonth';
+import IsNumber from '../../decorators/IsNumber';
 
 export default class PaymentController {
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -21,51 +22,47 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ idPosition: 0 })
   async handleGetPaymentById(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
-
     const payment = await this.paymentDAOImp.findUnique({
       where: {
         id: paymentId,
       },
     }) as PaymentModel;
 
+    validationField400code(payment, 'Conta não existe.');
+
     checkIsEquals403Error(payment.user_id, userId, 'Você não tem permissão para acessar está informação.');
 
     return okWithContent({ payment });
   }
 
-  validatieAllRequestFields(paymentInfos: PaymentModel): void {
-    const {
-      default_value, nickname, reset_day, user_id, current_value,
-    } = paymentInfos;
-
-    validationField400code(nickname, 'É preciso dar um apelido para a forma de pagamento.');
-    validationField400code(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
-    validationValues(default_value, 'É preciso dar um valor padrão para a forma de pagamento.');
-    if (current_value !== undefined || Number.isNaN(current_value)) {
-      validationField400code(current_value, 'Valor adicional precisa ser um número e maior/igual que zero.');
-      validationValues(current_value as number, 'Valor adicional precisa ser um número e maior/igual que zero.');
-    }
-    validationId(user_id);
-
-    if (!validationDay(reset_day)) {
-      throw new BadRequestError('Por favor, forneça um dia que seja valido.');
-    }
-  }
-
   @Catch()
+  @IsValid({
+    paramName: 'paymentInfos',
+    notEmpty: ['nickname'],
+    messageError: [
+      'É preciso dar um apelido para a forma de pagamento.',
+    ],
+    fieldIdIsValid: 'user_id',
+  })
+  @IsNumber({ paramName: 'paymentInfos', argName: 'default_value' })
+  @IsDayOfTheMonth({ paramName: 'paymentInfos', fieldName: 'reset_day' })
   async handleAdd(paymentInfos: PaymentModel): Promise<HttpResponse> {
-    this.validatieAllRequestFields(paymentInfos);
-
     await this.paymentDAOImp.add(paymentInfos);
-
     return ok('Forma de pagamento criado com sucesso!');
   }
 
   @Catch()
+  @IsNumber({ paramName: 'paymentInfos', argName: 'current_value' })
+  @IsValid({
+    paramName: 'paymentInfos',
+    notEmpty: ['nickname', 'default_value'],
+    messageError: ['Nickname (apelido) é requerido.', 'É preciso dar um valor padrão para a forma de pagamento.'],
+    fieldIdIsValid: 'user_id',
+  })
+  @IsDayOfTheMonth({ paramName: 'paymentInfos', fieldName: 'reset_day' })
   async handleEdit(paymentInfos: PaymentModel, userId: number): Promise<HttpResponse> {
-    this.validatieAllRequestFields(paymentInfos);
     checkIsEquals403Error(userId, paymentInfos.user_id, 'Você não tem permissão para editar.');
 
     await this.paymentDAOImp.update({
@@ -79,11 +76,14 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsNumber({ paramName: 'infos', argName: 'additionalValue' })
+  @IsValid({
+    paramName: 'infos',
+    fieldIdIsValid: 'paymentId',
+    notEmpty: ['additionalValue'],
+    messageError: ['Valor adcional é requerido.'],
+  })
   async handleAddAdditionalValue(infos: AddAdditionalValue, userId: number): Promise<HttpResponse> {
-    validationId(infos.userId);
-    validationId(infos.paymentId);
-    validationField400code(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
-    validationValues(infos.additionalValue, 'Valor adicional precisa ser um número e maior/igual que zero.');
     checkIsEquals403Error(userId, infos.userId, 'Você não tem permissão para editar.');
 
     await this.paymentDAOImp.addAdditionValue(infos);
@@ -92,9 +92,8 @@ export default class PaymentController {
   }
 
   @Catch()
+  @IsValid({ idPosition: 0 })
   async handleDelete(paymentId: number, userId: number): Promise<HttpResponse> {
-    validationId(paymentId);
-
     const payment = await this.paymentDAOImp.findByPaymentId(paymentId);
 
     checkIsEquals403Error(userId, payment.user_id, 'Você não tem permissão para acessar esse contaúdo.');

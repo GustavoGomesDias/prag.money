@@ -26,7 +26,7 @@ export const checkIfExists404code = (info: unknown, message: string) => {
 };
 
 export const validationValues = (value: number, message: string) => {
-  if (value < 0) {
+  if (value < 0 || Number.isNaN(value)) {
     throw new BadRequestError(message);
   }
 };
@@ -54,3 +54,5 @@ export const checkIsEquals403Error = (firstTestValue: unknown, secondTestValue: 
     throw new ForbiddenError(errorMessage);
   }
 };
+
+export const isObject = (obj: unknown) => typeof obj === 'object' && obj !== null && !Array.isArray(obj);
