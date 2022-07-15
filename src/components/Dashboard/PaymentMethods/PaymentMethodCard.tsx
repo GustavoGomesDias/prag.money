@@ -10,7 +10,7 @@ const PaymentMethodCard = ({ children, title }: PaymentMethodCardProps): JSX.Ele
   <Flex
     pb="0.5em"
     px="0.5em"
-    width={{ base: '100%', md: '320px', xl: '400px' }}
+    width={{ base: '100%', md: '300px', xl: '300px' }}
     height="120px"
     alignItems="center"
     justifyContent="center"
