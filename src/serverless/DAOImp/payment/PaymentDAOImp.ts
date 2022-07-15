@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { Prisma } from '@prisma/client';
 import { GetDate } from '../../adapters/services/FinancialHelperAdapter';
-import { checkIfExists404code } from '../../api/helpers/Validations';
+import { checkIfExists404code } from '../../api/helpers/validations';
 import PaymentModel from '../../data/models/PaymentModel';
 import prisma from '../../data/prisma/config';
 import AddAdditionalValue from '../../data/usecases/AddAdditionalValue';

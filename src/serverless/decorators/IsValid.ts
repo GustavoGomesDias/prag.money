@@ -3,7 +3,7 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
-import { validationField400code, validationValues } from '../api/helpers/Validations';
+import { validationField400code, validationValues } from '../api/helpers/validations';
 import handleId from './helpers/handleId';
 
 export interface IsValidFields {
@@ -32,7 +32,6 @@ const IsValid = ({
     if (notEmpty && notEmpty.length > 0) {
       let messagePos = 0;
       for (const items of notEmpty) {
-        console.log(args[0][items]);
         const message = messageError ? messageError[messagePos] : 'Todos que tem * é um item obrigatório e deve ser preenchido.';
 
         validationField400code(args[0][items], message);

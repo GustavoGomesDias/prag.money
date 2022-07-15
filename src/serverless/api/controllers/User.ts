@@ -5,13 +5,13 @@ import RegisterUser from '../../data/usecases/RegisterUser';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
 
 import {
-  HttpRequest, HttpResponse, created, okWithContent, ok,
+  HttpResponse, created, okWithContent, ok,
 } from '../helpers/http';
 import UserModel from '../../data/models/UserModel';
 import {
   checkIfExists404code,
   validationId,
-} from '../helpers/Validations';
+} from '../helpers/validations';
 import GetForeignInfos from '../../data/usecases/GetForeignInfos';
 import Catch from '../../decorators/Catch';
 import IsValid from '../../decorators/IsValid';
@@ -34,7 +34,9 @@ export default class UserController {
   @Catch()
   @IsValid({
     notEmpty: ['name', 'email', 'password', 'passwordConfirmation'],
-    messageError: ['Nome de usuário requerido.',
+    paramName: 'req',
+    messageError: [
+      'Nome de usuário requerido.',
       'E-mail requerido.',
       'Senha requerida.',
       'Confirmação de senha requerida.',
@@ -47,10 +49,10 @@ export default class UserController {
     secondFieldName: 'passwordConfirmation',
     messageError: 'Senha diferente de confirmar senha.',
   })
-  async handleRegister(req: HttpRequest): Promise<HttpResponse> {
+  async handleRegister(infos: RegisterUser): Promise<HttpResponse> {
     const {
       email, password, name,
-    } = req.body.user as RegisterUser;
+    } = infos;
 
     await this.userDAO.addUser({
       email, name, password,

@@ -6,7 +6,7 @@ import UserDAO from './UserDAO';
 import prisma from '../../data/prisma/config';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import GetForeignInfos, { ReturnForeignInfos } from '../../data/usecases/GetForeignInfos';
-import { checkIfExists404code } from '../../api/helpers/Validations';
+import { checkIfExists404code } from '../../api/helpers/validations';
 
 export default class UserDAOImp extends GenericDAOImp<
   UserModel,

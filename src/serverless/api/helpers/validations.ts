@@ -2,7 +2,7 @@ import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import { BadRequestError, ForbiddenError, NotFoundError } from '../../error/HttpError';
 
 export const validationId = (id: number) => {
-  if (!(typeof id === 'number') || Number.isNaN(id) || id <= 0) {
+  if (!(typeof id === 'number') || Number.isNaN(id) || id < 0) {
     throw new BadRequestError('ID inválido.');
   }
 };
@@ -26,7 +26,7 @@ export const checkIfExists404code = (info: unknown, message: string) => {
 };
 
 export const validationValues = (value: number, message: string) => {
-  if (value < 0) {
+  if (value < 0 || Number.isNaN(value)) {
     throw new BadRequestError(message);
   }
 };
@@ -54,3 +54,5 @@ export const checkIsEquals403Error = (firstTestValue: unknown, secondTestValue: 
     throw new ForbiddenError(errorMessage);
   }
 };
+
+export const isObject = (obj: unknown) => typeof obj === 'object' && obj !== null && !Array.isArray(obj);

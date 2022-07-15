@@ -2,25 +2,19 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
-import { validationPage } from '../api/helpers/Validations';
+import { validationPage } from '../api/helpers/validations';
 
 export interface PageIsValidFields {
-  paramName?: string
-  fieldName: string
+  argPosition: number
 }
 
 const PageIsValid = ({
-  paramName, fieldName,
+  argPosition,
 }: PageIsValidFields) => (target: any, key: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value;
 
   descriptor.value = async function (...args: any) {
-    if (paramName) {
-      validationPage(args[0][fieldName]);
-    } else {
-      validationPage(args[fieldName]);
-    }
-
+    validationPage(args[argPosition]);
     return await originalMethod.apply(this, args);
   };
 

@@ -1,8 +1,9 @@
-import { validationId } from '../../api/helpers/Validations';
+/* eslint-disable no-lonely-if */
+import { validationId } from '../../api/helpers/validations';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const handleId = (fieldIdIsValid: string | string[], paramName: string | undefined, args: any) => {
-  if (paramName) {
+const handleId = (fieldIdIsValid: string | string[] | undefined, idPosition: number | undefined, paramName: string | undefined, args: any) => {
+  if (paramName && fieldIdIsValid !== undefined) {
     if (Array.isArray(fieldIdIsValid)) {
       for (const id of fieldIdIsValid) {
         validationId(args[0][id]);
@@ -10,12 +11,22 @@ const handleId = (fieldIdIsValid: string | string[], paramName: string | undefin
     } else {
       validationId(args[0][fieldIdIsValid]);
     }
-  } else if (Array.isArray(fieldIdIsValid)) {
-    for (const id of fieldIdIsValid) {
-      validationId(args[id]);
-    }
   } else {
-    validationId(args[fieldIdIsValid]);
+    if (Array.isArray(fieldIdIsValid)) {
+      for (const id of fieldIdIsValid) {
+        validationId(args[id]);
+      }
+    } else {
+      if (fieldIdIsValid) validationId(args[fieldIdIsValid]);
+    }
+  }
+
+  if (idPosition !== undefined) {
+    if (paramName) {
+      validationId(args[0][idPosition]);
+    } else {
+      validationId(args[idPosition]);
+    }
   }
 };
 

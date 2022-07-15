@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
-import { validationEmailRequest } from '../api/helpers/Validations';
+import { isObject, validationEmailRequest } from '../api/helpers/validations';
 import EmailValidator from '../services/EmailValidator';
 
 const IsEmail = () => (target: any, key: string, descriptor: PropertyDescriptor) => {
@@ -11,10 +11,10 @@ const IsEmail = () => (target: any, key: string, descriptor: PropertyDescriptor)
   descriptor.value = async function (...args: any) {
     const emailValidator = new EmailValidator();
     let validationEmail = true;
-    if (Array.isArray(args)) {
+    if (Array.isArray(args) && isObject(args[0])) {
       validationEmail = emailValidator.isEmail(args[0].email);
     } else {
-      validationEmail = emailValidator.isEmail(args.email);
+      validationEmail = emailValidator.isEmail(args[0]);
     }
 
     validationEmailRequest(validationEmail);

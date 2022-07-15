@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-return-await */
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -14,14 +15,14 @@ const IsDayOfTheMonth = ({ fieldName, paramName }: IsDayOfTheMonthProps) => (tar
   const originalMethod = descriptor.value;
 
   descriptor.value = async function (...args: any) {
-    console.log(args[0][fieldName]);
     if (paramName) {
-      console.log('Entrou');
       if (!validationDay(args[0][fieldName])) {
         throw new BadRequestError('Por favor, forneça um dia que seja valido.');
       }
-    } else if (!validationDay(args[fieldName])) {
-      throw new BadRequestError('Por favor, forneça um dia que seja valido.');
+    } else {
+      if (!validationDay(args[fieldName])) {
+        throw new BadRequestError('Por favor, forneça um dia que seja valido.');
+      }
     }
     return await originalMethod.apply(this, args);
   };

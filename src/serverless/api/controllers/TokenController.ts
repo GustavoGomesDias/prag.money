@@ -1,4 +1,3 @@
-import { EmailValidatorAdapter } from '../../adapters/services/EmailValidatorAdapter';
 import EncryptAdapter from '../../adapters/services/EncryptAdapter';
 import WebTokenAdapter from '../../adapters/services/WebTokenAdapter';
 import UserModel from '../../data/models/UserModel';
@@ -9,8 +8,8 @@ import {
 } from '../helpers/http';
 import {
   checkIfExists404code,
-  checkPasswordIsTheCertainPassword, validationEmailRequest, validationField400code,
-} from '../helpers/Validations';
+  checkPasswordIsTheCertainPassword, validationField400code,
+} from '../helpers/validations';
 import Catch from '../../decorators/Catch';
 import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import GetAcquisitions from '../../data/usecases/GetAcquisitions';
@@ -18,8 +17,6 @@ import IsValid from '../../decorators/IsValid';
 import IsEmail from '../../decorators/IsEmail';
 
 export default class TokenController {
-  private readonly emailValidator: EmailValidatorAdapter;
-
   private readonly userDAOImp: UserDAOImp;
 
   private readonly paymentDAOImp: PaymentDAOImp;
@@ -29,24 +26,15 @@ export default class TokenController {
   private readonly encrypter: EncryptAdapter;
 
   constructor(
-    emailValidator: EmailValidatorAdapter,
     userDAOImp: UserDAOImp,
     webToken: WebTokenAdapter,
     encrypter: EncryptAdapter,
     paymentDAOImp: PaymentDAOImp,
   ) {
-    this.emailValidator = emailValidator;
     this.userDAOImp = userDAOImp;
     this.webToken = webToken;
     this.encrypter = encrypter;
     this.paymentDAOImp = paymentDAOImp;
-  }
-
-  validationLoginInfos(infos: LoginProps): void {
-    const { email, password } = infos;
-
-    validationField400code(email, 'E-mail requerido.');
-    validationField400code(password, 'Senha requerida.');
   }
 
   async resolveMonthBalance(payments: GetAcquisitions[]) {
@@ -59,17 +47,19 @@ export default class TokenController {
   }
 
   @Catch()
-  @IsValid({ notEmpty: ['email', 'password'] })
+  @IsValid({
+    paramName: 'infos',
+    notEmpty: ['email', 'password'],
+    messageError: ['E-mail requerido.', 'Senha requerida.'],
+  })
   @IsEmail()
   async handleLogin(infos: LoginProps): Promise<HttpResponse> {
     const { email, password } = infos;
 
     const user = await this.userDAOImp.findByEmail(email);
+    checkIfExists404code(user, 'Usuário não existente, considere criar uma conta.');
 
     await checkPasswordIsTheCertainPassword(password, user.password, this.encrypter);
-
-    const validationEmail = this.emailValidator.isEmail(email);
-    validationEmailRequest(validationEmail);
 
     const payload = this.webToken.sign({
       id: user.id,

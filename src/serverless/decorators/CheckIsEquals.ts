@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-param-reassign */
-import { checkIsEquals } from '../api/helpers/Validations';
+import { checkIsEquals } from '../api/helpers/validations';
 
 export interface IsEquals {
   paramName?: string
