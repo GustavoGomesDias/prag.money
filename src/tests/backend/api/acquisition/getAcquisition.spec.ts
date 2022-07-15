@@ -12,7 +12,7 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../..
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
 import returnPurchaseInfos from '../../../mocks/acquisitons/mockPurchasesInfos';
-import * as validations from '../../../../serverless/api/helpers/Validations';
+import * as validations from '../../../../serverless/api/helpers/validations';
 
 jest.mock('../../../mocks/mockUserDAOImp');
 jest.mock('../../../mocks/mockPaymentDAOImp');

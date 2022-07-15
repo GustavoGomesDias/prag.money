@@ -8,7 +8,7 @@ class CheckIsEqualsDecoratorTest {
   }
 }
 
-describe('ChesIsEqual Decorator test', () => {
+describe('CheckIsEqual Decorator test', () => {
   test('Should return BadRequestError if paramName is undefined and firstField is different secondField', async () => {
     try {
       const mockedClass = new CheckIsEqualsDecoratorTest();

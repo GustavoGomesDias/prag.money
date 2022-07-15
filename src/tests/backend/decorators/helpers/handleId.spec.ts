@@ -1,4 +1,4 @@
-import * as validations from '../../../../serverless/api/helpers/Validations';
+import * as validations from '../../../../serverless/api/helpers/validations';
 import handleId from '../../../../serverless/decorators/helpers/handleId';
 
 describe('HandleID Helper Tests', () => {

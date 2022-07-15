@@ -14,7 +14,7 @@ import {
 } from '../../../../serverless/error/HttpError';
 import mockUserDAOImp from '../../../mocks/mockUserDAOImp';
 import mockReturnsAcquisiton from '../../../mocks/acquisitons/mockReturnsAcquisitionsUseCase';
-import * as validations from '../../../../serverless/api/helpers/Validations';
+import * as validations from '../../../../serverless/api/helpers/validations';
 
 const makeSut = (): AcquisitionController => {
   const payWithtDAOStub = new PayWithDAOImp();
