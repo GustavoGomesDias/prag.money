@@ -35,7 +35,6 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
   const toast = useToast();
-  console.log(data);
   const { user } = useContext(AuthContext);
 
   const { push } = useRouter();

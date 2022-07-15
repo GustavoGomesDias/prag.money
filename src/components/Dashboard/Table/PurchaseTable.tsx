@@ -10,8 +10,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
-import Link from 'next/link';
-import Image from 'next/image';
 import PurchaseContext from '../../../context/purchases/PurchaseContext';
 import PurchaseModel from '../../../serverless/data/models/PurchaseModel';
 import api from '../../../services/fetchAPI/init';
@@ -29,8 +27,6 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [actualPage, setActualPage] = useState<number>(0);
-  const [nextPage, setNextPage] = useState<number>(page + 1);
   const purchaseCtx = useContext(PurchaseContext);
 
   const { push } = useRouter();
@@ -100,7 +96,6 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
   const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const searchPage = page + 1;
-    setPage(searchPage);
     setIsLoading(true);
     const response = await api.getWithBody('/acquisition', {
       page: searchPage,
@@ -131,8 +126,7 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
       return;
     }
 
-    setActualPage(page);
-    setNextPage(searchPage);
+    setPage(searchPage);
     setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
   };
 
@@ -141,7 +135,6 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
     if (page > 0) {
       setIsLoading(true);
       const prevPage = page - 1;
-      setPage(prevPage);
       const response = await api.getWithBody('/acquisition', {
         page: prevPage,
         id: paymentId,
@@ -159,6 +152,7 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
         return;
       }
 
+      setPage(prevPage);
       setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
     } else {
       toast({
@@ -199,7 +193,6 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
             }}
             onClick={async (e) => await handleGetPrevPurchases(e)}
           >
-            {actualPage}
             <AiOutlineArrowLeft />
           </Button>
           <Button
@@ -217,35 +210,18 @@ const PurchaseTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.Elemen
             }}
             onClick={async (e) => await handleGetNextPurchases(e)}
           >
-
-            {nextPage}
             <AiOutlineArrowRight />
           </Button>
         </ButtonGroup>
       </Flex>
       {purchaseList.length < 1 && (
-        <>
-          <Text
-            fontWeight="bold"
-            fontSize="1.2rem"
-            my="1rem"
-          >
-            Por favor, selecione uma conta financeira
-          </Text>
-          <Image src="/gifs/select-account.gif" alt="Image Loading" width="500px" height="150px" />
-          <Text
-            fontWeight="bold"
-            fontSize="1.2rem"
-            my="1rem"
-          >
-            Caso não tenha, considere
-            {' '}
-            <Link href="/payment/create" passHref><span style={{ color: '#9fdbcf', cursor: 'pointer' }}>criar uma</span></Link>
-            .
-          </Text>
-
-          <Image src="/gifs/create-account.gif" alt="Image Loading" width="800px" height="500px" />
-        </>
+        <Text
+          fontWeight="bold"
+          fontSize="1.2rem"
+          my="1rem"
+        >
+          Não há gastos cadastrados nesta conta.
+        </Text>
       )}
       {purchaseList.length > 0 && (
         <Table

@@ -22,8 +22,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
   const [purchaseList, setPurchseList] = useState<PurchaseModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
-  const [actualPage, setActualPage] = useState<number>(0);
-  const [nextPage, setNextPage] = useState<number>(page + 1);
   const toast = useToast();
   const { push } = useRouter();
 
@@ -91,7 +89,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
   const handleGetNextPurchases = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const searchPage = page + 1;
-    setPage(searchPage);
     setIsLoading(true);
     const response = await api.getWithBody('/acquisition', {
       page: searchPage,
@@ -122,9 +119,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
       return;
     }
 
-    setActualPage(page);
-    setNextPage(searchPage);
-
+    setPage(searchPage);
     setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
   };
 
@@ -133,8 +128,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
     if (page > 0) {
       setIsLoading(true);
       const prevPage = page - 1;
-      setNextPage(page);
-      setPage(prevPage);
       const response = await api.getWithBody('/acquisition', {
         page: prevPage,
         id: paymentId,
@@ -152,7 +145,7 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
         return;
       }
 
-      setActualPage(prevPage);
+      setPage(prevPage);
       setPurchseList([...(response.data.content as { [key: string]: PurchaseModel[] }).purchases]);
     } else {
       toast({
@@ -191,7 +184,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
             }}
             onClick={async (e) => await handleGetPrevPurchases(e)}
           >
-            {actualPage}
             <AiOutlineArrowLeft />
           </Button>
           <Button
@@ -209,8 +201,6 @@ const MobileDisplayTable = ({ purchases, paymentId }: PurchaseTableProps): JSX.E
             }}
             onClick={async (e) => await handleGetNextPurchases(e)}
           >
-
-            {nextPage}
             <AiOutlineArrowRight />
 
           </Button>

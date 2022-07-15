@@ -7,7 +7,6 @@ import {
   Flex, Grid, useToast,
 } from '@chakra-ui/react';
 
-import { useRouter } from 'next/router';
 import Header from '../components/UI/Header/Header';
 import SEO from '../components/SEO';
 import Actions from '../components/Dashboard/Actions/Actions';
@@ -36,8 +35,6 @@ export interface DashboardProps {
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const [actualAction, setActualAction] = useState<number>(0);
   const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
-
-  const { push } = useRouter();
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
   const { handleSetPayments } = useContext(PaymentContext);
@@ -84,11 +81,11 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     <>
       <SEO title="p.$ | Dashboard" description="Dashboard page" />
       <Header logo="Dash" />
-      <PragModal isOpen={notHavePayment}>
+      <PragModal isOpen={actualAction === 0 && notHavePayment}>
         <InfoContainer
           action="Cadastrar pagamento"
           message="Você ainda não tem uma conta cadastrada e para usar será necessário ter uma. Vamos lá?"
-          handleAction={() => push('/payment/create', '/payment/create')}
+          handleAction={() => setActualAction(1)}
         />
       </PragModal>
       <Grid
@@ -105,7 +102,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
           w="full"
           mb={{ base: '1em', md: '0' }}
         >
-          <Actions setAction={setActualAction} />
+          <Actions action={actualAction} setAction={setActualAction} />
           <SideActions />
         </Flex>
         <Flex

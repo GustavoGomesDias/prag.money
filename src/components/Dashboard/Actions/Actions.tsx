@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ButtonGroup, Flex } from '@chakra-ui/react';
 import { FaShoppingBag, FaHome } from 'react-icons/fa';
 import { GiWallet } from 'react-icons/gi';
@@ -6,21 +6,18 @@ import CustomButton from '../../UI/Buttons/CustomButton';
 
 export interface ActionsProps {
   setAction: React.Dispatch<React.SetStateAction<number>>
+  action: number
 }
 
-const Actions = ({ setAction }: ActionsProps): JSX.Element => {
-  const [isActive, setIsActive] = useState<number>(0);
+const Actions = ({ setAction, action }: ActionsProps): JSX.Element => {
   const handleShowHome = () => {
     setAction(0);
-    setIsActive(0);
   };
   const handleAddPayment = () => {
     setAction(1);
-    setIsActive(1);
   };
   const handleAddPurchase = () => {
     setAction(2);
-    setIsActive(2);
   };
 
   return (
@@ -48,21 +45,21 @@ const Actions = ({ setAction }: ActionsProps): JSX.Element => {
           handleOnClick={handleShowHome}
           action="Inicio"
           textSize="20px"
-          isActive={isActive === 0}
+          isActive={action === 0}
         />
         <CustomButton
           Icon={GiWallet}
           handleOnClick={handleAddPayment}
           action="Adicionar conta"
           textSize="20px"
-          isActive={isActive === 1}
+          isActive={action === 1}
         />
         <CustomButton
           Icon={FaShoppingBag}
           handleOnClick={handleAddPurchase}
           action="Novo gasto"
           textSize="20px"
-          isActive={isActive === 2}
+          isActive={action === 2}
         />
         {/* <CustomButton action="Ver relatório" textSize="14px" /> */}
       </ButtonGroup>

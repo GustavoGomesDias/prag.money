@@ -44,7 +44,8 @@ const CreatePurchase = ({ data }: CreatePurchaseProps): JSX.Element => {
   const { push, back } = useRouter();
 
   useEffect(() => {
-    if (Array.isArray(data) && data.length === 0) {
+    if (data.payments === undefined) setNotHasPayment(true);
+    if (Array.isArray(data.payments) && data.payments.length === 0) {
       setNotHasPayment(true);
     }
   }, []);
