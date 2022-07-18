@@ -9,6 +9,7 @@ import PaymentDAOImp from '../../DAOImp/payment/PaymentDAOImp';
 import PayWithDAOImp from '../../DAOImp/payWith/PayWithDAOImp';
 import PurchaseDAOImp from '../../DAOImp/purchase/PurchaseDAOImp';
 import UserDAOImp from '../../DAOImp/users/UserDAOImp';
+import * as pur from '../../data/models/PurchaseModel';
 import PurchaseModel from '../../data/models/PurchaseModel';
 import type AddPurchase from '../../data/usecases/AddPurchase';
 import type { AddPayment } from '../../data/usecases/AddPurchase';
@@ -20,6 +21,7 @@ import Catch from '../../decorators/Catch';
 import UpdateCurrentValue from '../../data/usecases/UpdateCurrentValue';
 import IsValid from '../../decorators/IsValid';
 import PageIsValid from '../../decorators/PageIsValid';
+import { GetAcquisitionsByPaymentId } from '../../data/usecases/GetAcquisitonsByPaymentId';
 
 export default class AcquisitionController {
   private readonly paymentDAO: PaymentDAOImp;
@@ -56,16 +58,18 @@ export default class AcquisitionController {
     await this.paymentDAO.checkIfPaymentExists(paymentId);
 
     const { acquisitions, default_value, ...paymentInfo } = await this.paymentDAO.findByPaymentId(paymentId);
-    const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions);
+    const purchases = await this.purchaseDAO.returnsPurchaseByAcquisitionsList(acquisitions) as unknown as pur.PurchaseModelWithCreateData[];
 
     checkIfExists404code(purchases, 'Não há compras relacionadas a essa forma de pagamento.');
     checkIsEquals403Error(purchases[0].user_id, userId, 'Você não tem permissão para acessar este conteúdo.');
 
-    return okWithContent({
+    const content: GetAcquisitionsByPaymentId = {
       ...paymentInfo,
       default_value,
       purchases,
-    });
+    };
+
+    return okWithContent(content);
   }
 
   @Catch()

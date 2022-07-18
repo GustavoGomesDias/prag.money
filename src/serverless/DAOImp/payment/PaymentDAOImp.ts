@@ -50,7 +50,7 @@ Prisma.PaymentFindManyArgs
     const { PayWith, ...paymentInfos } = getAcquisitionsInfos;
 
     return {
-      acquisitions: Array.isArray(PayWith) ? PayWith.slice(0, 6) : [PayWith],
+      acquisitions: Array.isArray(PayWith) ? PayWith : [PayWith],
       ...paymentInfos,
     };
   }
