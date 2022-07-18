@@ -1,6 +1,7 @@
 import { IconButton, keyframes, Tooltip } from '@chakra-ui/react';
 import React, { MouseEvent } from 'react';
 import { FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+import { BsFileEarmarkPdfFill } from 'react-icons/bs';
 import { ImLoop2 } from 'react-icons/im';
 import { RiCoinFill } from 'react-icons/ri';
 import PaymentMethodCard from './PaymentMethodCard';
@@ -33,10 +34,11 @@ export interface PaymentActionsProps {
   handleDelete: (e: MouseEvent<HTMLButtonElement>) => void
   setRenderAdditionalValueForm: React.Dispatch<React.SetStateAction<boolean>>
   refreshAccount: (e: MouseEvent<HTMLButtonElement>) => Promise<void>
+  handleMakeReport: (e: MouseEvent<HTMLButtonElement>) => Promise<void>
 }
 
 const PaymentActions = ({
-  handleDelete, handleEdit, refreshAccount, setRenderAdditionalValueForm,
+  handleDelete, handleEdit, refreshAccount, setRenderAdditionalValueForm, handleMakeReport,
 }: PaymentActionsProps): JSX.Element => (
   <PaymentMethodCard
     title="Ações da conta"
@@ -49,7 +51,7 @@ const PaymentActions = ({
 
       <IconButton
         bg="none"
-        aria-label="Edit account"
+        aria-label="Add more"
         icon={<RiCoinFill />}
         transition="0.5ms"
         animation={animationFlip}
@@ -110,13 +112,12 @@ const PaymentActions = ({
       label="Refrash"
       placement="right-start"
     >
-
       <IconButton
         bg="none"
-        aria-label="Search database"
+        aria-label="Refresh Account"
         icon={<ImLoop2 />}
         _hover={{
-          color: '#049579',
+          color: '#53fabf',
           animation: animationSpin,
         }}
         w="50px"
@@ -126,6 +127,28 @@ const PaymentActions = ({
           await refreshAccount(e);
         }}
         color="#00E091"
+      />
+    </Tooltip>
+
+    <Tooltip
+      hasArrow
+      label="Gerar relatório da conta"
+      placement="bottom-end"
+    >
+      <IconButton
+        bg="none"
+        aria-label="Make account report"
+        color="#00E091"
+        icon={<BsFileEarmarkPdfFill />}
+        _hover={{
+          color: '#53fabf',
+        }}
+        w="60px"
+        h="60px"
+        size="lg"
+        onClick={async (e) => {
+          await handleMakeReport(e);
+        }}
       />
     </Tooltip>
   </PaymentMethodCard>

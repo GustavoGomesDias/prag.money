@@ -6,3 +6,7 @@ export default interface PurchaseModel {
   purchase_date: Date
   user_id: number
 }
+
+export interface PurchaseModelWithCreateData extends PurchaseModel {
+  created_at: string
+}

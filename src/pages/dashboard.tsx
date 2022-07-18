@@ -43,7 +43,6 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     const { authToken, userId } = parseCookies();
     api.setAuthHeader(`Bearer ${authToken}`);
     const response = await api.get(`/user/payment/${userId}`);
-
     handleSetPayments(response.data.content !== undefined ? (response.data.content as ({ [key: string]: PaymentModel[] })).payments : []);
   };
 

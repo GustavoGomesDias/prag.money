@@ -22,6 +22,9 @@ import PaymentMethodCard from './PaymentMethodCard';
 import PaymentActions from './PaymentActions';
 import AddAdditonalValue from './AddAdditionalValue';
 import AddAdditionalValue from '../../../serverless/data/usecases/AddAdditionalValue';
+import generateUrlQRCODE from '../../../services/qrcode/qrcode';
+import handlePDF from '../../../services/pdf/pdf';
+import { GetAcquisitionsByPaymentId } from '../../../serverless/data/usecases/GetAcquisitonsByPaymentId';
 
 export interface PaymentsMethodsProps {
   refresh(): Promise<void>
@@ -243,6 +246,21 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     setAdditionalValue(0);
   };
 
+  const handleMakeReport = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (paymentId === 0) {
+      return;
+    }
+
+    const response = await api.get(`/acquisition/${paymentId}`);
+
+    const payment = response.data.content as GetAcquisitionsByPaymentId;
+
+    const qrcode = await generateUrlQRCODE('https://pragmoney.vercel.app/');
+    handlePDF(qrcode, payment);
+  };
+
   return (
     <Flex
       width="100%"
@@ -344,6 +362,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           refreshAccount={refreshAccount}
+          handleMakeReport={handleMakeReport}
         />
       </Grid>
     </Flex>
