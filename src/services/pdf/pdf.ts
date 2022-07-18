@@ -25,6 +25,16 @@ const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
     pageOrientation: 'landscape',
     content: [
       {
+        text: 'Leia o QRCode e entre em nossa plataforma. B)',
+        style: 'qrImage',
+      },
+
+      {
+        image: qrcode,
+        width: 100,
+        style: 'qrImage',
+      },
+      {
         text: `Relatório do mês até o dia ${new Date().getDate()}`,
         style: 'header',
       },
@@ -50,16 +60,12 @@ const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
           ],
         },
       },
-      {
-        text: 'Leia o QRCode e entre em nossa plataforma. B)',
-        style: 'qrImage',
-      },
 
-      {
-        image: qrcode,
-        width: 100,
-        style: 'qrImage',
-      },
+      // {
+      //   image: '../../../public/logo.png',
+      //   width: 100,
+      //   style: 'qrImage',
+      // },
     ],
     styles: {
       header: {
