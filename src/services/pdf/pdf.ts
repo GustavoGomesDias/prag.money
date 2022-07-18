@@ -6,7 +6,7 @@ import formatDate from '../../utils/formatDate';
 
 export type ReportPurchaseInfo = Array<string | number>[]
 
-const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
+const handlePDF = async (qrcode: string, content: GetAcquisitionsByPaymentId) => {
   const purchases: ReportPurchaseInfo = [];
 
   for (const data of content.purchases) {
@@ -25,22 +25,12 @@ const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
     pageOrientation: 'landscape',
     content: [
       {
-        text: 'Leia o QRCode e entre em nossa plataforma. B)',
-        style: 'qrImage',
-      },
-
-      {
-        image: qrcode,
-        width: 100,
-        style: 'qrImage',
-      },
-      {
         text: `Relatório do mês até o dia ${new Date().getDate()}`,
         style: 'header',
       },
       'Este relatório contém as informações de todos os gastos guardados na plataforma referente a conta atual.',
       {
-        text: `Apelido da conta: ${content.nickname}\nSaldo Atual: R$ ${content.current_value}\n`,
+        text: `Apelido da conta: ${content.nickname}\nSaldo Atual: R$ ${Number(content.current_value).toFixed(2)}\n`,
         bold: true,
         style: 'tableExample',
       },
@@ -60,12 +50,20 @@ const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
           ],
         },
       },
+      {
+        text: 'Leia o QRCode e entre em nossa plataforma. B)',
+        style: 'qrImage',
+      },
 
-      // {
-      //   image: '../../../public/logo.png',
-      //   width: 100,
-      //   style: 'qrImage',
-      // },
+      {
+        image: qrcode,
+        width: 100,
+        style: 'qrImage',
+      },
+      {
+        text: 'Prag.Money$',
+        style: ['qrImage', 'logoMargin'],
+      },
     ],
     styles: {
       header: {
@@ -84,6 +82,11 @@ const handlePDF = (qrcode: string, content: GetAcquisitionsByPaymentId) => {
       },
       tableExample: {
         margin: [15, 15, 15, 15],
+
+      },
+
+      logoMargin: {
+        margin: [15, 0, 15, 0],
 
       },
       qrImage: {

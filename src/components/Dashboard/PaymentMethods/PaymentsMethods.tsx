@@ -246,7 +246,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     setAdditionalValue(0);
   };
 
-  const handleMakeReport = async (e: MouseEvent<HTMLButtonElement>) => {
+  const handleMakePDFReport = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (paymentId === 0) {
@@ -258,7 +258,30 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     const payment = response.data.content as GetAcquisitionsByPaymentId;
 
     const qrcode = await generateUrlQRCODE('https://pragmoney.vercel.app/');
-    handlePDF(qrcode, payment);
+    await handlePDF(qrcode, payment);
+  };
+
+  const handleMakeJSONReport = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    if (paymentId === 0) {
+      return;
+    }
+    const paymentsIndex = payments.map((payment) => payment.id).indexOf(paymentId);
+    const response = await api.get(`/acquisition/${paymentId}`);
+    const payment = response.data.content as GetAcquisitionsByPaymentId;
+    const fileName = `${payments[paymentsIndex].nickname}.json`;
+    const json = JSON.stringify(payment);
+    const blob = new Blob([json], { type: 'application/json' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = href;
+    link.download = `${fileName}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
   };
 
   return (
@@ -362,7 +385,8 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
           handleEdit={handleEdit}
           handleDelete={handleDelete}
           refreshAccount={refreshAccount}
-          handleMakeReport={handleMakeReport}
+          handleMakePDFReport={handleMakePDFReport}
+          handleMakeJSONReport={handleMakeJSONReport}
         />
       </Grid>
     </Flex>
