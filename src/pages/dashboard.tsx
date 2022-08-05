@@ -35,6 +35,7 @@ export interface DashboardProps {
 const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
   const [actualAction, setActualAction] = useState<number>(0);
   const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
+  const [accountCreated, setAccountCreated] = useState<boolean>(false);
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
   const { handleSetPayments } = useContext(PaymentContext);
@@ -80,7 +81,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     <>
       <SEO title="p.$ | Dashboard" description="Dashboard page" />
       <Header logo="Dash" />
-      <PragModal isOpen={actualAction === 0 && notHavePayment}>
+      <PragModal isOpen={actualAction === 0 && notHavePayment && !accountCreated}>
         <InfoContainer
           action="Cadastrar pagamento"
           message="Você ainda não tem uma conta cadastrada e para usar será necessário ter uma. Vamos lá?"
@@ -120,7 +121,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
               <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
             </>
           )}
-          {actualAction === 1 && <CreateForm />}
+          {actualAction === 1 && <CreateForm setAccountCreated={setAccountCreated} />}
           {actualAction === 2 && <CreatePurchase data={{ payments }} />}
         </Flex>
       </Grid>
