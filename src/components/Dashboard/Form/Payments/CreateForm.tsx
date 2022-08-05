@@ -11,7 +11,13 @@ import api from '../../../../services/fetchAPI/init';
 import toastConfig from '../../../../utils/config/tostConfig';
 import { validationDay, validationField } from '../../../../utils/validations';
 
-const CreateForm = (): JSX.Element => {
+export interface CreateFormProps {
+  setActualAction: React.Dispatch<React.SetStateAction<number>>
+  setNotHavePayment: React.Dispatch<React.SetStateAction<boolean>>
+  refresh: () => Promise<void>
+}
+
+const CreateForm = ({ setActualAction, setNotHavePayment, refresh }: CreateFormProps): JSX.Element => {
   const [nickname, setNickName] = useState<string>('');
   const [defaultValue, setDefaultValue] = useState<number>(-1);
   const [resetDay, setResetDay] = useState<string>('0');
@@ -76,6 +82,9 @@ const CreateForm = (): JSX.Element => {
       nickname, default_value: isSpecialAccount ? Number(defaultValue) : 0, reset_day: isSpecialAccount ? Number(resetDay) : 1, user_id: (user?.userInfo.id as number),
     };
     const response = await api.post('/payment', data);
+    setActualAction(0);
+    setNotHavePayment(false);
+    await refresh();
     if (response.data.message) {
       toast({
         title: 'Sucesso! 😎',

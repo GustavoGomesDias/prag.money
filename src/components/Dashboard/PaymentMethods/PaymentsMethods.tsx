@@ -148,7 +148,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
   };
 
   const handleDeletePayment = async (): Promise<void> => {
-    if (balance === 0) {
+    if (paymentId === 0) {
       toast({
         title: '😢',
         description: 'Não me delete, por favor!',
@@ -229,6 +229,7 @@ const PaymentsMethods = ({ refresh }: PaymentsMethodsProps): JSX.Element => {
     const response = await api.post(`payment/${paymentId}`, { infos });
 
     if (response.data.message) {
+      setRenderAdditionalValueForm(false);
       toast({
         title: '📣',
         description: response.data.message,

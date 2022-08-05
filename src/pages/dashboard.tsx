@@ -120,7 +120,13 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
               <MobileDisplayTable purchases={purchaseCtx.purchases} paymentId={purchaseCtx.paymentId} />
             </>
           )}
-          {actualAction === 1 && <CreateForm />}
+          {actualAction === 1 && (
+          <CreateForm
+            setActualAction={setActualAction}
+            refresh={refresh}
+            setNotHavePayment={setNotHavePayment}
+          />
+          )}
           {actualAction === 2 && <CreatePurchase data={{ payments }} />}
         </Flex>
       </Grid>
