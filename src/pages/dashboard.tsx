@@ -25,19 +25,19 @@ import PragModal from '../components/Layout/PragModal';
 import InfoContainer from '../components/Layout/InfoContainer';
 
 export interface DashboardProps {
-  payments: PaymentModel[]
+  paymentList: PaymentModel[]
   error?: {
     statusCode: number
     error: string
   }
 }
 
-const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
+const Dashboard = ({ paymentList, error }: DashboardProps): JSX.Element => {
   const [actualAction, setActualAction] = useState<number>(0);
   const [notHavePayment, setNotHavePayment] = useState<boolean>(false);
   const toast = useToast();
   const purchaseCtx = useContext(PurchaseContext);
-  const { handleSetPayments } = useContext(PaymentContext);
+  const { handleSetPayments, payments } = useContext(PaymentContext);
 
   const refresh = async () => {
     const { authToken, userId } = parseCookies();
@@ -73,7 +73,7 @@ const Dashboard = ({ payments, error }: DashboardProps): JSX.Element => {
     };
 
     handlePayment();
-    handleSetPayments(payments);
+    handleSetPayments(paymentList);
   }, []);
 
   return (
@@ -163,7 +163,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      payments: response.data.content !== undefined ? (response.data.content as ({ [key: string]: PaymentModel[] })).payments : [],
+      paymentList: response.data.content !== undefined ? (response.data.content as ({ [key: string]: PaymentModel[] })).payments : [],
     },
   };
 };
